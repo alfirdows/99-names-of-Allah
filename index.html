@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; connect-src 'self'; form-action 'none'; base-uri 'self'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; form-action 'none'; base-uri 'self'; object-src 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>أسماء الله الحسنى · The Beautiful Names of Allah</title>
 <meta name="description" content="احفظ أسماء الله الحسنى مع الدليل من القرآن والسنة والمعنى: ٧٠ درسًا، مع أدوات للحفظ والتكرار والألعاب والاختبار. Memorize the Beautiful Names of Allah with their evidence and meaning, with memorization tools, games and quizzes.">
@@ -260,6 +260,12 @@ html[lang="ar"] .names .gl{display:none}
 .confirm{background:var(--bad-soft);border-radius:12px;padding:12px;display:grid;gap:8px}
 .toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-weight:600;font-size:.9rem;z-index:80;box-shadow:var(--shadow);max-width:calc(100% - 32px);text-align:center}
 
+.recs{display:grid;gap:10px}
+.rec{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center;border-top:1px solid var(--line);padding-top:10px}
+.rec audio{grid-column:1/-1;width:100%;height:40px}
+.rec .nmi{font-family:var(--name);font-size:1.1rem}
+.btn.recon{background:var(--bad);color:#fff;border-color:var(--bad)}
+.btn.armed{background:var(--bad);color:#fff;border-color:var(--bad)}
 footer{border-top:1px solid var(--line);background:var(--band)}
 footer .wrap{padding-block:36px;display:grid;gap:10px;justify-items:center;text-align:center;font-size:.9rem;color:var(--muted)}
 footer a{color:var(--acc);font-weight:600}
@@ -357,7 +363,19 @@ const TX={
  erased:["Progress erased","تم مسح التقدّم"],learner:["Learner","متعلّم"],
  footNote:["The Arabic text follows the book متن الأسماء, with evidence from the Qur’an and Sunnah and meanings drawn from the works of al-Saʿdī, al-Badr, Ibn ʿUthaymīn and al-Jalīl. Please review them with your teacher. Progress is saved on this device only.","النص العربي من كتاب «متن الأسماء»، والأدلة من القرآن والسنة، والمعاني من كتب السعدي والبدر وابن عثيمين والجليل. راجعها مع معلّمك. يُحفظ التقدّم على هذا الجهاز فقط."],
  sibling:["Also memorize: Matn Tuḥfat al-Aṭfāl","احفظ أيضًا: متن تحفة الأطفال"],
- xpGain:["+{n} points","+{n} نقطة"]
+ xpGain:["+{n} points","+{n} نقطة"],
+ rec:["Record","سجّل"],recStop:["Stop and save","أوقف واحفظ"],myRec:["My recitation","تسميعي"],myRecs:["My recordings","تسجيلاتي"],
+ recHint:["Record yourself reciting, then listen back. Recordings stay on this device until you delete them.","سجّل تسميعك ثم استمع إليه. تبقى التسجيلات على هذا الجهاز حتى تحذفها."],
+ noRecs:["No recordings yet.","لا توجد تسجيلات بعد."],recSaved:["Recording saved","تم حفظ التسجيل"],
+ noMic:["The microphone is not available. Allow microphone access for this site and try again.","الميكروفون غير متاح. اسمح للموقع باستخدام الميكروفون ثم حاول مرة أخرى."],
+ saveFile:["Save to device","احفظ على الجهاز"],sure:["Tap again to delete","اضغط مرة أخرى للحذف"],delAll:["Delete all my recordings","احذف كل تسجيلاتي"],deleted:["Deleted","تم الحذف"],
+ storage:["Your data","بياناتك"],
+ storageD:["Everything here is free, with no limits and no expiry. Progress and recordings are saved on this device and stay until you delete them. To move them to another device, or to be safe if the browser data is cleared, save a backup file.","كل شيء هنا مجاني بلا حدود ولا مدة. يُحفظ التقدّم والتسجيلات على هذا الجهاز ويبقى حتى تحذفه. لنقلها إلى جهاز آخر، أو للاحتياط إن مُسحت بيانات المتصفح، احفظ نسخة احتياطية."],
+ persistOn:["This browser has agreed to keep the data permanently.","وافق المتصفح على الاحتفاظ بالبيانات بشكل دائم."],
+ persistOff:["This browser may clear site data if the device runs out of space. Tap the button, install the site as an app, and save a backup now and then.","قد يمسح المتصفح بيانات الموقع إذا امتلأت مساحة الجهاز. اضغط الزر، وثبّت الموقع كتطبيق، واحفظ نسخة احتياطية من حين لآخر."],
+ persistBtn:["Keep my data permanently","احتفظ ببياناتي دائمًا"],backup:["Save backup file","احفظ نسخة احتياطية"],restore:["Restore backup","استعد نسخة احتياطية"],
+ restoreQ:["Replace the progress on this device with the backup? Recordings in the backup are added to the ones here.","هل تريد استبدال التقدّم على هذا الجهاز بالنسخة الاحتياطية؟ تُضاف تسجيلات النسخة إلى الموجودة هنا."],
+ restored:["Backup restored","تمت الاستعادة"],badFile:["That file is not a backup from this site.","هذا الملف ليس نسخة احتياطية من هذا الموقع."],saved:["Saved","تم الحفظ"],working:["Preparing…","جارٍ التجهيز…"]
 };
 const t=(k,v)=>{const a=TX[k];let s=a?(LANG==="ar"?a[1]:a[0]):k;if(v)for(const x in v)s=s.replace("{"+x+"}",LANG==="ar"?AD(v[x]):v[x]);return s};
 const N=n=>LANG==="ar"?AD(n):String(n);
@@ -427,7 +445,7 @@ $("#pfBtn").onclick=()=>location.hash="#settings";
 /* ================= views ================= */
 const V={};
 function render(){
-  stopSpeech();Game.stop();
+  stopSpeech();Game.stop();if(Rec.mr&&!(VIEW==="memorize"&&location.hash==="#memorize"))Rec.stop();
   const h=location.hash.slice(1);VIEW=[...VIEWS,"settings"].includes(h)?h:"home";
   renderTop();$("#main").innerHTML="";(V[VIEW])($("#main"));
 }
@@ -542,6 +560,8 @@ V.memorize=el=>{
       <div class="dots" aria-label="${p.reps}/${target}">${Array.from({length:target},(_,n)=>`<i class="${n<p.reps?"on":""}"></i>`).join("")}</div>
       <div class="row"><button class="btn pri" id="tap">${t("recited")}</button><button class="btn sm" id="rr">${t("reset")}</button></div></div>
     <div class="row" style="justify-content:center"><button class="btn pri" id="mm">${ic("check")}${t("markMem")}</button><button class="btn warn" id="rv">${p.rev?t("unRev"):t("needRev")}</button></div>
+    <div class="panel"><div class="row" style="justify-content:space-between"><h3>${t("myRec")}</h3><button class="btn ${Rec.mr?"recon":"out"}" id="recBtn">${Rec.mr?"■ "+t("recStop"):"● "+t("rec")}</button></div>
+      <p class="note">${t("recHint")}</p><div class="recs" id="recList"></div></div>
   </div></section>`;
   const go=n=>{LS.set("cur."+PID,n);render();scrollTo(0,0)};
   $("#sets").onclick=()=>{Mem.run=false;render()};
@@ -560,6 +580,13 @@ V.memorize=el=>{
     const nx=r.find(x=>x>i&&status(x)!=="memorized");if(nx!=null)go(nx);else{toast(t("setDone"));Mem.run=false;render()}};
   $("#rv").onclick=()=>{p.rev=!p.rev;if(p.s==="new")p.s="learning";touch(i);saveST();render()};
   $("#listen").onclick=()=>speak([DATA[i].names.join("، "),...DATA[i].m].join(". "));
+  const fillRecs=async()=>{const box=$("#recList");if(!box)return;const all=(await DB.all()).filter(r=>r.pid===PID&&r.lesson===i).sort((a,b)=>b.date-a.date);
+    box.innerHTML=all.length?all.map(recItem).join(""):`<p class="note">${t("noRecs")}</p>`;bindRecs(box,fillRecs)};
+  fillRecs();
+  $("#recBtn").onclick=async()=>{const b=$("#recBtn");
+    if(Rec.mr){await Rec.stop();clearInterval(Rec.tick);const b2=$("#recBtn");if(b2){b2.className="btn out";b2.textContent="● "+t("rec")}fillRecs();return}
+    if(!await Rec.start(i)){toast(t("noMic"));return}
+    b.className="btn recon";const upd=()=>{const b2=$("#recBtn");if(b2)b2.textContent="■ "+t("recStop")+" · "+fmtT((Date.now()-Rec.t0)/1000)};upd();Rec.tick=setInterval(upd,1000)};
 };
 addEventListener("keydown",e=>{if(VIEW!=="memorize"||!Mem.run||e.target.matches("input,select,textarea"))return;
   const fwd=LANG==="ar"?"ArrowLeft":"ArrowRight",bwd=LANG==="ar"?"ArrowRight":"ArrowLeft";const i=LS.get("cur."+PID,0);
@@ -690,6 +717,45 @@ V.quiz=el=>{
   $("#qn").onclick=()=>{Q.at++;Q.done=false;render()};$("#qx").onclick=()=>{Q.qs.length=Q.at+(Q.done?1:0);Q.at=Q.qs.length;render()};
 };
 
+/* ---------- recordings: kept on this device until the learner deletes them (no expiry) ---------- */
+const DB={db:null,open(){if(this.db)return Promise.resolve(this.db);return new Promise((res,rej)=>{try{const r=indexedDB.open("asma-recs",1);r.onupgradeneeded=()=>r.result.createObjectStore("recs",{keyPath:"id"});r.onsuccess=()=>{this.db=r.result;res(this.db)};r.onerror=()=>rej(r.error)}catch(e){rej(e)}})},
+ async tx(mode,fn){const db=await this.open();return new Promise((res,rej)=>{const x=db.transaction("recs",mode);const r=fn(x.objectStore("recs"));x.oncomplete=()=>res(r&&r.result);x.onerror=()=>rej(x.error)})},
+ put(o){return this.tx("readwrite",s=>s.put(o)).catch(()=>{})},all(){return this.tx("readonly",s=>s.getAll()).then(a=>a||[]).catch(()=>[])},del(id){return this.tx("readwrite",s=>s.delete(id)).catch(()=>{})}};
+async function persisted(){try{return !!(navigator.storage&&navigator.storage.persisted&&await navigator.storage.persisted())}catch(e){return false}}
+async function keepForever(){try{if(navigator.storage&&navigator.storage.persist)return(await navigator.storage.persisted())||(await navigator.storage.persist())}catch(e){}return false}
+const fmtT=s=>{s=Math.max(0,Math.round(s));return N(Math.floor(s/60))+":"+N(String(s%60).padStart(2,"0"))};
+const fmtD=d=>{try{return new Date(d).toLocaleDateString(LANG==="ar"?"ar":"en",{year:"numeric",month:"short",day:"numeric"})}catch(e){return""}};
+const Rec={mr:null,stream:null,chunks:[],t0:0,lesson:0,tick:null,
+ async start(i){if(this.mr)return true;try{this.stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){return false}
+  try{this.mr=new MediaRecorder(this.stream)}catch(e){this.stream.getTracks().forEach(x=>x.stop());return false}
+  this.chunks=[];this.lesson=i;this.t0=Date.now();this.mr.ondataavailable=e=>{if(e.data&&e.data.size)this.chunks.push(e.data)};this.mr.start(1000);keepForever();return true},
+ stop(){if(!this.mr)return Promise.resolve(null);const mr=this.mr;this.mr=null;clearInterval(this.tick);
+  return new Promise(res=>{mr.onstop=async()=>{try{this.stream.getTracks().forEach(x=>x.stop())}catch(e){}const dur=(Date.now()-this.t0)/1000;if(!this.chunks.length||dur<1)return res(null);
+   const type=mr.mimeType||"audio/webm";const o={id:String(Date.now()),pid:PID,lesson:this.lesson,date:Date.now(),dur,type,blob:new Blob(this.chunks,{type})};await DB.put(o);toast(t("recSaved"));res(o)};try{mr.stop()}catch(e){res(null)}})}};
+const extOf=type=>/mp4|aac|m4a/.test(type)?"m4a":/ogg/.test(type)?"ogg":/mpeg/.test(type)?"mp3":"webm";
+async function saveBlob(blob,name){
+  try{const f=new File([blob],name,{type:blob.type});if(navigator.canShare&&navigator.canShare({files:[f]})&&/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){await navigator.share({files:[f],title:name});return}}catch(e){if(e&&e.name==="AbortError")return}
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000)}
+function recItem(r){return`<div class="rec"><div><b>${t("lessonN")} ${N(r.lesson+1)} · <span lang="ar" class="nmi">${esc(nm(r.lesson))}</span></b><div class="note">${fmtD(r.date)} · ${fmtT(r.dur||0)}</div></div>
+  <div class="row"><button class="btn out sm" data-dl="${r.id}">${t("saveFile")}</button><button class="btn sm" data-rdel="${r.id}">${t("del")}</button></div><audio controls preload="metadata" data-src="${r.id}"></audio></div>`}
+async function bindRecs(root,after){const all=await DB.all();const by={};all.forEach(r=>by[r.id]=r);
+  $$("audio[data-src]",root).forEach(a=>{const r=by[a.dataset.src];if(r)try{a.src=URL.createObjectURL(r.blob)}catch(e){}});
+  $$("[data-dl]",root).forEach(b=>b.onclick=()=>{const r=by[b.dataset.dl];if(r)saveBlob(r.blob,`asma-${r.lesson+1}-${new Date(r.date).toISOString().slice(0,10)}.${extOf(r.type)}`)});
+  $$("[data-rdel]",root).forEach(b=>b.onclick=async()=>{if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent=t("sure");setTimeout(()=>{if(b.isConnected){b.classList.remove("armed");b.textContent=t("del")}},4000);return}
+    await DB.del(b.dataset.rdel);toast(t("deleted"));after&&after()})}
+
+/* ---------- backup file (progress + recordings), no account needed ---------- */
+const b64=blob=>new Promise(res=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(",")[1]||"");r.onerror=()=>res("");r.readAsDataURL(blob)});
+const unb64=(s,type)=>{const bin=atob(s);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new Blob([u],{type})};
+async function makeBackup(){const ls={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith("asma1."))ls[k]=localStorage.getItem(k)}}catch(e){}
+  const recs=[];for(const r of await DB.all()){recs.push({id:r.id,pid:r.pid,lesson:r.lesson,date:r.date,dur:r.dur,type:r.type,data:await b64(r.blob)})}
+  return new Blob([JSON.stringify({app:"asma-al-husna",v:1,date:Date.now(),ls,recs})],{type:"application/json"})}
+async function restoreBackup(file){let o;try{o=JSON.parse(await file.text())}catch(e){return false}
+  if(!o||o.app!=="asma-al-husna"||typeof o.ls!=="object")return false;
+  try{Object.keys(localStorage).filter(k=>k.startsWith("asma1.")).forEach(k=>localStorage.removeItem(k));for(const k in o.ls)if(k.startsWith("asma1."))localStorage.setItem(k,o.ls[k])}catch(e){return false}
+  for(const r of o.recs||[]){try{await DB.put({id:r.id,pid:r.pid,lesson:r.lesson,date:r.date,dur:r.dur,type:r.type,blob:unb64(r.data,r.type)})}catch(e){}}
+  return true}
+
 /* ---------- progress ---------- */
 V.progress=el=>{
   const mem=memNames(),pct=Math.round(mem/TOTAL*100),lm=DATA.filter((_,i)=>status(i)==="memorized").length,rev=DATA.map((_,i)=>i).filter(i=>status(i)==="review");
@@ -700,8 +766,14 @@ V.progress=el=>{
       <div><h3 style="margin-bottom:6px">${t("last14")}</h3><div class="days">${days}</div></div></div>
     <div class="panel"><h3>${t("bySet")}</h3>${Array.from({length:SETS},(_,k)=>{const r=setRange(k),d=r.filter(i=>status(i)==="memorized").length;return`<div style="display:grid;gap:4px"><div class="row" style="justify-content:space-between"><span>${setLabel(k)} <span class="note" lang="ar">${esc(setSpan(k))}</span></span><span class="note">${N(d)} / ${N(r.length)}</span></div><div class="prog"><i style="width:${d/r.length*100}%"></i></div></div>`}).join("")}</div>
     <div class="panel"><h3>${t("revList")}</h3>${rev.length?`<ul class="misses">${rev.map(i=>`<li><span class="nm" lang="ar">${esc(nm(i))}</span><button class="btn out sm" data-st="${i}">${t("study")} · ${N(i+1)}</button></li>`).join("")}</ul>`:`<p class="note">${t("revEmpty")}</p>`}</div>
+    <div class="panel"><div class="row" style="justify-content:space-between"><h3>${t("myRecs")}</h3><button class="btn sm" id="delAll" hidden>${t("delAll")}</button></div><div class="recs" id="allRecs"></div></div>
   </div></section>`;
   $$("[data-st]").forEach(b=>b.onclick=()=>Mem.open(+b.dataset.st));
+  const fill=async()=>{const box=$("#allRecs");if(!box)return;const all=(await DB.all()).filter(r=>r.pid===PID).sort((a,b)=>b.date-a.date);
+    box.innerHTML=all.length?all.map(recItem).join(""):`<p class="note">${t("noRecs")}</p>`;$("#delAll").hidden=!all.length;bindRecs(box,fill)};
+  fill();
+  $("#delAll").onclick=async e=>{const b=e.currentTarget;if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent=t("sure");return}
+    for(const r of (await DB.all()).filter(r=>r.pid===PID))await DB.del(r.id);toast(t("deleted"));b.classList.remove("armed");b.textContent=t("delAll");fill()};
 };
 
 /* ---------- settings ---------- */
@@ -718,15 +790,24 @@ V.settings=el=>{
       ${PROFILES.map(p=>`<div class="learner"><span class="pf" style="background:${COLORS[p.color%COLORS.length]}">${p.name.trim()?esc(p.name.trim().slice(0,1)):PERSON}</span><input data-pn="${p.id}" value="${esc(p.name)}" placeholder="${esc(t("name"))}" aria-label="${esc(t("name"))}">
         ${p.id===PID?`<span class="pill memorized">${t("current")}</span>`:`<button class="btn sm" data-use="${p.id}">${t("use")}</button><button class="btn sm warn" data-del="${p.id}">${t("del")}</button>`}</div>`).join("")}
       <div class="row"><button class="btn out sm" id="addL">${t("addLearner")}</button></div></div>
+    <div class="panel"><h3>${t("storage")}</h3><p class="note">${t("storageD")}</p><p class="note" id="pst"></p>
+      <div class="row"><button class="btn out sm" id="persist" hidden>${t("persistBtn")}</button><button class="btn pri sm" id="bk">${t("backup")}</button><button class="btn out sm" id="rsBtn">${t("restore")}</button><input type="file" id="rsFile" accept="application/json,.json" hidden></div><div id="rcf"></div></div>
     <div class="panel"><div class="row"><button class="btn warn" id="rst">${t("resetP")}</button></div><div id="cf"></div></div>
   </div></section>`;
+  const showP=async()=>{const on=await persisted();const el=$("#pst");if(!el)return;el.textContent=on?t("persistOn"):t("persistOff");$("#persist").hidden=on};showP();
+  $("#persist").onclick=async()=>{await keepForever();showP()};
+  $("#bk").onclick=async()=>{const b=$("#bk");b.disabled=true;b.textContent=t("working");keepForever();const blob=await makeBackup();await saveBlob(blob,`asma-backup-${today()}.json`);b.disabled=false;b.textContent=t("backup")};
+  $("#rsBtn").onclick=()=>$("#rsFile").click();
+  $("#rsFile").onchange=e=>{const f=e.target.files[0];if(!f)return;$("#rcf").innerHTML=`<div class="confirm"><p class="note" style="color:var(--ink)">${t("restoreQ")}</p><div class="row"><button class="btn warn" id="ry">${t("restore")}</button><button class="btn sm" id="rn">${t("cancel")}</button></div></div>`;
+    $("#rn").onclick=()=>{$("#rcf").innerHTML="";e.target.value=""};
+    $("#ry").onclick=async()=>{if(await restoreBackup(f)){toast(t("restored"));setTimeout(()=>location.reload(),600)}else{$("#rcf").innerHTML=`<p class="note" style="color:var(--bad)">${t("badFile")}</p>`}e.target.value=""}};
   $$("[data-l]").forEach(b=>b.onclick=()=>{LANG=b.dataset.l;LS.set("lang",LANG);applySettings();render()});
   $$("[data-th]").forEach(b=>b.onclick=()=>{LS.set("theme",b.dataset.th);applySettings();render()});
   $("#fs").oninput=e=>{LS.set("fs",+e.target.value);applySettings()};
   $$("[data-tg]").forEach(b=>b.onclick=()=>{LS.set("target",+b.dataset.tg);render()});
   $$("[data-pn]").forEach(inp=>inp.onchange=()=>{PROFILES.find(p=>p.id===inp.dataset.pn).name=inp.value.trim().slice(0,24);LS.set("profiles",PROFILES);render()});
   $$("[data-use]").forEach(b=>b.onclick=()=>{PID=b.dataset.use;LS.set("pid",PID);loadST();Mem.run=false;Q.qs=null;render()});
-  $$("[data-del]").forEach(b=>b.onclick=()=>{const id=b.dataset.del;PROFILES=PROFILES.filter(p=>p.id!==id);LS.set("profiles",PROFILES);try{localStorage.removeItem("asma1.p."+id)}catch(e){}render()});
+  $$("[data-del]").forEach(b=>b.onclick=()=>{const id=b.dataset.del;PROFILES=PROFILES.filter(p=>p.id!==id);LS.set("profiles",PROFILES);try{localStorage.removeItem("asma1.p."+id)}catch(e){}DB.all().then(a=>a.filter(r=>r.pid===id).forEach(r=>DB.del(r.id)));render()});
   $("#addL").onclick=()=>{const id="p"+Date.now().toString(36);PROFILES.push({id,name:"",color:PROFILES.length});LS.set("profiles",PROFILES);PID=id;LS.set("pid",PID);loadST();Mem.run=false;render()};
   $("#rst").onclick=()=>{$("#cf").innerHTML=`<div class="confirm"><p class="note" style="color:var(--ink)">${t("resetQ")}</p><div class="row"><button class="btn warn" id="y">${t("yes")}</button><button class="btn sm" id="n">${t("cancel")}</button></div></div>`;
     $("#y").onclick=()=>{ST={p:{},xp:0,days:{},best:{}};saveST();LS.set("cur."+PID,0);toast(t("erased"));render()};$("#n").onclick=()=>$("#cf").innerHTML=""};
