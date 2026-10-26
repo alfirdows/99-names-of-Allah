@@ -65,6 +65,12 @@
 h3 .i,.ht .i{width:20px;height:20px;vertical-align:-4px;margin-inline-end:6px;color:var(--c,var(--acc))}
 .btn .i{width:17px;height:17px}
 .pdfp{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;justify-content:space-between;margin-top:18px;border-inline-start:4px solid var(--c)}.pdfp b .i{color:var(--c);width:20px;height:20px;vertical-align:-4px;margin-inline-end:6px}.pdfp .note{margin:4px 0 0}
+html.noev .evx{display:none!important}
+.evrow{justify-content:center;margin:-4px 0 10px}
+.dlx{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);display:grid;gap:6px}
+.dlx p{margin:0;font-family:var(--text);font-weight:400!important;font-size:calc(1.1rem*var(--fs));line-height:1.9}
+.dlx cite{font-style:normal;font-size:.8rem;color:var(--muted);font-family:var(--font)}
+.dlx .lb{font-family:var(--font);font-size:.78rem;font-weight:700;color:var(--h3)}
 .evsw .i{width:16px;height:16px}.evsw:not(.on){color:var(--muted)}
 .orn{display:flex;justify-content:center;gap:10px;margin:2px 0 4px}
 .orn i{width:9px;height:9px;transform:rotate(45deg);border-radius:2px}
@@ -476,6 +482,7 @@ const SELF_NAMING=new Set([33]); /* al-Awwal…: its meaning quotes the names, s
 function applySettings(){
   const br=$("#brand");if(br){br.innerHTML=LANG==="en"?`<span lang="en">The Most Beautiful Names of Allah</span>`:`<span lang="ar">أسماء الله الحسنى</span>`;br.classList.toggle("en",LANG==="en")}
   document.title=LANG==="en"?"The Most Beautiful Names of Allah · أسماء الله الحسنى":"أسماء الله الحسنى · The Most Beautiful Names of Allah";
+  document.documentElement.classList.toggle("noev",!LS.get("showEv",true));
   document.documentElement.lang=LANG;document.documentElement.dir=LANG==="ar"?"rtl":"ltr";
   const th=LS.get("theme","system");if(th==="system")document.documentElement.removeAttribute("data-theme");else document.documentElement.dataset.theme=th;
   document.documentElement.style.setProperty("--fs",LS.get("fs",1));
@@ -502,7 +509,11 @@ const ICON={
 const ic=(k,st="")=>`<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" ${st}>${ICON[k]}</svg>`;
 const PERSON='<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg>';
 const evSw=()=>`<button class="chip evsw ${LS.get("showEv",true)?"on":""}" aria-pressed="${LS.get("showEv",true)}">${ic("book")}${t(LS.get("showEv",true)?"evOn":"evOff")}</button>`;
-function bindEvSw(root=document){$$(".evsw",root).forEach(b=>b.onclick=()=>{const v=!LS.get("showEv",true);LS.set("showEv",v);const y=scrollY;render();scrollTo(0,y);toast(t(v?"evOnT":"evOffT"))})}
+/* One daleel switch for the whole site. It only hides/shows elements marked .evx, so a game or quiz in progress is never restarted. */
+function setEv(v,quiet){LS.set("showEv",v);document.documentElement.classList.toggle("noev",!v);
+  $$(".evsw").forEach(b=>{b.classList.toggle("on",v);b.setAttribute("aria-pressed",v);b.innerHTML=ic("book")+t(v?"evOn":"evOff")});const c=$("#sEv");if(c)c.checked=v;if(!quiet)toast(t(v?"evOnT":"evOffT"))}
+document.addEventListener("click",e=>{const b=e.target.closest(".evsw");if(b)setEv(!LS.get("showEv",true))});
+function bindEvSw(){}
 const hue=k=>"hue"+(((k%6)+6)%6+1);
 const VIEWS=["home","names","memorize","practice","quiz","progress"];
 let VIEW="home";
@@ -604,7 +615,7 @@ function lessonHTML(i,o={}){
   return`<article class="lesson ${o.framed?"framed":""} ${hue(i)}" data-i="${i}">
     <div class="lhead"><span class="lnum">${N(i+1)}</span><span class="pill ${st}">${t("st_"+st)}</span></div>
     <div class="names ${o.hideNames?"hid":""}">${L.names.map((n,k)=>`<div><span class="nm" lang="ar">${esc(n)}</span><span class="gl">${esc(GLOSS[i][k]||"")}</span></div>`).join("")}</div>
-    ${LS.get("showEv",true)?`<div class="blk ev-b"><h4>${ic("book")}${t("evidence")} · <span lang="ar">الدليل</span></h4>${L.ev.map(([x,r])=>`<div class="ev" lang="ar"><p>${words(x,o.hideEv?(lv||4):0)}</p><cite>${esc(r)}</cite></div>`).join("")}</div>`:""}
+    <div class="blk ev-b evx"><h4>${ic("book")}${t("evidence")} · <span lang="ar">الدليل</span></h4>${L.ev.map(([x,r])=>`<div class="ev" lang="ar"><p>${words(x,o.hideEv?(lv||4):0)}</p><cite>${esc(r)}</cite></div>`).join("")}</div>
     <div class="blk mn-b"><h4>${ic("bulb")}${t("meaning")} · <span lang="ar">المعنى</span></h4><div class="mn" lang="ar">${L.m.map(x=>`<p>${words(x,lv)}</p>`).join("")}</div>${LANG==="en"?`<div class="mn-en" lang="en"><span class="trl">${t("trl")}</span>${MEAN_EN[i].map(x=>`<p>${esc(x)}</p>`).join("")}</div>`:""}</div>
     ${o.foot||""}</article>`;
 }
@@ -712,7 +723,7 @@ const Game={id:null,set:null,timer:null,stop(){clearInterval(this.timer);this.ti
 const poolFor=k=>k<0?DATA.map((_,i)=>i):setRange(k);
 V.practice=el=>{
   if(!Game.id){
-    el.innerHTML=`<section class="sec"><div class="wrap narrow"><div class="head"><h2>${t("prHead")}</h2><p>${t("prSub")}</p></div>
+    el.innerHTML=`<section class="sec"><div class="wrap narrow"><div class="head"><h2>${t("prHead")}</h2><p>${t("prSub")}</p></div><div class="row evrow" style="justify-content:flex-start">${evSw()}</div>
       <div class="gcards">${GAMES.map(([g,i])=>{const b=Object.values(ST.best[g]||{});return`<button class="gcard ${hue([0,3,4,2,1][GAMES.findIndex(x=>x[0]===g)])}" data-g="${g}"><span class="ic">${ic(i)}</span><b>${t("g_"+g)}</b><span class="d">${t("g_"+g+"D")}</span><span class="gst">${b.length?`${t("best")}: ${N(Math.max(...b))}`:"&nbsp;"}</span></button>`}).join("")}</div></div></section>`;
     $$(".gcard").forEach(b=>b.onclick=()=>{Game.id=b.dataset.g;Game.set=null;render()});
     return;
@@ -738,14 +749,15 @@ function finish(box,score,max,extra=""){
     <div class="row"><button class="btn pri" id="ga">${t("again")}</button><button class="btn out" id="go">${t("otherGame")}</button></div></div>`;
   $("#ga").onclick=()=>render();$("#go").onclick=()=>{Game.id=null;render()};
 }
-const gHead=(l,r)=>`<div class="ghead"><button class="btn sm" id="gq">${t("back")}</button><span>${l}</span><span class="sc">${r}</span></div>`;
+const gHead=(l,r)=>`<div class="ghead"><button class="btn sm" id="gq">${t("back")}</button><span>${l}</span><span class="sc">${r}</span></div><div class="row evrow">${evSw()}</div>`;
 const bindBack=()=>$("#gq").onclick=()=>{Game.stop();Game.set=null;render()};
+const dlx=i=>`<div class="dlx evx" lang="ar"><span class="lb">${t("evidence")} · الدليل</span>${DATA[i].ev.map(([x,r])=>`<p>${esc(x)}</p><cite>${esc(r)}</cite>`).join("")}</div>`;
 const shortM=i=>{const w=meaningOf(i).split(/\s+/);return w.slice(0,8).join(" ")+(w.length>8?" …":"")};
 const PLAY={
  flash(box,pool){const order=shuffle([...pool]);let n=0,known=0;
   const show=(flip)=>{if(!box.isConnected)return;const i=order[n];
    box.innerHTML=`${gHead(`${N(n+1)} / ${N(order.length)}`,`✓ ${N(known)}`)}
-    <div class="flash" id="card" lang="ar">${flip?`<div><div class="nm">${esc(nm(i))}</div>${DATA[i].m.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`:`<div><div class="nm">${esc(nm(i))}</div><p class="note" style="font-family:var(--font);font-weight:400">${t("tapFlip")}</p></div>`}</div>
+    <div class="flash" id="card" lang="ar">${flip?`<div><div class="nm">${esc(nm(i))}</div>${DATA[i].m.map(x=>`<p>${esc(x)}</p>`).join("")}${dlx(i)}</div>`:`<div><div class="nm">${esc(nm(i))}</div><p class="note" style="font-family:var(--font);font-weight:400">${t("tapFlip")}</p></div>`}</div>
     ${flip?`<div class="row" style="justify-content:center"><button class="btn pri" id="k">${t("knew")}</button><button class="btn warn" id="nk">${t("notYet")}</button></div>`:""}`;
    bindBack();$("#card").onclick=()=>!flip&&show(true);
    if(flip){const nx=()=>{n++;n<order.length?show(false):finish(box,known,order.length)};
@@ -787,7 +799,7 @@ function buildQs(){const pool=qPool();if(!pool.length)return[];const order=shuff
     else qs.push({k,i,a:i,opts:shuffle([i,...others(i,pool).filter(x=>!(k==="m2n"&&SELF_NAMING.has(x))).slice(0,3)])})}
   return shuffle(qs)}
 V.quiz=el=>{
-  const box=`<section class="sec"><div class="wrap narrow"><div class="head"><h2>${t("quizHead")}</h2><p>${t("quizSub")}</p></div><div class="panel" id="qb"></div></div></section>`;el.innerHTML=box;const qb=$("#qb");
+  const box=`<section class="sec"><div class="wrap narrow"><div class="head"><h2>${t("quizHead")}</h2><p>${t("quizSub")}</p></div><div class="row evrow" style="justify-content:flex-start">${evSw()}</div><div class="panel" id="qb"></div></div></section>`;el.innerHTML=box;const qb=$("#qb");
   if(!Q.qs){
     const scopes=[["all",t("all")],["started",t("qStarted")],["review",t("qReview")],...Array.from({length:SETS},(_,k)=>["set"+k,setLabel(k)])];
     qb.innerHTML=`<div class="stack"><div><h3 style="margin-bottom:8px">${t("qLessons")}</h3><div class="chips">${scopes.map(([v,l])=>`<button class="chip ${Q.scope===v?"on":""}" data-s="${v}">${l}</button>`).join("")}</div></div>
@@ -810,10 +822,10 @@ V.quiz=el=>{
   if(q.k==="m2n"){ask=t("askM2N");prompt=`<p>${esc(meaningOf(q.i))}</p>`;opt=i=>`<button class="nmc" data-o="${i}">${esc(nm(i))}</button>`}
   else if(q.k==="n2m"){ask=t("askN2M");prompt=`<div class="nm">${esc(nm(q.i))}</div>`;opt=i=>`<button data-o="${i}">${esc(meaningOf(i))}</button>`}
   else{ask=t("askNext");prompt=`<div class="nm">${esc(nm(q.i))}</div><p style="font-weight:400">… ثُمَّ؟</p>`;opt=i=>`<button class="nmc" data-o="${i}">${esc(nm(i))}</button>`}
-  qb.innerHTML=`<div class="ghead"><b>${ask}</b><span class="sc">${N(Q.at+1)} / ${N(Q.qs.length)}</span></div><div class="prompt" lang="ar">${prompt}</div><div class="opts" lang="ar">${q.opts.map(opt).join("")}</div>
+  qb.innerHTML=`<div class="ghead"><b>${ask}</b><span class="sc">${N(Q.at+1)} / ${N(Q.qs.length)}</span></div><div class="prompt" lang="ar">${prompt}</div><div class="opts" lang="ar">${q.opts.map(opt).join("")}</div><div id="qdl"></div>
     <div class="row"><button class="btn pri" id="qn" hidden>${t("nextQ")}</button><button class="btn sm" id="qx">${t("endQ")}</button><span class="note" id="qf"></span></div>`;
   $$("[data-o]",qb).forEach(b=>b.onclick=()=>{if(Q.done)return;Q.done=true;const ok=+b.dataset.o===q.a;if(ok)Q.right++;else Q.miss.push(q.k==="next"?q.a:q.i);
-    $$("[data-o]",qb).forEach(x=>{if(+x.dataset.o===q.a)x.classList.add("right")});if(!ok)b.classList.add("wrong");$("#qf").textContent=ok?t("correct"):t("wrongA");$("#qn").hidden=false;$("#qn").focus()});
+    $$("[data-o]",qb).forEach(x=>{if(+x.dataset.o===q.a)x.classList.add("right")});if(!ok)b.classList.add("wrong");$("#qf").textContent=ok?t("correct"):t("wrongA");$("#qn").hidden=false;$("#qdl").innerHTML=dlx(q.a);$("#qn").focus()});
   $("#qn").onclick=()=>{Q.at++;Q.done=false;render()};$("#qx").onclick=()=>{Q.qs.length=Q.at+(Q.done?1:0);Q.at=Q.qs.length;render()};
 };
 
@@ -904,7 +916,7 @@ V.settings=el=>{
     $("#ry").onclick=async()=>{if(await restoreBackup(f)){toast(t("restored"));setTimeout(()=>location.reload(),600)}else{$("#rcf").innerHTML=`<p class="note" style="color:var(--bad)">${t("badFile")}</p>`}e.target.value=""}};
   $$("[data-l]").forEach(b=>b.onclick=()=>{LANG=b.dataset.l;LS.set("lang",LANG);applySettings();render()});
   $$("[data-th]").forEach(b=>b.onclick=()=>{LS.set("theme",b.dataset.th);applySettings();render()});
-  $("#sEv").onchange=e=>{LS.set("showEv",e.target.checked);toast(t(e.target.checked?"evOnT":"evOffT"))};
+  $("#sEv").onchange=e=>setEv(e.target.checked);
   $("#fs").oninput=e=>{LS.set("fs",+e.target.value);applySettings()};
   $$("[data-tg]").forEach(b=>b.onclick=()=>{LS.set("target",+b.dataset.tg);render()});
   bindAv(el);
