@@ -87,10 +87,17 @@ svg.i{width:22px;height:22px;flex:none}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:70;background:var(--surface)}
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:60;background:var(--surface);border-bottom:1px solid var(--line)}
 .bar1{display:flex;align-items:center;gap:8px;height:60px}
+.brand.en{font-family:var(--font);font-size:1.15rem;color:var(--acc)}.brand .bs{display:none}
+@media (max-width:700px){.brand .bl{display:none}.brand .bs{display:inline}}
+@media (max-width:430px){.xpchip{display:none!important}.brand.en{font-size:1rem}}
 .brand{text-decoration:none;margin-inline-end:auto;font-family:var(--name);font-size:1.45rem;font-weight:700;line-height:1.2;white-space:nowrap}
 .brand small{font-family:var(--font);font-size:.95rem;font-weight:700}
 .hbtn{display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:.86rem;text-decoration:none;white-space:nowrap}
 .hbtn:hover{border-color:var(--acc);color:var(--acc)}
+.lsw{display:inline-flex;height:40px;padding:3px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2)}
+.lsw button{border:0;background:none;padding:0 12px;border-radius:999px;font:inherit;font-weight:600;font-size:.86rem;color:var(--muted);cursor:pointer}
+.lsw button.on{background:var(--acc);color:var(--acc-ink)}
+@media (max-width:560px){.lsw button{padding:0 9px;font-size:.8rem}}
 .hbtn.icon{width:40px;padding:0;justify-content:center}
 .xpchip{background:var(--acc-soft);border-color:color-mix(in srgb,var(--acc) 30%,transparent);color:var(--acc)}
 .xpchip small{color:var(--muted);font-weight:500}
@@ -316,10 +323,10 @@ footer a{color:var(--acc);font-weight:600}
 <body>
 <header class="top"><div class="wrap">
  <div class="bar1">
-  <a class="brand" href="#home">أسماء الله الحسنى <small class="en-only" lang="en">· Asmāʾ al-Ḥusnā</small></a>
+  <a class="brand" href="#home" id="brand"><span lang="ar">أسماء الله الحسنى</span></a>
   <button class="hbtn xpchip" id="xpChip" type="button"></button>
   <button class="hbtn" id="pfBtn" type="button"></button>
-  <button class="hbtn lang" id="langBtn" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:18px;height:18px"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"/></svg><span class="lbl" id="langLbl"></span></button>
+  <div class="lsw" id="langSw" role="group" aria-label="Language · اللغة"><button type="button" data-lg="ar" lang="ar">عربي</button><button type="button" data-lg="en" lang="en">English</button></div>
   <a class="hbtn icon" href="#settings" id="setBtn"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></a>
  </div>
  <nav class="menu" id="menu"></nav>
@@ -467,6 +474,8 @@ const SELF_NAMING=new Set([33]); /* al-Awwal…: its meaning quotes the names, s
 
 /* ================= settings application ================= */
 function applySettings(){
+  const br=$("#brand");if(br){br.innerHTML=LANG==="en"?`<span class="bl" lang="en">The Beautiful Names of Allah</span><span class="bs" lang="en">Names of Allah</span>`:`<span lang="ar">أسماء الله الحسنى</span>`;br.classList.toggle("en",LANG==="en")}
+  document.title=LANG==="en"?"The Beautiful Names of Allah · أسماء الله الحسنى":"أسماء الله الحسنى · The Beautiful Names of Allah";
   document.documentElement.lang=LANG;document.documentElement.dir=LANG==="ar"?"rtl":"ltr";
   const th=LS.get("theme","system");if(th==="system")document.documentElement.removeAttribute("data-theme");else document.documentElement.dataset.theme=th;
   document.documentElement.style.setProperty("--fs",LS.get("fs",1));
@@ -502,11 +511,10 @@ function renderTop(){
   $("#xpChip").innerHTML=`${ic("bolt",'style="width:16px;height:16px"')}<b>${N(ST.xp)}</b> <small class="lbl">${t("level")} ${N(levelOf(ST.xp))}</small>`;
   const pf=PROFILES.find(p=>p.id===PID);
   $("#pfBtn").innerHTML=`${avatar(pf)}<span class="lbl">${esc(pf.name||t("learner"))}</span>`;
-  $("#langLbl").textContent=t("lang");$("#langBtn").setAttribute("aria-label",t("lang"));$("#setBtn").setAttribute("aria-label",t("settings"));
-  $(".brand small").hidden=LANG==="ar";
+  $$("#langSw button").forEach(b=>{const on=b.dataset.lg===LANG;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)});$("#setBtn").setAttribute("aria-label",t("settings"));
   $("#foot").innerHTML=`<div class="row note" style="justify-content:center"><span id="visits" hidden></span><span>${t("since")}</span><a href="matn-al-asma.pdf" download="متن-الأسماء.pdf">${t("pdfB")}</a></div><p class="note" style="max-width:640px">${esc(t("footNote"))}</p><a href="https://fastaqim.github.io/tuhfa-/">${esc(t("sibling"))}</a>`;showVisits();
 }
-$("#langBtn").onclick=()=>{LANG=LANG==="ar"?"en":"ar";LS.set("lang",LANG);applySettings();render()};
+$$("#langSw button").forEach(b=>b.onclick=()=>{if(LANG===b.dataset.lg)return;LANG=b.dataset.lg;LS.set("lang",LANG);applySettings();render();toast(LANG==="ar"?"تم التبديل إلى العربية":"Switched to English")});
 $("#xpChip").onclick=()=>location.hash="#progress";
 $("#pfBtn").onclick=()=>location.hash="#settings";
 
@@ -645,7 +653,7 @@ V.memorize=el=>{
     ${lessonHTML(i,{framed:true,lv,hideEv,hideNames:hideNm})}
     <div class="row" style="justify-content:center">
       ${lv?`<button class="btn out sm" id="nw">${t("nextWord")}</button><button class="btn sm" id="sa">${t("showAll")}</button>`:""}
-      <button class="btn sm" id="listen">${ic("sound")}<span>${t("listen")}</span></button>
+      ${AUDIO[i]?`<button class="btn sm" id="listen">${ic("sound")}<span>${t("listen")}</span></button>`:""}
     </div>
     <p class="note" id="noVoice" hidden>${t("noVoice")}</p>
     <div class="row" style="justify-content:center">${evSw()}<label class="tog"><input type="checkbox" id="hNm" ${hideNm?"checked":""}>${t("hideNm")}</label></div>
@@ -672,7 +680,7 @@ V.memorize=el=>{
   $("#mm").onclick=()=>{const was=p.s==="memorized"&&!p.rev;p.s="memorized";p.rev=false;touch(i);saveST();if(!was)addXP(10);LS.set("lv",0);
     const nx=r.find(x=>x>i&&status(x)!=="memorized");if(nx!=null)go(nx);else{toast(t("setDone"));Mem.run=false;render()}};
   $("#rv").onclick=()=>{p.rev=!p.rev;if(p.s==="new")p.s="learning";touch(i);saveST();render()};
-  $("#listen").onclick=()=>speak([DATA[i].names.join("، "),...DATA[i].m].join(". "));
+  if($("#listen"))$("#listen").onclick=()=>speak(AUDIO[i]);
   const fillRecs=async()=>{const box=$("#recList");if(!box)return;const all=(await DB.all()).filter(r=>r.pid===PID&&r.lesson===i).sort((a,b)=>b.date-a.date);
     box.innerHTML=all.length?all.map(recItem).join(""):`<p class="note">${t("noRecs")}</p>`;bindRecs(box,fillRecs)};
   fillRecs();
@@ -687,17 +695,16 @@ addEventListener("keydown",e=>{if(VIEW!=="memorize"||!Mem.run||e.target.matches(
   if(e.key===" "&&$("#nw")){e.preventDefault();$("#nw").click()}});
 
 /* ---------- speech ---------- */
-let speaking=false;
-function stopSpeech(){try{speechSynthesis.cancel()}catch(e){}speaking=false}
-function speak(text){
-  const b=$("#listen");let v=null;try{v=speechSynthesis.getVoices().find(x=>/^ar/i.test(x.lang))}catch(e){}
-  if(!v){$("#noVoice").hidden=false;return}
+/* Listen plays real human recordings only (no computer voice). AUDIO maps a lesson index to a file in audio/; lessons without one show no Listen button. */
+const AUDIO={};
+let speaking=null;
+function stopSpeech(){if(speaking){try{speaking.pause()}catch(e){}speaking=null}}
+function speak(src){
+  const b=$("#listen");
   if(speaking){stopSpeech();$("span",b).textContent=t("listen");return}
-  const u=new SpeechSynthesisUtterance(text);u.voice=v;u.lang=v.lang;u.rate=.8;
-  u.onend=u.onerror=()=>{speaking=false;const bb=$("#listen");if(bb)$("span",bb).textContent=t("listen")};
-  speaking=true;$("span",b).textContent=t("stop");speechSynthesis.speak(u);
+  const a=new Audio(src);a.onended=a.onerror=()=>{speaking=null;const bb=$("#listen");if(bb)$("span",bb).textContent=t("listen")};
+  speaking=a;$("span",b).textContent=t("stop");a.play().catch(()=>{speaking=null});
 }
-try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{}}catch(e){}
 
 /* ---------- practice ---------- */
 const GAMES=[["flash","cards"],["pair","pair"],["quick","bolt"],["build","build"],["order","order"]];
