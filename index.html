@@ -380,7 +380,7 @@ const TX={
  lv0:["Read","اقرأ"],lv1:["Hide some","أخفِ بعضها"],lv2:["Hide most","أخفِ أكثرها"],lv3:["First letters","أوائل الحروف"],lv4:["Recite","سمّع"],
  trl:["English translation of the meaning · please review with a teacher","ترجمة المعنى بالإنجليزية"],
  pdfB:["Download the book (PDF)","حمّل الكتاب (PDF)"],pdfD:["The original book متن الأسماء, free to download, print and share.","الكتاب الأصلي «متن الأسماء»، مجاني للتحميل والطباعة والنشر."],
- hideEv:["Hide the evidence (tap to reveal)","أخفِ الدليل (اضغط لإظهاره)"],showEv:["Show the evidence (daleel)","إظهار الدليل"],showEvD:["Memorizing the daleel is optional. Turn this off to see only the names and their meanings.","حفظ الدليل اختياري. أطفئ هذا الخيار لترى الأسماء ومعانيها فقط."],evOn:["Daleel shown","الدليل ظاهر"],evOff:["Daleel hidden","الدليل مخفي"],hideNm:["Hide the name","أخفِ الاسم"],
+ hideEv:["Hide the evidence (tap to reveal)","أخفِ الدليل (اضغط لإظهاره)"],showEv:["Show the evidence (daleel)","إظهار الدليل"],showEvD:["Memorizing the daleel is optional. Turn this off to see only the names and their meanings.","حفظ الدليل اختياري. أطفئ هذا الخيار لترى الأسماء ومعانيها فقط."],evOnT:["The daleel is now shown","تم إظهار الدليل"],evOffT:["The daleel is now hidden","تم إخفاء الدليل"],evOn:["Daleel shown","الدليل ظاهر"],evOff:["Daleel hidden","الدليل مخفي"],hideNm:["Hide the name","أخفِ الاسم"],
  nextWord:["Show next word","أظهر الكلمة التالية"],showAll:["Show all","أظهر الكل"],listen:["Listen","استمع"],stop:["Stop","إيقاف"],
  noVoice:["This device has no Arabic voice installed, so Listen is not available here.","لا يوجد صوت عربي على هذا الجهاز، لذلك لا يعمل الاستماع هنا."],
  reps:["Repetitions","التكرار"],repsHint:["Read it aloud, then tap.","اقرأ بصوت مسموع ثم اضغط."],recited:["I recited it","قرأته"],reset:["Reset","إعادة"],
@@ -493,7 +493,7 @@ const ICON={
 const ic=(k,st="")=>`<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" ${st}>${ICON[k]}</svg>`;
 const PERSON='<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg>';
 const evSw=()=>`<button class="chip evsw ${LS.get("showEv",true)?"on":""}" aria-pressed="${LS.get("showEv",true)}">${ic("book")}${t(LS.get("showEv",true)?"evOn":"evOff")}</button>`;
-function bindEvSw(root=document){$$(".evsw",root).forEach(b=>b.onclick=()=>{LS.set("showEv",!LS.get("showEv",true));const y=scrollY;render();scrollTo(0,y)})}
+function bindEvSw(root=document){$$(".evsw",root).forEach(b=>b.onclick=()=>{const v=!LS.get("showEv",true);LS.set("showEv",v);const y=scrollY;render();scrollTo(0,y);toast(t(v?"evOnT":"evOffT"))})}
 const hue=k=>"hue"+(((k%6)+6)%6+1);
 const VIEWS=["home","names","memorize","practice","quiz","progress"];
 let VIEW="home";
@@ -637,7 +637,7 @@ V.memorize=el=>{
     return;
   }
   const i=LS.get("cur."+PID,0), p=P(i), lv=LS.get("lv",0), target=LS.get("target",5);
-  const hideEv=LS.get("hideEv",false), hideNm=LS.get("hideNm",false), k=Math.floor(i/PART), r=setRange(k);
+  const hideEv=false, hideNm=LS.get("hideNm",false), k=Math.floor(i/PART), r=setRange(k);
   el.innerHTML=`<section class="sec"><div class="wrap narrow stack">
     <div class="mtop"><button class="btn sm" id="sets">${t("backSets")}</button><span class="where">${setLabel(k)}، ${t("lessonN")} ${N(r.indexOf(i)+1)} ${t("of")} ${N(r.length)}</span>
       <span class="row"><button class="btn sm" id="prev" ${i===0?"disabled":""}>${t("prev")}</button><button class="btn sm" id="next" ${i===DATA.length-1?"disabled":""}>${t("next")}</button></span></div>
@@ -648,7 +648,7 @@ V.memorize=el=>{
       <button class="btn sm" id="listen">${ic("sound")}<span>${t("listen")}</span></button>
     </div>
     <p class="note" id="noVoice" hidden>${t("noVoice")}</p>
-    <div class="row" style="justify-content:center">${evSw()}${LS.get("showEv",true)?`<label class="tog"><input type="checkbox" id="hEv" ${hideEv?"checked":""}>${t("hideEv")}</label>`:""}<label class="tog"><input type="checkbox" id="hNm" ${hideNm?"checked":""}>${t("hideNm")}</label></div>
+    <div class="row" style="justify-content:center">${evSw()}<label class="tog"><input type="checkbox" id="hNm" ${hideNm?"checked":""}>${t("hideNm")}</label></div>
     <div class="reps"><div><b>${t("reps")}</b><div class="note">${t("repsHint")}</div></div>
       <div class="dots" aria-label="${p.reps}/${target}">${Array.from({length:target},(_,n)=>`<i class="${n<p.reps?"on":""}"></i>`).join("")}</div>
       <div class="row"><button class="btn pri" id="tap">${ic("star")}${t("recited")}</button><button class="btn sm" id="rr">${ic("refresh")}${t("reset")}</button></div></div>
@@ -897,7 +897,7 @@ V.settings=el=>{
     $("#ry").onclick=async()=>{if(await restoreBackup(f)){toast(t("restored"));setTimeout(()=>location.reload(),600)}else{$("#rcf").innerHTML=`<p class="note" style="color:var(--bad)">${t("badFile")}</p>`}e.target.value=""}};
   $$("[data-l]").forEach(b=>b.onclick=()=>{LANG=b.dataset.l;LS.set("lang",LANG);applySettings();render()});
   $$("[data-th]").forEach(b=>b.onclick=()=>{LS.set("theme",b.dataset.th);applySettings();render()});
-  $("#sEv").onchange=e=>{LS.set("showEv",e.target.checked);toast(t(e.target.checked?"evOn":"evOff"))};
+  $("#sEv").onchange=e=>{LS.set("showEv",e.target.checked);toast(t(e.target.checked?"evOnT":"evOffT"))};
   $("#fs").oninput=e=>{LS.set("fs",+e.target.value);applySettings()};
   $$("[data-tg]").forEach(b=>b.onclick=()=>{LS.set("target",+b.dataset.tg);render()});
   bindAv(el);
