@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; form-action 'none'; base-uri 'self'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com; form-action 'none'; base-uri 'self'; object-src 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>أسماء الله الحسنى · The Beautiful Names of Allah</title>
 <meta name="description" content="احفظ أسماء الله الحسنى مع الدليل من القرآن والسنة والمعنى: ٧٠ درسًا، مع أدوات للحفظ والتكرار والألعاب والاختبار. Memorize the Beautiful Names of Allah with their evidence and meaning, with memorization tools, games and quizzes.">
@@ -296,7 +296,8 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const AD=n=>String(n).replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const norm=s=>s.replace(/[ً-ٰٟۖ-ۭـ]/g,"").replace(/[أإآٱ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").toLowerCase();
-const LS={get(k,d){try{const v=localStorage.getItem("asma1."+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("asma1."+k,JSON.stringify(v))}catch(e){}}};
+let cloudDirty=()=>{};
+const LS={get(k,d){try{const v=localStorage.getItem("asma1."+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("asma1."+k,JSON.stringify(v))}catch(e){}cloudDirty()}};
 const GOAT=""; /* GoatCounter code for a visit counter, same as the Tuhfa site; empty = off */
 
 /* ================= language ================= */
@@ -375,7 +376,20 @@ const TX={
  persistOff:["This browser may clear site data if the device runs out of space. Tap the button, install the site as an app, and save a backup now and then.","قد يمسح المتصفح بيانات الموقع إذا امتلأت مساحة الجهاز. اضغط الزر، وثبّت الموقع كتطبيق، واحفظ نسخة احتياطية من حين لآخر."],
  persistBtn:["Keep my data permanently","احتفظ ببياناتي دائمًا"],backup:["Save backup file","احفظ نسخة احتياطية"],restore:["Restore backup","استعد نسخة احتياطية"],
  restoreQ:["Replace the progress on this device with the backup? Recordings in the backup are added to the ones here.","هل تريد استبدال التقدّم على هذا الجهاز بالنسخة الاحتياطية؟ تُضاف تسجيلات النسخة إلى الموجودة هنا."],
- restored:["Backup restored","تمت الاستعادة"],badFile:["That file is not a backup from this site.","هذا الملف ليس نسخة احتياطية من هذا الموقع."],saved:["Saved","تم الحفظ"],working:["Preparing…","جارٍ التجهيز…"]
+ restored:["Backup restored","تمت الاستعادة"],badFile:["That file is not a backup from this site.","هذا الملف ليس نسخة احتياطية من هذا الموقع."],saved:["Saved","تم الحفظ"],
+ acct:["Account (optional)","حساب (اختياري)"],
+ acctD:["Create a free account if you want your progress on any device. Only a username and password: no email, no name. Your recordings stay on your own device.","أنشئ حسابًا مجانيًا إن أردت تقدّمك على أي جهاز. اسم مستخدم وكلمة مرور فقط، بلا بريد ولا اسم. تبقى تسجيلاتك على جهازك."],
+ create:["Create account","أنشئ حسابًا"],signIn:["Sign in","تسجيل الدخول"],signOut:["Sign out","تسجيل الخروج"],
+ user:["Username","اسم المستخدم"],pass:["Password","كلمة المرور"],
+ passNote:["Write your password down. Without an email it cannot be reset.","احفظ كلمة المرور في مكان آمن. لا يمكن استعادتها لأنه لا يوجد بريد."],
+ userRule:["Use 3–20 letters, numbers or _ for the username.","استخدم ٣ إلى ٢٠ حرفًا إنجليزيًا أو رقمًا أو _ لاسم المستخدم."],
+ signedAs:["Signed in as","مسجّل باسم"],lastSave:["Last saved","آخر حفظ"],never:["not yet","لم يُحفظ بعد"],saveNow:["Save now","احفظ الآن"],
+ delAcct:["Delete account","احذف الحساب"],acctGone:["Account deleted. Your progress is still on this device.","حُذف الحساب. ما زال تقدّمك على هذا الجهاز."],
+ outNote:["Signed out. Your progress is still on this device.","خرجت من الحساب. ما زال تقدّمك على هذا الجهاز."],
+ signInNote:["Signing in loads your saved progress onto this device.","تسجيل الدخول يحمّل تقدّمك المحفوظ على هذا الجهاز."],
+ e_taken:["That username is taken. Try another.","اسم المستخدم مستخدم. جرّب غيره."],e_wrong:["Wrong username or password.","اسم المستخدم أو كلمة المرور غير صحيحة."],
+ e_weak:["Use at least 6 characters for the password.","استخدم ٦ أحرف على الأقل لكلمة المرور."],e_many:["Too many tries. Wait a few minutes and try again.","محاولات كثيرة. انتظر بضع دقائق ثم حاول."],
+ e_net:["Could not reach the server. Check your internet connection.","تعذّر الاتصال بالخادم. تحقّق من الإنترنت."],e_other:["Something went wrong. Try again.","حدث خطأ. حاول مرة أخرى."],working:["Preparing…","جارٍ التجهيز…"]
 };
 const t=(k,v)=>{const a=TX[k];let s=a?(LANG==="ar"?a[1]:a[0]):k;if(v)for(const x in v)s=s.replace("{"+x+"}",LANG==="ar"?AD(v[x]):v[x]);return s};
 const N=n=>LANG==="ar"?AD(n):String(n);
@@ -756,6 +770,65 @@ async function restoreBackup(file){let o;try{o=JSON.parse(await file.text())}cat
   for(const r of o.recs||[]){try{await DB.put({id:r.id,pid:r.pid,lesson:r.lesson,date:r.date,dur:r.dur,type:r.type,blob:unb64(r.data,r.type)})}catch(e){}}
   return true}
 
+/* ---------- optional account: Firebase (free plan), username + password only, progress only ---------- */
+/* Paste the two values from Firebase console → Project settings → General → Your apps. They are public by design. */
+const FIREBASE={apiKey:"",projectId:""};
+function localSnapshot(){const o={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith("asma1."))o[k]=localStorage.getItem(k)}}catch(e){}return o}
+function applySnapshot(o){try{Object.keys(localStorage).filter(k=>k.startsWith("asma1.")).forEach(k=>localStorage.removeItem(k));for(const k in o)if(k.startsWith("asma1."))localStorage.setItem(k,o[k])}catch(e){}}
+const Cloud={s:null,timer:null,
+ on(){return!!(FIREBASE.apiKey&&FIREBASE.projectId)},
+ load(){try{this.s=JSON.parse(localStorage.getItem("asma-acct")||"null")}catch(e){this.s=null}},
+ save(){try{this.s?localStorage.setItem("asma-acct",JSON.stringify(this.s)):localStorage.removeItem("asma-acct")}catch(e){}},
+ email:u=>u.toLowerCase()+"@users.asma-al-husna.app",
+ async post(url,body){let r;try{r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})}catch(e){throw new Error("NETWORK")}
+   const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error((j.error&&j.error.message)||"NETWORK");return j},
+ async auth(kind,user,pass){const j=await this.post(`https://identitytoolkit.googleapis.com/v1/accounts:${kind}?key=${FIREBASE.apiKey}`,{email:this.email(user),password:pass,returnSecureToken:true});
+   this.s={user:user.toLowerCase(),uid:j.localId,idToken:j.idToken,refreshToken:j.refreshToken,exp:Date.now()+(+j.expiresIn-60)*1000,lastSync:0,dirty:0};this.save()},
+ async token(){if(!this.s)throw new Error("SIGNED_OUT");if(Date.now()<this.s.exp)return this.s.idToken;let r;
+   try{r=await fetch(`https://securetoken.googleapis.com/v1/token?key=${FIREBASE.apiKey}`,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"grant_type=refresh_token&refresh_token="+encodeURIComponent(this.s.refreshToken)})}catch(e){throw new Error("NETWORK")}
+   const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error((j.error&&j.error.message)||"NETWORK");
+   Object.assign(this.s,{idToken:j.id_token,refreshToken:j.refresh_token,exp:Date.now()+(+j.expires_in-60)*1000});this.save();return this.s.idToken},
+ url(){return`https://firestore.googleapis.com/v1/projects/${FIREBASE.projectId}/databases/(default)/documents/users/${this.s.uid}`},
+ async get(){let r;try{r=await fetch(this.url(),{headers:{Authorization:"Bearer "+await this.token()}})}catch(e){throw new Error("NETWORK")}if(r.status===404)return null;if(!r.ok)throw new Error("NETWORK");
+   const j=await r.json();return{data:JSON.parse((j.fields&&j.fields.data&&j.fields.data.stringValue)||"{}"),updated:+((j.fields&&j.fields.updated&&j.fields.updated.integerValue)||0)}},
+ async put(){if(!this.s)return;const now=Date.now();const tok=await this.token();let r;
+   try{r=await fetch(this.url(),{method:"PATCH",headers:{Authorization:"Bearer "+tok,"Content-Type":"application/json"},body:JSON.stringify({fields:{data:{stringValue:JSON.stringify(localSnapshot())},updated:{integerValue:String(now)}}})})}catch(e){throw new Error("NETWORK")}
+   if(!r.ok)throw new Error("NETWORK");this.s.lastSync=now;this.s.dirty=0;this.save()},
+ dirty(){if(!this.on()||!this.s)return;this.s.dirty=Date.now();this.save();clearTimeout(this.timer);this.timer=setTimeout(()=>this.put().catch(()=>{}),15000)},
+ async startup(){if(!this.on()||!this.s)return;try{const rem=await this.get();
+   if(rem&&rem.updated>(this.s.lastSync||0)&&!(this.s.dirty>rem.updated)){applySnapshot(rem.data);this.s.lastSync=rem.updated;this.s.dirty=0;this.save();location.reload()}
+   else if(this.s.dirty||!rem)await this.put()}catch(e){}},
+ async remove(){const tok=await this.token();try{await fetch(this.url(),{method:"DELETE",headers:{Authorization:"Bearer "+tok}})}catch(e){}
+   await this.post(`https://identitytoolkit.googleapis.com/v1/accounts:delete?key=${FIREBASE.apiKey}`,{idToken:tok});this.s=null;this.save()}};
+Cloud.load();cloudDirty=()=>Cloud.dirty();
+addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden"&&Cloud.s&&Cloud.s.dirty){clearTimeout(Cloud.timer);Cloud.put().catch(()=>{})}});
+const cloudErr=e=>{const m=String(e&&e.message||"");return t(/EMAIL_EXISTS/.test(m)?"e_taken":/INVALID_LOGIN|INVALID_PASSWORD|EMAIL_NOT_FOUND|USER_DISABLED/.test(m)?"e_wrong":/WEAK_PASSWORD/.test(m)?"e_weak":/TOO_MANY/.test(m)?"e_many":/NETWORK/.test(m)?"e_net":"e_other")};
+function acctHTML(){if(!Cloud.on())return"";
+  if(Cloud.s)return`<div class="panel" id="acct"><h3>${t("acct")}</h3><p style="margin:0">${t("signedAs")} <b dir="ltr">${esc(Cloud.s.user)}</b></p><p class="note">${t("lastSave")}: ${Cloud.s.lastSync?fmtD(Cloud.s.lastSync)+" "+new Date(Cloud.s.lastSync).toLocaleTimeString(LANG==="ar"?"ar":"en",{hour:"2-digit",minute:"2-digit"}):t("never")}</p>
+    <div class="row"><button class="btn pri sm" id="cSave">${t("saveNow")}</button><button class="btn out sm" id="cOut">${t("signOut")}</button><button class="btn sm" id="cDel">${t("delAcct")}</button></div><p class="note" id="cMsg" style="color:var(--bad)"></p></div>`;
+  return`<div class="panel" id="acct"><h3>${t("acct")}</h3><p class="note">${t("acctD")}</p>
+    <div class="seg" role="group"><button class="on" data-cm="signUp">${t("create")}</button><button data-cm="signInWithPassword">${t("signIn")}</button></div>
+    <div class="row"><input class="search" id="cU" autocomplete="username" autocapitalize="none" spellcheck="false" dir="ltr" placeholder="${esc(t("user"))}" aria-label="${esc(t("user"))}" maxlength="20" style="max-width:240px">
+      <input class="search" id="cP" type="password" autocomplete="new-password" dir="ltr" placeholder="${esc(t("pass"))}" aria-label="${esc(t("pass"))}" style="max-width:240px"></div>
+    <p class="note" id="cHint">${t("passNote")}</p><div class="row"><button class="btn pri" id="cGo">${t("create")}</button></div><p class="note" id="cMsg" style="color:var(--bad)"></p></div>`}
+function bindAcct(){if(!$("#acct"))return;const msg=x=>{const m=$("#cMsg");if(m)m.textContent=x};
+  if(Cloud.s){
+    $("#cSave").onclick=async()=>{try{await Cloud.put();toast(t("saved"));render()}catch(e){msg(cloudErr(e))}};
+    $("#cOut").onclick=async()=>{try{if(Cloud.s.dirty)await Cloud.put()}catch(e){}Cloud.s=null;Cloud.save();toast(t("outNote"));render()};
+    $("#cDel").onclick=async e=>{const b=e.currentTarget;if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent=t("sure");return}
+      try{await Cloud.remove();toast(t("acctGone"));render()}catch(err){msg(cloudErr(err))}};
+    return}
+  let mode="signUp";
+  $$("[data-cm]").forEach(b=>b.onclick=()=>{mode=b.dataset.cm;$$("[data-cm]").forEach(x=>x.classList.toggle("on",x===b));$("#cGo").textContent=t(mode==="signUp"?"create":"signIn");
+    $("#cHint").textContent=t(mode==="signUp"?"passNote":"signInNote");$("#cP").autocomplete=mode==="signUp"?"new-password":"current-password";msg("")});
+  $("#cGo").onclick=async()=>{const u=$("#cU").value.trim(),pw=$("#cP").value;if(!/^[A-Za-z0-9_]{3,20}$/.test(u)){msg(t("userRule"));return}if(pw.length<6){msg(t("e_weak"));return}
+    const b=$("#cGo");b.disabled=true;b.textContent=t("working");
+    try{await Cloud.auth(mode,u,pw);
+      if(mode==="signUp"){await Cloud.put();toast(t("saved"));render()}
+      else{const rem=await Cloud.get();if(rem){applySnapshot(rem.data);Cloud.s.lastSync=rem.updated;Cloud.save();location.reload()}else{await Cloud.put();render()}}}
+    catch(e){Cloud.s=null;Cloud.save();msg(cloudErr(e));b.disabled=false;b.textContent=t(mode==="signUp"?"create":"signIn")}};
+  $("#cP").onkeydown=e=>{if(e.key==="Enter")$("#cGo").click()}}
+
 /* ---------- progress ---------- */
 V.progress=el=>{
   const mem=memNames(),pct=Math.round(mem/TOTAL*100),lm=DATA.filter((_,i)=>status(i)==="memorized").length,rev=DATA.map((_,i)=>i).filter(i=>status(i)==="review");
@@ -790,10 +863,12 @@ V.settings=el=>{
       ${PROFILES.map(p=>`<div class="learner"><span class="pf" style="background:${COLORS[p.color%COLORS.length]}">${p.name.trim()?esc(p.name.trim().slice(0,1)):PERSON}</span><input data-pn="${p.id}" value="${esc(p.name)}" placeholder="${esc(t("name"))}" aria-label="${esc(t("name"))}">
         ${p.id===PID?`<span class="pill memorized">${t("current")}</span>`:`<button class="btn sm" data-use="${p.id}">${t("use")}</button><button class="btn sm warn" data-del="${p.id}">${t("del")}</button>`}</div>`).join("")}
       <div class="row"><button class="btn out sm" id="addL">${t("addLearner")}</button></div></div>
+    ${acctHTML()}
     <div class="panel"><h3>${t("storage")}</h3><p class="note">${t("storageD")}</p><p class="note" id="pst"></p>
       <div class="row"><button class="btn out sm" id="persist" hidden>${t("persistBtn")}</button><button class="btn pri sm" id="bk">${t("backup")}</button><button class="btn out sm" id="rsBtn">${t("restore")}</button><input type="file" id="rsFile" accept="application/json,.json" hidden></div><div id="rcf"></div></div>
     <div class="panel"><div class="row"><button class="btn warn" id="rst">${t("resetP")}</button></div><div id="cf"></div></div>
   </div></section>`;
+  bindAcct();
   const showP=async()=>{const on=await persisted();const el=$("#pst");if(!el)return;el.textContent=on?t("persistOn"):t("persistOff");$("#persist").hidden=on};showP();
   $("#persist").onclick=async()=>{await keepForever();showP()};
   $("#bk").onclick=async()=>{const b=$("#bk");b.disabled=true;b.textContent=t("working");keepForever();const blob=await makeBackup();await saveBlob(blob,`asma-backup-${today()}.json`);b.disabled=false;b.textContent=t("backup")};
@@ -813,7 +888,7 @@ V.settings=el=>{
     $("#y").onclick=()=>{ST={p:{},xp:0,days:{},best:{}};saveST();LS.set("cur."+PID,0);toast(t("erased"));render()};$("#n").onclick=()=>$("#cf").innerHTML=""};
 };
 
-applySettings();render();
+applySettings();render();Cloud.startup();
 if("serviceWorker" in navigator&&location.protocol==="https:")addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 </script>
 </body>
