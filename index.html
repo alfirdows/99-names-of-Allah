@@ -379,6 +379,20 @@ body.reading .sec{padding-bottom:110px}
 .sess .mis{margin-top:10px}
 .misc .pl{border:0;background:transparent;color:var(--acc);cursor:pointer;padding:6px;border-radius:8px;display:inline-flex}
 .misc .pl.on{color:#c0392b}
+.mbar{position:sticky;top:calc(var(--toph,64px) + env(safe-area-inset-top,0px));z-index:20;background:var(--bg);padding:8px 0 6px;display:grid;gap:8px;border-bottom:1px solid var(--line)}
+.mbar .r1{display:flex;align-items:center;gap:8px}
+.mbar .where{flex:1;min-width:0;border:0;background:var(--band);border-radius:999px;padding:8px 12px;font:inherit;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.mbar .ib{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer;flex:none}
+.mbar .ib:disabled{opacity:.35}
+.mbar .mic{width:48px;height:48px;border-radius:50%;border:0;background:var(--acc);color:#fff;display:grid;place-items:center;font-size:1.1rem;cursor:pointer;flex:none}
+.mbar .mic.on{background:#c0392b;animation:pulse 1.6s ease-in-out infinite}
+.mbar .r2{display:flex;gap:6px;flex-wrap:wrap;scrollbar-width:none;-webkit-overflow-scrolling:touch}.mbar .r2::-webkit-scrollbar{display:none}
+.mbar .r2 .chip{flex:none;font-size:.82rem;padding:6px 10px;min-height:0;display:inline-flex;align-items:center;gap:5px;text-decoration:none}
+.mbar .r2 .chip .i{width:16px;height:16px}
+.mini{flex:none;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font:inherit;font-size:.82rem;font-weight:700;padding:6px 10px}
+.mbar .r3{margin:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.82rem;color:var(--muted)}
+.mbar .r3 .lv{display:inline-flex;align-items:center;gap:6px;font-weight:700;color:#c0392b}.mbar .r3 .lv i{width:8px;height:8px;border-radius:50%;background:#c0392b;animation:blink 1.4s infinite}
+.mbar .legend{font-size:.8rem;gap:10px}
 .fab{position:fixed;inset-inline-end:max(16px,env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:65;width:58px;height:58px;border-radius:50%;border:0;background:var(--acc);color:#fff;display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.22);cursor:pointer}
 .fab .i{width:26px;height:26px}.fab[hidden]{display:none}
 @media print{.fab{display:none}}
@@ -657,7 +671,7 @@ function render(){
   stopSpeech();Game.stop();if(Rec.mr&&!Mem.live&&!(VIEW==="memorize"&&location.hash==="#memorize"))Rec.stop();
   if(location.hash==="#owner-tasnim"){LS.set("owner",true);location.replace("#settings");return}
   const h=location.hash.slice(1);VIEW=[...VIEWS,"settings","mistakes"].includes(h)?h:"home";
-  renderTop();$("#main").innerHTML="";(V[VIEW])($("#main"));bindEvSw($("#main"));
+  renderTop();try{document.documentElement.style.setProperty("--toph",$(".top").offsetHeight+"px")}catch(e){}$("#main").innerHTML="";(V[VIEW])($("#main"));bindEvSw($("#main"));
   const fab=$("#fab");fab.hidden=VIEW==="memorize"&&Mem.run||VIEW==="settings"||(Mem.live&&Mem.mode==="read");Mem.bar();MIS.closeSheet();fab.setAttribute("aria-label",t("recite"));
 }
 /* Mic button on every page: recite from the lesson you are looking at (or the last one), hands-free, with recording. */
@@ -869,11 +883,11 @@ const Mem={run:false,live:false,L:null,W:[],at:0,lock:false,mode:"mem",li:0,sid:
   /* One full recitation = one repetition. When the target is reached, the lesson is memorized and the next one opens. */
   finish(){this.lock=true;this.pend=[];if(this.mode==="read")return this.nextRead();const i=LS.get("cur."+PID,0),p=P(i),target=LS.get("target",5);
     p.reps++;if(p.s==="new")p.s="learning";touch(i);saveST();addXP(2);
-    if(p.reps<target){toast(t("repN",{a:p.reps,b:target}));setTimeout(()=>{if(this.live&&VIEW==="memorize")render()},1400);return}
-    const was=p.s==="memorized"&&!p.rev;p.s="memorized";p.rev=false;saveST();if(!was)addXP(10);
-    const list=this.q().list,pos=list.indexOf(i),nx=list.slice(pos+1).find(x=>status(x)!=="memorized");
-    if(nx==null){this.stopLive();toast(t("setDone"));setTimeout(()=>{Mem.run=false;render()},1400);return}
-    toast(t("memNext"));setTimeout(()=>{if(this.live&&VIEW==="memorize"){LS.set("cur."+PID,nx);render();scrollTo(0,0)}},1400)}};
+    if(p.reps>=target&&p.s!=="memorized"){p.s="memorized";p.rev=false;saveST();addXP(10);toast(t("memNext"))}
+    /* Like Tarteel: as soon as a lesson is finished, the next one opens and listening carries on. */
+    const list=this.q().list,pos=list.indexOf(i),nx=list[pos+1];
+    if(nx==null){this.stopLive();toast(t("setDone"));setTimeout(()=>{Mem.run=false;render()},900);return}
+    setTimeout(()=>{if(this.live&&VIEW==="memorize"){LS.set("cur."+PID,nx);render();scrollTo(0,0)}},450)}};
 V.mistakes=el=>{
   el.innerHTML=`<section class="sec"><div class="wrap narrow stack"><div class="head"><h2>${t("mistakes")}</h2><p>${t("misSub")}</p></div><div id="mAll"></div>
     <div class="row" id="mFoot"><a class="btn out" href="#memorize">${ic("memorize")}${t("memorize")}</a><button class="btn warn" id="mClr">${ic("trash")}${t("clearMis")}</button></div><div id="mcf"></div></div></section>`;
@@ -897,12 +911,16 @@ V.memorize=el=>{
   const hideEv=false, hideNm=LS.get("hideNm",false), MQ=Mem.q(), r=MQ.list.includes(i)?MQ.list:setRange(Math.floor(i/PART)), pos=r.indexOf(i), live=Mem.live&&!!SR;
   const scope=(MQ.k<0?t("allL"):setLabel(MQ.k))+(MQ.rnd?" · "+t("ordRnd"):"");
   el.innerHTML=`<section class="sec"><div class="wrap narrow stack">
-    <div class="mtop"><button class="btn sm" id="sets">${t("backSets")}</button><span class="where">${scope}${LANG==="ar"?"،":","} ${t("lessonN")} ${N(pos+1)} ${t("of")} ${N(r.length)}</span>
-      <span class="row"><button class="btn sm" id="prev" ${pos===0?"disabled":""}>${t("prev")}</button><button class="btn sm" id="next" ${pos===r.length-1?"disabled":""}>${t("next")}</button></span></div>
-    <div class="livebar"><button class="btn pri live ${live?"on":""}" id="live">${live?"■ "+t("liveStop"):ic("mic")+t("live")}</button>
-      <p class="note" style="margin:0">${live?t("liveOn"):t("liveHint")}</p>
-      <div class="legend"><span><i class="k-mem"></i>${t("kMem")}</span><span><i class="k-rd"></i>${t("kRd")}</span><span><i class="k-miss"></i>${t("kMiss")}</span></div></div>
-    <div class="seg" role="group">${[0,1,2,3,4].map(n=>`<button data-lv="${n}" class="${n===lv?"on":""}">${t("lv"+n)}</button>`).join("")}</div>
+    <div class="mbar" id="mbar">
+      <div class="r1"><button class="ib" id="prev" ${pos===0?"disabled":""} aria-label="${t("prev")}">${ic(LANG==="ar"?"next":"prev")}</button>
+        <button class="where" id="sets" title="${esc(scope)}">${t("lessonN")} ${N(pos+1)} ${t("of")} ${N(r.length)}</button>
+        <button class="ib" id="next" ${pos===r.length-1?"disabled":""} aria-label="${t("next")}">${ic(LANG==="ar"?"prev":"next")}</button>
+        <button class="mic ${live?"on":""}" id="live" aria-label="${live?t("liveStop"):t("live")}">${live?"■":ic("mic")}</button></div>
+      <div class="r2"><select class="mini" id="lvSel" aria-label="${t("lv0")}">${[0,1,2,3,4].map(n=>`<option value="${n}" ${n===lv?"selected":""}>${t("lv"+n)}</option>`).join("")}</select>
+        ${evSw()}<button class="chip ${hideNm?"on":""}" id="hNm" aria-pressed="${hideNm}">${ic(hideNm?"eyeoff":"eye")}${t("hideNm")}</button>
+        <a class="chip" href="#mistakes">${ic("history")}${t("misBtn")}</a></div>
+      ${live?`<div class="r3"><span class="lv"><i></i>${t("liveOn")}</span><span class="legend"><span><i class="k-mem"></i>${t("kMem")}</span><span><i class="k-rd"></i>${t("kRd")}</span><span><i class="k-miss"></i>${t("kMiss")}</span></span></div>`:`<p class="note r3">${t("liveHint")}</p>`}
+    </div>
     ${lessonHTML(i,{framed:true,lv,hideEv,hideNames:hideNm,sp:live})}
     <div class="panel" id="misWrap"><div class="row" style="justify-content:space-between"><h3>${ic("history")}${t("misHere")}</h3><a class="btn out sm" href="#mistakes">${t("pastMis")}</a></div><div class="mis" id="misBox"></div></div>
     <div class="row" style="justify-content:center">
@@ -910,7 +928,6 @@ V.memorize=el=>{
       ${AUDIO[i]?`<button class="btn sm" id="listen">${ic("sound")}<span>${t("listen")}</span></button>`:""}
     </div>
     <p class="note" id="noVoice" hidden>${t("noVoice")}</p>
-    <div class="row" style="justify-content:center">${evSw()}<label class="tog"><input type="checkbox" id="hNm" ${hideNm?"checked":""}>${t("hideNm")}</label></div>
     <div class="reps"><div><b>${t("reps")}</b><div class="note">${t("repsHint")}</div></div>
       <div class="dots" aria-label="${p.reps}/${target}">${Array.from({length:target},(_,n)=>`<i class="${n<p.reps?"on":""}"></i>`).join("")}</div>
       <div class="row"><button class="btn pri" id="tap">${ic("star")}${t("recited")}</button><button class="btn sm" id="rr">${ic("refresh")}${t("reset")}</button></div></div>
@@ -924,13 +941,13 @@ V.memorize=el=>{
   $("#sets").onclick=()=>{Mem.stopLive();Mem.run=false;render()};
   $("#prev").onclick=()=>pos>0&&go(r[pos-1]);$("#next").onclick=()=>pos<r.length-1&&go(r[pos+1]);
   $("#live").onclick=()=>{if(Mem.live)Mem.stopLive();else{Mem.mode="mem";Mem.startLive()}render()};
-  $$(".seg button").forEach(b=>b.onclick=()=>{LS.set("lv",+b.dataset.lv);render()});
+  $("#lvSel").onchange=e=>{LS.set("lv",+e.target.value);render()};
   const markCur=()=>{$$(".w.cur").forEach(w=>w.classList.remove("cur"));const f=$(".w[data-h]");if(f)f.classList.add("cur")};
   const reveal=w=>{w.classList.remove("h","fl","cur");w.removeAttribute("data-h");markCur()};
   $$(".w[data-h]").forEach(w=>w.onclick=()=>{if(!live)return reveal(w);const j=Mem.W.findIndex(x=>x.el===w);if(j===Mem.at)Mem.step(1,"miss");else Mem.mark(j,"miss")});if(live)Mem.hook();else markCur();
   if($("#nw")){$("#nw").onclick=()=>{const c=$(".w.cur");if(c)reveal(c)};$("#sa").onclick=()=>$$(".w[data-h]").forEach(reveal)}
   $(".names").onclick=e=>{if(hideNm)e.currentTarget.classList.toggle("hid")};
-  bindEvSw(el);if($("#hEv"))$("#hEv").onchange=e=>{LS.set("hideEv",e.target.checked);render()};$("#hNm").onchange=e=>{LS.set("hideNm",e.target.checked);render()};
+  bindEvSw(el);if($("#hEv"))$("#hEv").onchange=e=>{LS.set("hideEv",e.target.checked);render()};$("#hNm").onclick=()=>{LS.set("hideNm",!hideNm);render()};
   $("#tap").onclick=()=>{p.reps++;if(p.s==="new")p.s="learning";touch(i);
     if(p.reps===target&&lv<4)LS.set("lv",lv+1);saveST();addXP(2);render()};
   $("#rr").onclick=()=>{p.reps=0;saveST();render()};
