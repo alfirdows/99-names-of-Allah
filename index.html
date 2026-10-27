@@ -240,7 +240,7 @@ html[lang="ar"] .names .gl{display:none}
 .w.cur,.w.cur .rest{background:var(--cur)!important;box-shadow:0 0 0 2px var(--acc)}
 /* hands-free recite: read = said while visible, mem = said from memory, miss = skipped */
 .w.rd{color:var(--h3);transition:color .2s}
-.w.mem{color:var(--acc);background:var(--h1s);border-radius:6px;box-shadow:inset 0 -2px 0 var(--acc);transition:background .2s}
+.w.wm{color:var(--acc);background:var(--h1s);border-radius:6px;box-shadow:inset 0 -2px 0 var(--acc);transition:background .2s}
 .w.miss{color:#c0392b;background:#fbe3e0;border-radius:6px}
 html[data-theme=dark] .w.miss{color:#ff9b8f;background:#3a1f1c}
 @media (prefers-color-scheme:dark){html:not([data-theme=light]) .w.miss{color:#ff9b8f;background:#3a1f1c}}
@@ -350,6 +350,35 @@ html[data-theme=dark] .mline .tx .r{color:#ff9b8f}
 .emoin{flex:1;min-width:160px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 10px;font:inherit}
 .learner input{flex:1 1 100px;width:0;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 10px}
 .confirm{background:var(--bad-soft);border-radius:12px;padding:12px;display:grid;gap:8px}
+/* reading bar while reciting on the reading page */
+.rbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:66;display:flex;align-items:center;gap:8px;padding:8px;border-radius:999px;background:var(--surface);border:1px solid var(--line);box-shadow:0 8px 24px rgba(0,0,0,.18);max-width:calc(100vw - 24px)}
+.rbar[hidden]{display:none}
+body.reading .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+.rbar .st{display:flex;align-items:center;gap:8px;padding:0 8px;font-weight:700;white-space:nowrap;font-size:.92rem}
+.rbar .st i{width:10px;height:10px;border-radius:50%;background:#c0392b;animation:blink 1.4s ease-in-out infinite}
+@keyframes blink{50%{opacity:.25}}
+.rbar button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:8px 12px;font:inherit;font-weight:700;display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap}
+.rbar button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.rbar .stop{background:#c0392b;border-color:#c0392b;color:#fff}
+.rbar .cnt{background:#c0392b;color:#fff;border-radius:999px;padding:0 7px;font-size:.8rem}
+@media (max-width:430px){.rbar .lbl{display:none}.rbar .st span{display:none}}
+body.reading .sec{padding-bottom:110px}
+/* mistakes sheet (slides up from the bottom) */
+.sheet{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.38);display:flex;align-items:flex-end;justify-content:center}
+.sheet[hidden]{display:none}
+.sheet .sh-in{width:100%;max-width:720px;max-height:86vh;overflow:auto;background:var(--bg);border-radius:22px 22px 0 0;padding:8px 16px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 30px rgba(0,0,0,.2);animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:.4}}
+.sheet .grab{width:44px;height:5px;border-radius:9px;background:var(--line);margin:4px auto 10px}
+.sheet .sh-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.sheet .sh-h h3{margin:0}
+.sess{border-top:1px solid var(--line);padding:10px 0}
+.sess>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;font-weight:700}
+.sess>summary::-webkit-details-marker{display:none}
+.sess>summary .tm{display:block;color:var(--muted);font-size:.82rem;font-weight:600}
+.sess>summary .chev{margin-inline-start:auto;transition:transform .2s}.sess[open]>summary .chev{transform:rotate(180deg)}
+.sess .mis{margin-top:10px}
+.misc .pl{border:0;background:transparent;color:var(--acc);cursor:pointer;padding:6px;border-radius:8px;display:inline-flex}
+.misc .pl.on{color:#c0392b}
 .fab{position:fixed;inset-inline-end:max(16px,env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:65;width:58px;height:58px;border-radius:50%;border:0;background:var(--acc);color:#fff;display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.22);cursor:pointer}
 .fab .i{width:26px;height:26px}.fab[hidden]{display:none}
 @media print{.fab{display:none}}
@@ -381,6 +410,8 @@ footer a{color:var(--acc);font-weight:600}
 <main id="main"></main>
 <footer><div class="wrap" id="foot"></div></footer>
 <button class="fab" id="fab" type="button" aria-label="Recite"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button>
+<div class="rbar" id="rbar" hidden></div>
+<div class="sheet" id="misSheet" hidden><div class="sh-in" role="dialog" aria-modal="true"><div class="grab"></div><div class="sh-h"><h3 id="shT"></h3><button class="btn sm" id="shX"></button></div><div id="shB"></div></div></div>
 <div class="toast" id="toast" hidden role="status"></div>
 <script>
 "use strict";
@@ -506,6 +537,8 @@ const TX={
  mistakes:["Past mistakes","الأخطاء السابقة"],misSub:["Each mistake shows what was expected and what was heard. If the website misheard you, tap the bin to delete it.","يظهر كل خطأ المطلوبَ وما سُمع. إن أخطأ الموقع في سماعك فاضغط سلة المهملات لحذفه."],
  noMis:["No mistakes saved yet.","لا توجد أخطاء محفوظة بعد."],clearMis:["Delete all mistakes","احذف كل الأخطاء"],clearMisQ:["Delete all saved mistakes for this learner?","هل تريد حذف كل الأخطاء المحفوظة لهذا المتعلّم؟"],
  misDel:["Delete this mistake (misheard)","احذف هذا الخطأ (سماع خاطئ)"],misDone:["Mistake deleted","حُذف الخطأ"],practiceL:["Practice this lesson","تدرّب على هذا الدرس"],
+ hideWords:["Hide words","إخفاء الكلمات"],misBtn:["Mistakes","الأخطاء"],playMine:["Play my recitation here","استمع لتسميعك هنا"],noRecHere:["No recording was saved for this one.","لم يُحفظ تسجيل لهذا."],
+ closeL:["Close","إغلاق"],readDone:["You reached the end. Well done!","وصلت إلى النهاية. أحسنت!"],listenL:["Listening","أستمع"],
  noMic:["The microphone is not available. Allow microphone access for this site and try again.","الميكروفون غير متاح. اسمح للموقع باستخدام الميكروفون ثم حاول مرة أخرى."],
  saveFile:["Save to device","احفظ على الجهاز"],sure:["Tap again to delete","اضغط مرة أخرى للحذف"],delAll:["Delete all my recordings","احذف كل تسجيلاتي"],deleted:["Deleted","تم الحذف"],
  storage:["Your data","بياناتك"],
@@ -587,6 +620,10 @@ const ICON={
  sound:'<path d="M4 10v4h4l5 4V6L8 10zM16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/>',
  trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
  history:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2"/>',
+ chev:'<path d="M6 9l6 6 6-6"/>',
+ eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+ eyeoff:'<path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.2M6.6 6.6C3.9 8.4 2 12 2 12s3.5 7 10 7c1.6 0 3-.4 4.3-1M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
+ play2:'<path d="M7 5v14l12-7z"/>',
  mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/>',
  shuffle:'<path d="M3 7h3.5c4.5 0 6.5 10 11 10H21M3 17h3.5c1.6 0 2.8-1.3 3.8-3M14 7.6C15 6.6 16 7 17.5 7H21M18.5 4.5 21 7l-2.5 2.5M18.5 14.5 21 17l-2.5 2.5"/>',
  arrows:'<path d="M4 12h16M14 6l6 6-6 6"/>'
@@ -617,17 +654,17 @@ $("#pfBtn").onclick=()=>location.hash="#settings";
 /* ================= views ================= */
 const V={};
 function render(){
-  stopSpeech();Game.stop();if(Rec.mr&&!(VIEW==="memorize"&&location.hash==="#memorize"))Rec.stop();
+  stopSpeech();Game.stop();if(Rec.mr&&!Mem.live&&!(VIEW==="memorize"&&location.hash==="#memorize"))Rec.stop();
   if(location.hash==="#owner-tasnim"){LS.set("owner",true);location.replace("#settings");return}
   const h=location.hash.slice(1);VIEW=[...VIEWS,"settings","mistakes"].includes(h)?h:"home";
   renderTop();$("#main").innerHTML="";(V[VIEW])($("#main"));bindEvSw($("#main"));
-  const fab=$("#fab");fab.hidden=VIEW==="memorize"&&Mem.run||VIEW==="settings";fab.setAttribute("aria-label",t("recite"));
+  const fab=$("#fab");fab.hidden=VIEW==="memorize"&&Mem.run||VIEW==="settings"||(Mem.live&&Mem.mode==="read");Mem.bar();MIS.closeSheet();fab.setAttribute("aria-label",t("recite"));
 }
 /* Mic button on every page: recite from the lesson you are looking at (or the last one), hands-free, with recording. */
 $("#fab").onclick=()=>{let i=LS.get("cur."+PID,0);
-  if(VIEW==="names"){const c=$$(".lesson[data-i]").find(e=>e.getBoundingClientRect().bottom>140);if(c)i=+c.dataset.i}
-  if(Mem.startLive())Mem.open(i)};
-addEventListener("hashchange",()=>{const was=VIEW;if(!Mem.opening&&location.hash!=="#"+was){Game.id=null;Game.set=null;Mem.run=false}if(location.hash!=="#memorize")Mem.stopLive();Mem.opening=false;render();scrollTo(0,0)});
+  if(VIEW==="names"){const c=$$(".lesson[data-i]").find(e=>e.getBoundingClientRect().bottom>140);if(c)i=+c.dataset.i;Mem.startRead(i,false)}
+  else Mem.startRead(i,true)};
+addEventListener("hashchange",()=>{const was=VIEW;if(!Mem.opening&&location.hash!=="#"+was){Game.id=null;Game.set=null;Mem.run=false}if(location.hash!==(Mem.mode==="read"?"#names":"#memorize"))Mem.stopLive();Mem.opening=false;render();scrollTo(0,0)});
 
 /* ---------- home ---------- */
 V.home=el=>{
@@ -724,9 +761,11 @@ V.names=el=>{
     const q=norm(NamesQ.trim());
     let idx=NamesSet<0?DATA.map((_,i)=>i):setRange(NamesSet);
     if(q)idx=idx.filter(i=>norm(DATA[i].names.join(" ")+" "+DATA[i].m.join(" ")).includes(q)||(GLOSS[i].join(" ")+" "+MEAN_EN[i].join(" ")).toLowerCase().includes(NamesQ.trim().toLowerCase()));
-    $("#list").innerHTML=idx.length?idx.map(i=>lessonHTML(i,{foot:`<div class="lfoot"><button class="btn out sm" data-mem="${i}">${ic("memorize")}${t("memThis")}</button><button class="btn pri sm" data-live="${i}">${ic("mic")}${t("recite")}</button></div>`})).join(""):`<p class="note">${t("noMatch")}</p>`;
+    const rd=Mem.live&&Mem.mode==="read",hw=rd&&LS.get("hideRead",false);
+    $("#list").innerHTML=idx.length?idx.map(i=>lessonHTML(i,{sp:rd,lv:hw?4:0,hideEv:hw,hideNames:hw,foot:`<div class="lfoot"><button class="btn out sm" data-mem="${i}">${ic("memorize")}${t("memThis")}</button><button class="btn pri sm" data-live="${i}">${ic("mic")}${t("recite")}</button></div>`})).join(""):`<p class="note">${t("noMatch")}</p>`;
     $$("[data-mem]").forEach(b=>b.onclick=()=>Mem.open(+b.dataset.mem));
-    $$("[data-live]").forEach(b=>b.onclick=()=>{const i=+b.dataset.live;if(Mem.startLive())Mem.open(i)});
+    $$("[data-live]").forEach(b=>b.onclick=()=>Mem.startRead(+b.dataset.live));
+    if(rd){Mem.hook();Mem.recLesson(Mem.li);Mem.bar();if(Mem.scrollTo){Mem.scrollTo=false;const r=Mem.root();if(r)r.scrollIntoView({block:"start"})}}
   };
   $("#q").oninput=e=>{NamesQ=e.target.value;draw()};
   $$("#setChips .chip").forEach(b=>b.onclick=()=>{NamesSet=+b.dataset.k;$$("#setChips .chip").forEach(x=>x.classList.toggle("on",x===b));draw()});
@@ -742,35 +781,60 @@ const MIS={all(){return LS.get("mis."+PID,[])},save(a){LS.set("mis."+PID,a.slice
   line(m,k,cl){return m.ctx.filter(x=>x[k]!=null).map(x=>x.b?`<span class="${cl}">${esc(x[k])}</span>`:esc(x[k])).join(" ")},
   card(m){const both=m.type==="wrong";
     return`<div class="misc" data-mid="${m.id}"><div class="mh"><button class="tag" data-mopen="${m.i}" title="${esc(t("practiceL"))}">${t("lessonN")} ${N(m.i+1)}</button><span class="mt">${this.title(m)}</span>
-      <button class="del" data-mdel="${m.id}" aria-label="${esc(t("misDel"))}" title="${esc(t("misDel"))}">${ic("trash")}</button></div>
+      <button class="pl" data-mplay="${m.id}" aria-label="${esc(t("playMine"))}" title="${esc(t("playMine"))}">${ic("play2")}</button><button class="del" data-mdel="${m.id}" aria-label="${esc(t("misDel"))}" title="${esc(t("misDel"))}">${ic("trash")}</button></div>
       ${both?`<div class="mline"><small>${t("expected")}</small><span class="tx" lang="ar">${this.line(m,"e","g")}</span><small>${t("recitedL")}</small><span class="tx" lang="ar">${this.line(m,"s","r")}</span></div>`
         :`<div class="mline one"><span class="tx" lang="ar">${m.type==="missed"?this.line(m,"e","r"):this.line(m,"s","r")}</span></div>`}</div>`},
   bind(root,redraw){$$("[data-mdel]",root).forEach(b=>b.onclick=()=>{this.del(b.dataset.mdel);toast(t("misDone"));redraw()});
-    $$("[data-mopen]",root).forEach(b=>b.onclick=()=>Mem.open(+b.dataset.mopen))}};
+    $$("[data-mopen]",root).forEach(b=>b.onclick=()=>{this.closeSheet();Mem.stopLive();Mem.open(+b.dataset.mopen)});
+    $$("[data-mplay]",root).forEach(b=>b.onclick=()=>this.play(b.dataset.mplay,b))},
+  /* Grouped by recitation session (newest first), like a history: time, lessons covered, then each mistake in order. */
+  sessionsHTML(){const g=new Map();for(const m of this.all()){const k=m.sid||"d"+fmtD(m.t);if(!g.has(k))g.set(k,[]);g.get(k).push(m)}
+    if(!g.size)return`<p class="note">${t("noMis")}</p>`;let n=0,h="";
+    for(const ms of g.values()){ms.sort((a,b)=>a.t-b.t);const a=ms[0].i,b=ms[ms.length-1].i,t0=ms[0].t;
+      const tm=new Date(t0).toLocaleTimeString(LANG==="ar"?"ar":"en",{hour:"numeric",minute:"2-digit"});
+      h+=`<details class="sess" ${n++<2?"open":""}><summary>${ic("history")}<span>${t("lessonN")} ${N(a+1)}${a!==b?` ${LANG==="ar"?"←":"→"} ${t("lessonN")} ${N(b+1)}`:""}<span class="tm">${esc(fmtD(t0))} · ${esc(tm)} · ${N(ms.length)} ${t("misBtn")}</span></span><span class="chev">${ic("chev")}</span></summary><div class="mis">${ms.map(m=>this.card(m)).join("")}</div></details>`}
+    return h},
+  /* Play your own recording from a few seconds before the mistake. */
+  audio:null,async play(id,btn){if(this.audio){this.audio.pause();const was=this.audio._id;this.audio=null;$$(".misc .pl.on").forEach(x=>x.classList.remove("on"));if(was===id)return}
+    const m=this.all().find(x=>x.id===id);if(!m)return;const recs=(await DB.all()).filter(r=>r.pid===PID&&r.lesson===m.i&&r.date<=m.t+1000&&r.date+r.dur*1000+4000>=m.t);
+    const r=recs.sort((a,b)=>b.date-a.date)[0];if(!r){toast(t("noRecHere"));return}
+    const a=new Audio(URL.createObjectURL(r.blob));a._id=id;this.audio=a;btn.classList.add("on");
+    const off=Math.max(0,(m.t-r.date)/1000-4);a.addEventListener("loadedmetadata",()=>{try{a.currentTime=Math.min(off,Math.max(0,(a.duration||off)-1))}catch(e){}},{once:true});
+    a.onended=()=>{btn.classList.remove("on");this.audio=null};a.play().catch(()=>{btn.classList.remove("on");this.audio=null});
+    setTimeout(()=>{if(this.audio===a){a.pause();btn.classList.remove("on");this.audio=null}},9000)},
+  openSheet(){$("#shT").textContent=t("mistakes");$("#shX").textContent=t("closeL");const body=$("#shB"),draw=()=>{body.innerHTML=this.sessionsHTML();this.bind(body,draw)};draw();$("#misSheet").hidden=false},
+  closeSheet(){$("#misSheet").hidden=true;if(this.audio){this.audio.pause();this.audio=null}}};
+$("#shX").onclick=()=>MIS.closeSheet();$("#misSheet").onclick=e=>{if(e.target.id==="misSheet")MIS.closeSheet()};
+document.addEventListener("click",e=>{const a=e.target.closest('a[href="#mistakes"]');if(a){e.preventDefault();MIS.openSheet()}});
 /* The lessons being memorized: one set or all lessons, in book order or shuffled. Kept per learner. */
-const Mem={run:false,live:false,L:null,W:[],at:0,lock:false,
+const Mem={run:false,live:false,L:null,W:[],at:0,lock:false,mode:"mem",li:0,sid:"",
+  lesson(){return this.mode==="read"?this.li:LS.get("cur."+PID,0)},
+  root(){return this.mode==="read"?$(`#list .lesson[data-i="${this.li}"]`):$("#main .lesson")},
+  /* Recite on the reading page (like Tarteel): follows you there and moves on to the next lesson by itself. */
+  startRead(i,go){this.mode="read";this.li=i;LS.set("cur."+PID,i);if(!this.startLive()){this.mode="mem";return}this.scrollTo=true;
+    if(go){NamesSet=-1;NamesQ="";if(location.hash!=="#names"){location.hash="#names";return}}render()},
   q(){const q=LS.get("mq."+PID,null);return q&&Array.isArray(q.list)&&q.list.length?q:{k:-1,rnd:false,list:DATA.map((_,i)=>i)}},
   setQ(k,rnd){const list=k<0?DATA.map((_,i)=>i):setRange(k);LS.set("mq."+PID,{k,rnd,list:rnd?shuffle(list):list});return this.q()},
   open(i){if(!this.q().list.includes(i))this.setQ(Math.floor(i/PART),false);LS.set("cur."+PID,i);this.run=true;if(location.hash!=="#memorize"){this.opening=true;location.hash="#memorize"}else{render();scrollTo(0,0)}},
   startLive(){if(!SR){toast(t("noSR"));return false}
     if(!this.L){this.L=new Listener(ws=>this.heard(ws),st=>{if(st==="denied"){this.stopLive();toast(t("noMic"));if(VIEW==="memorize")render()}});this.L.onPeek=w=>this.peek(w);this.L.onRevise=()=>{this.pend=[]}}
-    this.live=true;this.L.start();try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(l=>this.wl=l).catch(()=>{})}catch(e){}return true},
-  stopLive(){const was=this.live;this.live=false;if(this.L)this.L.stop();if(was&&Rec.mr)Rec.stop().then(()=>{const l=$("#recList");if(l&&l.refresh)l.refresh()});try{this.wl&&this.wl.release()}catch(e){}this.wl=null},
+    this.live=true;this.sid=Date.now().toString(36);this.L.start();try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(l=>this.wl=l).catch(()=>{})}catch(e){}return true},
+  stopLive(){const was=this.live;this.live=false;if(was&&this.mode==="read"){this.mode="mem";$$(".w.cur").forEach(w=>w.classList.remove("cur"));if(VIEW==="names")setTimeout(render,0)}if(this.L)this.L.stop();if(was&&Rec.mr)Rec.stop().then(()=>{const l=$("#recList");if(l&&l.refresh)l.refresh()});try{this.wl&&this.wl.release()}catch(e){}this.wl=null},
   /* While reciting hands-free, your voice is also recorded: one recording per lesson, saved to My recitation. */
   async recLesson(i){if(!this.live||(Rec.mr&&Rec.lesson===i))return;if(Rec.mr)await Rec.stop();if(this.live&&await Rec.start(i)){const b=$("#recBtn");if(b){b.className="btn recon";b.textContent="■ "+t("recStop")}}},
   /* Collect the words to recite, in reading order: names, then the daleel (if shown), then the meaning. */
-  hook(){const ev=!document.documentElement.classList.contains("noev");
-    this.W=$$(".lesson .names .w, .lesson .ev p .w, .lesson .mn p .w").filter(w=>ev||!w.closest(".evx")).map(el=>({el,n:snorm(el.textContent)})).filter(x=>x.n);
+  hook(){const ev=!document.documentElement.classList.contains("noev"),root=this.root();if(!root){this.W=[];return}
+    this.W=$$(".names .w, .ev p .w, .mn p .w",root).filter(w=>ev||!w.closest(".evx")).map(el=>({el,n:snorm(el.textContent)})).filter(x=>x.n);
     this.at=0;this.lock=false;this.pend=[];this.cur()},
   cur(){$$(".w.cur").forEach(w=>w.classList.remove("cur"));const x=this.W[this.at];if(!x)return;x.el.classList.add("cur");
     const r=x.el.getBoundingClientRect();if(r.top<90||r.bottom>innerHeight-90)x.el.scrollIntoView({block:"center",behavior:"smooth"})},
   mark(j,kind){const x=this.W[j];if(!x)return;const el=x.el,hid=el.hasAttribute("data-h")||!!el.closest(".names.hid");
-    el.classList.remove("h","fl","cur");el.removeAttribute("data-h");el.classList.add(kind==="miss"?"miss":hid?"mem":"rd")},
+    el.classList.remove("h","fl","cur");el.removeAttribute("data-h");el.classList.add(kind==="miss"?"miss":hid?"wm":"rd")},
   step(n,kind){for(let k=0;k<n;k++){this.mark(this.at,k<n-1||kind==="miss"?kind:"ok");this.at++}
-    const nm=$(".names.hid");if(nm&&!nm.querySelector(".w:not(.mem):not(.rd):not(.miss)"))nm.classList.remove("hid");
+    const rt=this.root(),nm=rt&&$(".names.hid",rt);if(nm&&!nm.querySelector(".w:not(.wm):not(.rd):not(.miss)"))nm.classList.remove("hid");
     if(this.at>=this.W.length)this.finish();else this.cur()},
   peek(raw){if(!this.live||this.lock)return false;const x=this.W[this.at];if(x&&wmatch(snorm(raw),x.n)){this.step(1,"ok");return true}return false},
-  heard(ws){if(!this.live||this.lock||VIEW!=="memorize")return;for(const raw of ws){if(this.lock)return;const h=snorm(raw),W=this.W,i=this.at;if(!h||!W[i])continue;
+  heard(ws){if(!this.live||this.lock||VIEW!==(this.mode==="read"?"names":"memorize"))return;for(const raw of ws){if(this.lock)return;const h=snorm(raw),W=this.W,i=this.at;if(!h||!W[i])continue;
     if(wmatch(h,W[i].n)){this.resolve(0,1);continue}
     if(W[i+1]&&wmatch(h,W[i].n+W[i+1].n)){this.resolve(0,2);continue}
     let j=0;for(let d=1;d<=3&&W[i+d];d++)if((d===1||h.length>3)&&wmatch(h,W[i+d].n)){j=d;break}
@@ -788,10 +852,22 @@ const Mem={run:false,live:false,L:null,W:[],at:0,lock:false,
     for(let k=a;k<=z;k++){if(k===i+d)extra.forEach(x=>ctx.push({e:null,s:x,b:1}));const w=wrong.find(x=>x.k===k),txt=W[k].el.textContent;
       ctx.push(w?{e:txt,s:w.s,b:1}:missed.includes(k)?{e:txt,s:null,b:1}:{e:txt,s:txt})}
     if(i+d>z)extra.forEach(x=>ctx.push({e:null,s:x,b:1}));
-    MIS.add({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),t:Date.now(),i:LS.get("cur."+PID,0),type:wrong.length?"wrong":missed.length?"missed":"extra",ctx});
-    const box=$("#misBox");if(box)box.dispatchEvent(new Event("redraw"))},
+    MIS.add({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),t:Date.now(),sid:this.sid,i:this.lesson(),type:wrong.length?"wrong":missed.length?"missed":"extra",ctx});
+    const box=$("#misBox");if(box)box.dispatchEvent(new Event("redraw"));this.bar()},
+  /* The bar at the bottom of the reading page while listening. */
+  bar(){const b=$("#rbar");if(!b)return;const on=this.live&&this.mode==="read"&&VIEW==="names";b.hidden=!on;document.body.classList.toggle("reading",on);if(!on)return;
+    const n=MIS.all().filter(m=>m.sid===this.sid).length,hw=LS.get("hideRead",false);
+    b.innerHTML=`<span class="st"><i></i><span>${t("listenL")} · </span>${t("lessonN")} ${N(this.li+1)}</span>
+      <button id="rbHide" class="${hw?"on":""}" aria-pressed="${hw}">${ic(hw?"eyeoff":"eye")}<span class="lbl">${t("hideWords")}</span></button>
+      <button id="rbMis">${ic("history")}<span class="lbl">${t("misBtn")}</span>${n?`<span class="cnt">${N(n)}</span>`:""}</button>
+      <button class="stop" id="rbStop">■ <span class="lbl">${t("liveStop")}</span></button>`;
+    $("#rbHide").onclick=()=>{LS.set("hideRead",!hw);render()};$("#rbMis").onclick=()=>MIS.openSheet();$("#rbStop").onclick=()=>{this.stopLive()}},
+  nextRead(){const i=this.li,p=P(i);if(p.s==="new")p.s="learning";touch(i);saveST();
+    const nx=this.root()&&this.root().nextElementSibling;
+    if(!nx||!nx.dataset.i){this.stopLive();toast(t("readDone"));return}
+    setTimeout(()=>{if(!this.live||this.mode!=="read")return;this.li=+nx.dataset.i;LS.set("cur."+PID,this.li);this.recLesson(this.li);this.hook();this.bar()},500)},
   /* One full recitation = one repetition. When the target is reached, the lesson is memorized and the next one opens. */
-  finish(){this.lock=true;this.pend=[];const i=LS.get("cur."+PID,0),p=P(i),target=LS.get("target",5);
+  finish(){this.lock=true;this.pend=[];if(this.mode==="read")return this.nextRead();const i=LS.get("cur."+PID,0),p=P(i),target=LS.get("target",5);
     p.reps++;if(p.s==="new")p.s="learning";touch(i);saveST();addXP(2);
     if(p.reps<target){toast(t("repN",{a:p.reps,b:target}));setTimeout(()=>{if(this.live&&VIEW==="memorize")render()},1400);return}
     const was=p.s==="memorized"&&!p.rev;p.s="memorized";p.rev=false;saveST();if(!was)addXP(10);
@@ -801,9 +877,7 @@ const Mem={run:false,live:false,L:null,W:[],at:0,lock:false,
 V.mistakes=el=>{
   el.innerHTML=`<section class="sec"><div class="wrap narrow stack"><div class="head"><h2>${t("mistakes")}</h2><p>${t("misSub")}</p></div><div id="mAll"></div>
     <div class="row" id="mFoot"><a class="btn out" href="#memorize">${ic("memorize")}${t("memorize")}</a><button class="btn warn" id="mClr">${ic("trash")}${t("clearMis")}</button></div><div id="mcf"></div></div></section>`;
-  const draw=()=>{const ms=MIS.all();$("#mClr").hidden=!ms.length;let day="",h="";
-    for(const m of ms){const d=fmtD(m.t);if(d!==day){if(day)h+="</div>";day=d;h+=`<p class="mday">${esc(d)}</p><div class="mis">`}h+=MIS.card(m)}
-    if(day)h+="</div>";$("#mAll").innerHTML=ms.length?h:`<p class="note">${t("noMis")}</p>`;MIS.bind($("#mAll"),draw)};
+  const draw=()=>{$("#mClr").hidden=!MIS.all().length;$("#mAll").innerHTML=MIS.sessionsHTML();MIS.bind($("#mAll"),draw)};
   draw();
   $("#mClr").onclick=()=>{$("#mcf").innerHTML=`<div class="confirm"><p class="note" style="color:var(--ink)">${t("clearMisQ")}</p><div class="row"><button class="btn warn" id="y">${t("yes")}</button><button class="btn" id="n">${t("cancel")}</button></div></div>`;
     $("#y").onclick=()=>{MIS.save([]);$("#mcf").innerHTML="";draw()};$("#n").onclick=()=>$("#mcf").innerHTML=""}};
@@ -849,7 +923,7 @@ V.memorize=el=>{
   drawMis();$("#misBox").addEventListener("redraw",drawMis);
   $("#sets").onclick=()=>{Mem.stopLive();Mem.run=false;render()};
   $("#prev").onclick=()=>pos>0&&go(r[pos-1]);$("#next").onclick=()=>pos<r.length-1&&go(r[pos+1]);
-  $("#live").onclick=()=>{if(Mem.live)Mem.stopLive();else Mem.startLive();render()};
+  $("#live").onclick=()=>{if(Mem.live)Mem.stopLive();else{Mem.mode="mem";Mem.startLive()}render()};
   $$(".seg button").forEach(b=>b.onclick=()=>{LS.set("lv",+b.dataset.lv);render()});
   const markCur=()=>{$$(".w.cur").forEach(w=>w.classList.remove("cur"));const f=$(".w[data-h]");if(f)f.classList.add("cur")};
   const reveal=w=>{w.classList.remove("h","fl","cur");w.removeAttribute("data-h");markCur()};
