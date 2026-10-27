@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://gc.zgo.at; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://*.goatcounter.com; media-src 'self' blob:; connect-src 'self' https://*.goatcounter.com; form-action 'none'; base-uri 'self'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; form-action 'none'; base-uri 'self'; object-src 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>أسماء الله الحسنى · The Most Beautiful Names of Allah</title>
 <meta name="description" content="احفظ أسماء الله الحسنى مع الدليل من القرآن والسنة والمعنى: ٧٠ درسًا، مع أدوات للحفظ والتكرار والألعاب والاختبار. Memorize the Most Beautiful Names of Allah with their evidence and meaning, with memorization tools, games and quizzes.">
@@ -354,12 +354,6 @@ const AD=n=>String(n).replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const norm=s=>s.replace(/[ً-ٰٟۖ-ۭـ]/g,"").replace(/[أإآٱ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").toLowerCase();
 const LS={get(k,d){try{const v=localStorage.getItem("asma1."+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("asma1."+k,JSON.stringify(v))}catch(e){}}};
-const GOAT=""; /* GoatCounter code (the part before .goatcounter.com); empty = no counting */
-/* GoatCounter counts page views without cookies or personal data. One code can serve several sites: each is counted by its own path. */
-if(GOAT&&location.hostname.endsWith("github.io")){const sc=document.createElement("script");sc.async=true;sc.src="https://gc.zgo.at/count.js";sc.dataset.goatcounter=`https://${GOAT}.goatcounter.com/count`;document.head.appendChild(sc)}
-let VISITS=null;
-function showVisits(){if(!GOAT)return;const put=()=>{const el=$("#visits");if(el&&VISITS){el.hidden=false;el.innerHTML=`<b>${N(VISITS)}</b> ${t("visits")}`}};
-  if(VISITS!=null)return put();VISITS=0;fetch(`https://${GOAT}.goatcounter.com/counter/${encodeURIComponent(location.pathname)}.json`).then(r=>r.json()).then(d=>{if(d&&d.count){VISITS=String(d.count).replace(/[\s,]/g,"");put()}}).catch(()=>{})}
 
 /* ================= language ================= */
 let LANG=LS.get("lang",null)||((navigator.language||"").slice(0,2)==="ar"?"ar":"en");
@@ -374,7 +368,7 @@ const TX={
  fLessons:["lessons","درسًا"],fNames:["names","اسمًا"],fSets:["sets","مجموعات"],fEv:["evidence + meaning","الدليل والمعنى"],
  who:["Who is learning?","من يتعلّم؟"],
  whoD:["Type your name so the site knows whose progress this is. Each learner on this device keeps their own progress. No sign-up, and nothing leaves this device.","اكتب اسمك ليعرف الموقع لمن هذا التقدّم. لكل متعلّم على هذا الجهاز تقدّمه الخاص. بلا تسجيل، ولا يخرج شيء من هذا الجهاز."],
- save:["Save","احفظ"],welcome:["Assalāmu ʿalaykum, {n}","السلام عليكم يا {n}"],switchL:["Switch learner","غيّر المتعلّم"],visits:["visits","زيارة"],since:["Since 2026","منذ ٢٠٢٦"],
+ save:["Save","احفظ"],welcome:["Assalāmu ʿalaykum, {n}","السلام عليكم يا {n}"],switchL:["Switch learner","غيّر المتعلّم"],since:["Since 2026","منذ ٢٠٢٦"],
  yourProg:["Your progress","تقدّمك"],today:["Today","اليوم"],streak:["day streak","أيام متتالية"],memorized:["Memorized","تم الحفظ"],namesMem:["names memorized","اسمًا محفوظًا"],
  goal:["Today's goal","هدف اليوم"],goalTxt:["Study or recite 3 lessons a day.","راجع أو سمّع ٣ دروس كل يوم."],
  continue:["Continue","تابع"],lessonN:["Lesson","الدرس"],
@@ -530,7 +524,7 @@ function renderTop(){
   const pf=PROFILES.find(p=>p.id===PID);
   $("#pfBtn").innerHTML=`${avatar(pf)}<span class="lbl">${esc(pf.name||t("learner"))}</span>`;
   $$("#langSw button").forEach(b=>{const on=b.dataset.lg===LANG;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)});$("#setBtn").setAttribute("aria-label",t("settings"));
-  $("#foot").innerHTML=`<div class="row note" style="justify-content:center"><span id="visits" hidden></span><span>${t("since")}</span><a href="matn-al-asma.pdf" download="متن-الأسماء.pdf">${t("pdfB")}</a></div><p class="note" style="max-width:640px">${esc(t("footNote"))}</p><a href="https://fastaqim.github.io/tuhfa-/">${esc(t("sibling"))}</a>`;showVisits();
+  $("#foot").innerHTML=`<div class="row note" style="justify-content:center"><span>${t("since")}</span><a href="matn-al-asma.pdf" download="متن-الأسماء.pdf">${t("pdfB")}</a></div><p class="note" style="max-width:640px">${esc(t("footNote"))}</p><a href="https://fastaqim.github.io/tuhfa-/">${esc(t("sibling"))}</a>`;
 }
 $$("#langSw button").forEach(b=>b.onclick=()=>{if(LANG===b.dataset.lg)return;LANG=b.dataset.lg;LS.set("lang",LANG);applySettings();render();toast(LANG==="ar"?"تم التبديل إلى العربية":"Switched to English")});
 $("#xpChip").onclick=()=>location.hash="#progress";
