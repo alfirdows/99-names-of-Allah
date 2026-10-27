@@ -547,15 +547,15 @@ const TX={
  repN:["Repetition {a} of {b}. Again!","التكرار {a} من {b}. مرة أخرى!"],memNext:["Memorized! Next lesson","أحسنت، حفظته! الدرس التالي"],
  noSR:["This browser can't listen. On iPhone use Safari, and turn on Siri or Dictation in Settings.","هذا المتصفح لا يستطيع الاستماع. على الآيفون استخدم سفاري، وفعّل سيري أو الإملاء من الإعدادات."],
  recite:["Recite","سمّع"],ordIn:["In order","بالترتيب"],ordRnd:["Random","عشوائي"],allLessons:["All names","كل الأسماء"],allL:["All lessons","كل الدروس"],orderH:["Order","الترتيب"],
- misWrong:["Incorrect words","كلمات خاطئة"],misMissed:["Missed words","كلمات فائتة"],misExtra:["Extra words","كلمات زائدة"],
- expected:["Expected","المطلوب"],recitedL:["Recited","ما سُمع"],misHere:["Mistakes in this lesson","أخطاء هذا الدرس"],pastMis:["See past mistakes","الأخطاء السابقة"],
- mistakes:["Past mistakes","الأخطاء السابقة"],misSub:["Each mistake shows what was expected and what was heard. If the website misheard you, tap the bin to delete it.","يظهر كل خطأ المطلوبَ وما سُمع. إن أخطأ الموقع في سماعك فاضغط سلة المهملات لحذفه."],
+ misWrong:["Wrong word","خطأ"],misMissed:["Left out","سقط"],misExtra:["Added word","زيادة"],
+ expected:["Correct","الصواب"],recitedL:["You said","ما قلتَه"],misHere:["Review for this lesson","مراجعة هذا الدرس"],pastMis:["Recitation review","مراجعة التسميع"],
+ mistakes:["Recitation review","مراجعة التسميع"],misSub:["Each mistake shows what was expected and what was heard. If the website misheard you, tap the bin to delete it.","يظهر كل خطأ المطلوبَ وما سُمع. إن أخطأ الموقع في سماعك فاضغط سلة المهملات لحذفه."],
  noMis:["No mistakes saved yet.","لا توجد أخطاء محفوظة بعد."],clearMis:["Delete all mistakes","احذف كل الأخطاء"],clearMisQ:["Delete all saved mistakes for this learner?","هل تريد حذف كل الأخطاء المحفوظة لهذا المتعلّم؟"],
  misDel:["Delete this mistake (misheard)","احذف هذا الخطأ (سماع خاطئ)"],misDone:["Mistake deleted","حُذف الخطأ"],practiceL:["Practice this lesson","تدرّب على هذا الدرس"],
- hideWords:["Hide words","إخفاء الكلمات"],misBtn:["Mistakes","الأخطاء"],playMine:["Play my recitation here","استمع لتسميعك هنا"],noRecHere:["No recording was saved for this one.","لم يُحفظ تسجيل لهذا."],
+ hideWords:["Hide words","إخفاء الكلمات"],misBtn:["Review","مراجعة"],playMine:["Play my recitation here","استمع لتسميعك هنا"],noRecHere:["No recording was saved for this one.","لم يُحفظ تسجيل لهذا."],
  closeL:["Close","إغلاق"],readDone:["You reached the end. Well done!","وصلت إلى النهاية. أحسنت!"],listenL:["Listening","أستمع"],
  pause:["Pause","إيقاف مؤقت"],resume:["Continue","متابعة"],paused:["Paused. Tap ▶ to carry on from where you stopped.","متوقف مؤقتًا. اضغط ▶ لتكمل من حيث توقفت."],following:["Following you from here","أتابعك من هنا"],
- noMic:["The microphone is not available. Allow microphone access for this site and try again.","الميكروفون غير متاح. اسمح للموقع باستخدام الميكروفون ثم حاول مرة أخرى."],
+ toRev:["to review","للمراجعة"],lessonsL:["Lessons","الدروس"],noMic:["The microphone is not available. Allow microphone access for this site and try again.","الميكروفون غير متاح. اسمح للموقع باستخدام الميكروفون ثم حاول مرة أخرى."],
  saveFile:["Save to device","احفظ على الجهاز"],sure:["Tap again to delete","اضغط مرة أخرى للحذف"],delAll:["Delete all my recordings","احذف كل تسجيلاتي"],deleted:["Deleted","تم الحذف"],
  storage:["Your data","بياناتك"],
  storageD:["Everything here is free, with no limits and no expiry. Progress and recordings are saved on this device and stay until you delete them. To move them to another device, or to be safe if the browser data is cleared, save a backup file.","كل شيء هنا مجاني بلا حدود ولا مدة. يُحفظ التقدّم والتسجيلات على هذا الجهاز ويبقى حتى تحذفه. لنقلها إلى جهاز آخر، أو للاحتياط إن مُسحت بيانات المتصفح، احفظ نسخة احتياطية."],
@@ -808,7 +808,7 @@ const MIS={all(){return LS.get("mis."+PID,[])},save(a){LS.set("mis."+PID,a.slice
     if(!g.size)return`<p class="note">${t("noMis")}</p>`;let n=0,h="";
     for(const ms of g.values()){ms.sort((a,b)=>a.t-b.t);const a=ms[0].i,b=ms[ms.length-1].i,t0=ms[0].t;
       const tm=new Date(t0).toLocaleTimeString(LANG==="ar"?"ar":"en",{hour:"numeric",minute:"2-digit"});
-      h+=`<details class="sess" ${n++<2?"open":""}><summary>${ic("history")}<span>${t("lessonN")} ${N(a+1)}${a!==b?` ${LANG==="ar"?"←":"→"} ${t("lessonN")} ${N(b+1)}`:""}<span class="tm">${esc(fmtD(t0))} · ${esc(tm)} · ${N(ms.length)} ${t("misBtn")}</span></span><span class="chev">${ic("chev")}</span></summary><div class="mis">${ms.map(m=>this.card(m)).join("")}</div></details>`}
+      h+=`<details class="sess" ${n++<2?"open":""}><summary>${ic("history")}<span>${a!==b?`${t("lessonsL")} ${N(a+1)}–${N(b+1)}`:`${t("lessonN")} ${N(a+1)}`}<span class="tm">${esc(fmtD(t0))} · ${esc(tm)} · ${N(ms.length)} ${t("toRev")}</span></span><span class="chev">${ic("chev")}</span></summary><div class="mis">${ms.map(m=>this.card(m)).join("")}</div></details>`}
     return h},
   /* Play your own recording from a few seconds before the mistake. */
   audio:null,async play(id,btn){if(this.audio){this.audio.pause();const was=this.audio._id;this.audio=null;$$(".misc .pl.on").forEach(x=>x.classList.remove("on"));if(was===id)return}
