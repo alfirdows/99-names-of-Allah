@@ -400,6 +400,9 @@ body.reading .sec{padding-bottom:110px}
 .pc .pt{display:flex;justify-content:space-between;align-items:center;gap:6px}.pc .note{margin:0}
 .pc .pl{display:flex;flex-wrap:wrap;gap:4px}.pc .pl span{background:var(--band);border-radius:8px;padding:2px 8px;font-family:var(--text);font-size:.95rem}
 .pc .btn{justify-self:start}
+.weak{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:5px;margin:6px 0 10px}
+.wk{aspect-ratio:1;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:.8rem;font-weight:700;cursor:pointer;padding:0}
+.wk.l1{background:#fbe9e6;border-color:#f3c9c2}.wk.l2{background:#f5c6be;border-color:#eba497}.wk.l3{background:#e88f80;color:#fff;border-color:#e88f80}.wk.l4{background:#c0392b;color:#fff;border-color:#c0392b}
 .fab{position:fixed;inset-inline-end:max(16px,env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:65;width:58px;height:58px;border-radius:50%;border:0;background:var(--acc);color:#fff;display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.22);cursor:pointer}
 .fab .i{width:26px;height:26px}.fab[hidden]{display:none}
 @media print{.fab{display:none}}
@@ -564,6 +567,7 @@ const TX={
  reciteMis:["Recite your mistakes","سمّع أخطاءك"],reciteMisD:["Goes through only the lessons you slipped in.","يمرّ على الدروس التي أخطأت فيها فقط."],misSet:["Your mistakes","أخطاؤك"],planH:["Today's plan","ورد اليوم"],planD:["The classic way of hifz: a new portion, a recent review and an older review. Each one starts hands-free.","على طريقة الحفظ المعروفة: درس جديد، ومراجعة قريبة، ومراجعة بعيدة. كل واحد يبدأ بالتسميع مباشرة."],
  pNew:["New lesson","الدرس الجديد"],pNewD:["Your next lesson","درسك التالي"],pNear:["Recent review","المراجعة القريبة"],pNearD:["What you learned this week","ما حفظته هذا الأسبوع"],
  pFar:["Older review","المراجعة البعيدة"],pFarD:["Older lessons, so they stay strong","دروس قديمة حتى تبقى ثابتة"],pStart:["Start","ابدأ"],pDone:["Done today","تم اليوم"],pNone:["Nothing yet","لا شيء بعد"],pAll:["All memorized!","حفظت الكل!"],
+ weakH:["Weak spots","مواضع الضعف"],weakD:["Darker means more slips. Tap a lesson to recite it.","كلما كان اللون أغمق كانت الأخطاء أكثر. اضغط على درس لتسمّعه."],weakGo:["Recite the 5 weakest","سمّع أضعف ٥ دروس"],weakNone:["No slips recorded yet. Recite with the microphone to fill this map.","لا توجد أخطاء مسجّلة بعد. سمّع بالميكروفون ليمتلئ هذا الجدول."],
  toRev:["to review","للمراجعة"],lessonsL:["Lessons","الدروس"],noMic:["The microphone is not available. Allow microphone access for this site and try again.","الميكروفون غير متاح. اسمح للموقع باستخدام الميكروفون ثم حاول مرة أخرى."],
  saveFile:["Save to device","احفظ على الجهاز"],sure:["Tap again to delete","اضغط مرة أخرى للحذف"],delAll:["Delete all my recordings","احذف كل تسجيلاتي"],deleted:["Deleted","تم الحذف"],
  storage:["Your data","بياناتك"],
@@ -789,6 +793,16 @@ function planHTML(){const pl=dailyPlan(),td=ST.days[today()]||[];
   return`<div class="panel"><h3>${ic("history")}${t("planH")}</h3><p class="note">${t("planD")}</p><div class="plan">${card("new","h1","pNew","pNewD",pl.new)}${card("near","h2","pNear","pNearD",pl.near)}${card("far","h4","pFar","pFarD",pl.far)}</div></div>`}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-plan]");if(!b)return;const list=dailyPlan()[b.dataset.plan];if(!list||!list.length)return;
   LS.set("mq."+PID,{k:-3,rnd:false,list,lab:b.dataset.plan});Mem.stopLive();Mem.mode="mem";if(Mem.startLive())Mem.open(list[0])});
+
+/* ---------- weak spots map: each lesson shaded by how many slips were recorded there ---------- */
+function weakCounts(){const c={};for(const m of MIS.all())c[m.i]=(c[m.i]||0)+1;return c}
+function weakHTML(){const c=weakCounts(),mx=Math.max(0,...Object.values(c)),lv=n=>!n?0:n<=1?1:n<=3?2:n<=6?3:4;
+  return`<div class="panel"><h3>${ic("bolt")}${t("weakH")}</h3><p class="note">${mx?t("weakD"):t("weakNone")}</p>
+    <div class="weak">${DATA.map((_,i)=>`<button class="wk l${lv(c[i]||0)}" data-weak="${i}" title="${esc(nm(i))}${c[i]?" · "+c[i]:""}">${N(i+1)}</button>`).join("")}</div>
+    ${mx?`<button class="btn pri sm" data-weakgo>${ic("mic")}${t("weakGo")}</button>`:""}</div>`}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-weak]");if(b){Mem.mode="mem";Mem.open(+b.dataset.weak);return}
+  if(e.target.closest("[data-weakgo]")){const c=weakCounts(),list=Object.keys(c).map(Number).sort((a,b)=>c[b]-c[a]).slice(0,5).sort((a,b)=>a-b);if(!list.length)return;
+    LS.set("mq."+PID,{k:-2,rnd:false,list});Mem.stopLive();Mem.mode="mem";if(Mem.startLive())Mem.open(list[0])}});
 
 /* ---------- names (read) ---------- */
 let NamesSet=-1, NamesQ="";
@@ -1189,6 +1203,7 @@ V.progress=el=>{
     <div class="panel"><div class="row" style="gap:24px"><div class="ring" style="--p:${pct}"><div><b>${N(pct)}٪</b><small>${N(mem)} / ${N(TOTAL)}</small></div></div>
       <div class="stats" style="flex:1;min-width:240px"><div class="stat hue6">${ic("bolt")}<b>${N(ST.xp)}</b><span>${t("xp")} · ${t("level")} ${N(levelOf(ST.xp))}</span></div><div class="stat hue5">${ic("fire")}<b>${N(streak())}</b><span>${t("streak")}</span></div><div class="stat hue1">${ic("check")}<b>${N(lm)} / ${N(DATA.length)}</b><span>${t("lessonsMem")}</span></div></div></div>
       <div><h3 style="margin-bottom:6px" class="hue3">${ic("cal")}${t("last14")}</h3><div class="days">${days}</div></div></div>
+    ${weakHTML()}
     <div class="panel"><h3 class="hue2">${ic("progress")}${t("bySet")}</h3>${Array.from({length:SETS},(_,k)=>{const r=setRange(k),d=r.filter(i=>status(i)==="memorized").length;return`<div style="display:grid;gap:4px"><div class="row" style="justify-content:space-between"><span>${setLabel(k)} <span class="note" lang="ar">${esc(setSpan(k))}</span></span><span class="note">${N(d)} / ${N(r.length)}</span></div><div class="prog ${hue(k)}"><i style="width:${d/r.length*100}%"></i></div></div>`}).join("")}</div>
     <div class="panel"><h3 class="hue6">${ic("list")}${t("revList")}</h3>${rev.length?`<ul class="misses">${rev.map(i=>`<li><span class="nm" lang="ar">${esc(nm(i))}</span><button class="btn out sm" data-st="${i}">${t("study")} · ${N(i+1)}</button></li>`).join("")}</ul>`:`<p class="note">${t("revEmpty")}</p>`}</div>
     <div class="panel"><div class="row" style="justify-content:space-between"><h3 class="hue5">${ic("memorize")}${t("myRecs")}</h3><button class="btn sm" id="delAll" hidden>${t("delAll")}</button></div><div class="recs" id="allRecs"></div></div>
