@@ -71,6 +71,7 @@ html.noev .evx{display:none!important}
 .dlx p{margin:0;font-family:var(--text);font-weight:400!important;font-size:calc(1.1rem*var(--fs));line-height:1.9}
 .dlx cite{font-style:normal;font-size:.8rem;color:var(--muted);font-family:var(--font)}
 .dlx .lb{font-family:var(--font);font-size:.78rem;font-weight:700;color:var(--h3)}
+#pst.okn{color:var(--ok);font-weight:600}#pst.warnn{color:var(--warn);background:var(--warn-soft);padding:10px 12px;border-radius:10px}
 .evsw .i{width:16px;height:16px}.evsw:not(.on){color:var(--muted)}
 .orn{display:flex;justify-content:center;gap:10px;margin:2px 0 4px}
 .orn i{width:9px;height:9px;transform:rotate(45deg);border-radius:2px}
@@ -295,7 +296,8 @@ html[lang="ar"] .names .gl{display:none}
 /* settings */
 .setrow{display:grid;grid-template-columns:minmax(120px,200px) 1fr;gap:10px 16px;align-items:center;padding-block:12px;border-top:1px solid var(--line)}
 .setrow:first-of-type{border-top:0}
-@media (max-width:560px){.setrow{grid-template-columns:1fr}}
+@media (max-width:560px){.setrow{grid-template-columns:minmax(0,1fr)}}
+.setrow>*{min-width:0}.setrow .chips,.setrow .seg{flex-wrap:wrap}
 .learner{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
 .avb{position:relative;border:0;background:none;padding:0;cursor:pointer;border-radius:50%}
 .avb .avedit{position:absolute;inset-inline-end:-4px;bottom:-4px;width:20px;height:20px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;color:var(--acc)}
@@ -310,9 +312,9 @@ html[lang="ar"] .names .gl{display:none}
 .emogrid button{height:44px;font-size:1.5rem;border-radius:10px;border:1px solid transparent;background:var(--surface);cursor:pointer;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
 .emogrid button:hover{border-color:var(--line)}.emogrid button.on{border-color:var(--acc);background:var(--acc-soft)}
 .emoin{flex:1;min-width:160px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 10px;font:inherit}
-.learner input{flex:1;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 10px}
+.learner input{flex:1 1 100px;width:0;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 10px}
 .confirm{background:var(--bad-soft);border-radius:12px;padding:12px;display:grid;gap:8px}
-.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-weight:600;font-size:.9rem;z-index:80;box-shadow:var(--shadow);max-width:calc(100% - 32px);text-align:center}
+.toast{max-width:calc(100vw - 32px);text-align:center;position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-weight:600;font-size:.9rem;z-index:80;box-shadow:var(--shadow);max-width:calc(100% - 32px);text-align:center}
 
 .recs{display:grid;gap:10px}
 .rec{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center;border-top:1px solid var(--line);padding-top:10px}
@@ -437,6 +439,11 @@ const TX={
  storage:["Your data","بياناتك"],
  storageD:["Everything here is free, with no limits and no expiry. Progress and recordings are saved on this device and stay until you delete them. To move them to another device, or to be safe if the browser data is cleared, save a backup file.","كل شيء هنا مجاني بلا حدود ولا مدة. يُحفظ التقدّم والتسجيلات على هذا الجهاز ويبقى حتى تحذفه. لنقلها إلى جهاز آخر، أو للاحتياط إن مُسحت بيانات المتصفح، احفظ نسخة احتياطية."],
  persistOn:["This browser has agreed to keep the data permanently.","وافق المتصفح على الاحتفاظ بالبيانات بشكل دائم."],
+ persistWhat:["What this does: your browser may delete saved progress and recordings if the phone runs low on space. This button asks it never to delete them.","ما فائدته: قد يحذف المتصفح التقدّم والتسجيلات المحفوظة إذا امتلأت ذاكرة الجهاز. هذا الزر يطلب منه ألا يحذفها أبدًا."],
+ persistYes:["Done ✓ Your progress and recordings will be kept permanently on this device.","تم ✓ سيُحتفظ بتقدّمك وتسجيلاتك على هذا الجهاز بشكل دائم."],
+ persistIOS:["iPhone didn't allow it in Safari. To fix it: tap Share (the square with an arrow), choose “Add to Home Screen”, open the site from the new icon, then tap this button again. Saving a backup file also keeps your data safe.","لم يسمح الآيفون بذلك داخل سفاري. للحل: اضغط زر المشاركة (المربع مع السهم)، واختر «إضافة إلى الشاشة الرئيسية»، وافتح الموقع من الأيقونة الجديدة، ثم اضغط هذا الزر مرة أخرى. حفظ نسخة احتياطية يحفظ بياناتك أيضًا."],
+ persistNo:["This browser didn't allow it. Your data is still saved, but save a backup file now and then to be safe.","لم يسمح هذا المتصفح بذلك. بياناتك ما زالت محفوظة، لكن احفظ نسخة احتياطية من حين لآخر للاحتياط."],
+ persistYesT:["Done ✓ Your data is kept permanently","تم ✓ بياناتك محفوظة بشكل دائم"],persistNoT:["Not allowed yet, see the steps above","لم يُسمح بعد، اتبع الخطوات أعلاه"],
  persistOff:["This browser may clear site data if the device runs out of space. Tap the button, install the site as an app, and save a backup now and then.","قد يمسح المتصفح بيانات الموقع إذا امتلأت مساحة الجهاز. اضغط الزر، وثبّت الموقع كتطبيق، واحفظ نسخة احتياطية من حين لآخر."],
  persistBtn:["Keep my data permanently","احتفظ ببياناتي دائمًا"],backup:["Save backup file","احفظ نسخة احتياطية"],restore:["Restore backup","استعد نسخة احتياطية"],
  restoreQ:["Replace the progress on this device with the backup? Recordings in the backup are added to the ones here.","هل تريد استبدال التقدّم على هذا الجهاز بالنسخة الاحتياطية؟ تُضاف تسجيلات النسخة إلى الموجودة هنا."],
@@ -487,7 +494,7 @@ function applySettings(){
   const th=LS.get("theme","system");if(th==="system")document.documentElement.removeAttribute("data-theme");else document.documentElement.dataset.theme=th;
   document.documentElement.style.setProperty("--fs",LS.get("fs",1));
 }
-let toastT;function toast(s){const el=$("#toast");el.textContent=s;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,1600)}
+let toastT;function toast(s){const el=$("#toast");el.textContent=s;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,Math.max(1600,s.length*55))}
 
 /* ================= header / nav ================= */
 const ICON={
@@ -907,8 +914,13 @@ V.settings=el=>{
       <div class="row"><button class="btn out sm" id="persist" hidden>${t("persistBtn")}</button><button class="btn pri sm" id="bk">${ic("save")}${t("backup")}</button><button class="btn out sm" id="rsBtn">${ic("upload")}${t("restore")}</button><input type="file" id="rsFile" accept="application/json,.json" hidden></div><div id="rcf"></div></div>
     <div class="panel"><div class="row"><button class="btn warn" id="rst">${t("resetP")}</button></div><div id="cf"></div></div>
   </div></section>`;
-  const showP=async()=>{const on=await persisted();const el=$("#pst");if(!el)return;el.textContent=on?t("persistOn"):t("persistOff");$("#persist").hidden=on};showP();
-  $("#persist").onclick=async()=>{await keepForever();showP()};
+  const showP=async()=>{const on=await persisted();const el=$("#pst");if(!el)return;el.textContent=on?t("persistOn"):t("persistOff")+" "+t("persistWhat");$("#persist").hidden=on};showP();
+  $("#persist").onclick=async()=>{const b=$("#persist");b.disabled=true;const ok=await keepForever();b.disabled=false;
+    const ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+    const app=matchMedia("(display-mode: standalone)").matches||navigator.standalone;
+    const msg=ok?t("persistYes"):ios&&!app?t("persistIOS"):t("persistNo");
+    const el=$("#pst");if(el){el.textContent=msg;el.classList.toggle("okn",!!ok);el.classList.toggle("warnn",!ok)}
+    toast(t(ok?"persistYesT":"persistNoT"));if(el)el.scrollIntoView({block:"center",behavior:"smooth"});if(ok)b.hidden=true};
   $("#bk").onclick=async()=>{const b=$("#bk");b.disabled=true;b.textContent=t("working");keepForever();const blob=await makeBackup();await saveBlob(blob,`asma-backup-${today()}.json`);b.disabled=false;b.textContent=t("backup")};
   $("#rsBtn").onclick=()=>$("#rsFile").click();
   $("#rsFile").onchange=e=>{const f=e.target.files[0];if(!f)return;$("#rcf").innerHTML=`<div class="confirm"><p class="note" style="color:var(--ink)">${t("restoreQ")}</p><div class="row"><button class="btn warn" id="ry">${t("restore")}</button><button class="btn sm" id="rn">${t("cancel")}</button></div></div>`;
