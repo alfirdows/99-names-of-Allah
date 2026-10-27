@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; form-action 'none'; base-uri 'self'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://gc.zgo.at; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://tasnim.goatcounter.com; media-src 'self' blob:; connect-src 'self' https://tasnim.goatcounter.com; form-action 'none'; base-uri 'self'; object-src 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>أسماء الله الحسنى · The Most Beautiful Names of Allah</title>
 <meta name="description" content="احفظ أسماء الله الحسنى مع الدليل من القرآن والسنة والمعنى: ٧٠ درسًا، مع أدوات للحفظ والتكرار والألعاب والاختبار. Memorize the Most Beautiful Names of Allah with their evidence and meaning, with memorization tools, games and quizzes.">
@@ -354,6 +354,9 @@ const AD=n=>String(n).replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const norm=s=>s.replace(/[ً-ٰٟۖ-ۭـ]/g,"").replace(/[أإآٱ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").toLowerCase();
 const LS={get(k,d){try{const v=localStorage.getItem("asma1."+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("asma1."+k,JSON.stringify(v))}catch(e){}}};
+/* Visitor count: GoatCounter (account "tasnim"). No cookies or personal data; only the owner sees the numbers at https://tasnim.goatcounter.com. Works on any domain; skipped during local testing. */
+const GOAT="tasnim";
+if(GOAT&&!/^(localhost|127\.0\.0\.1|\[::1\]|)$/.test(location.hostname)){const sc=document.createElement("script");sc.async=true;sc.src="https://gc.zgo.at/count.js";sc.dataset.goatcounter=`https://${GOAT}.goatcounter.com/count`;document.head.appendChild(sc)}
 
 /* ================= language ================= */
 let LANG=LS.get("lang",null)||((navigator.language||"").slice(0,2)==="ar"?"ar":"en");
