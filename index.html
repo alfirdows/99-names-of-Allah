@@ -394,6 +394,12 @@ body.reading .sec{padding-bottom:110px}
 .mbar .r3{margin:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.82rem;color:var(--muted)}
 .mbar .r3 .lv{display:inline-flex;align-items:center;gap:6px;font-weight:700;color:#c0392b}.mbar .r3 .lv i{width:8px;height:8px;border-radius:50%;background:#c0392b;animation:blink 1.4s infinite}
 .mbar .legend{font-size:.8rem;gap:10px}
+.plan{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.pc{border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;gap:6px;align-content:start;background:var(--surface);border-top:4px solid var(--hc,var(--acc))}
+.pc.h1{--hc:var(--h1)}.pc.h2{--hc:var(--h2)}.pc.h4{--hc:var(--h4)}.pc.ok{opacity:.75}
+.pc .pt{display:flex;justify-content:space-between;align-items:center;gap:6px}.pc .note{margin:0}
+.pc .pl{display:flex;flex-wrap:wrap;gap:4px}.pc .pl span{background:var(--band);border-radius:8px;padding:2px 8px;font-family:var(--text);font-size:.95rem}
+.pc .btn{justify-self:start}
 .fab{position:fixed;inset-inline-end:max(16px,env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:65;width:58px;height:58px;border-radius:50%;border:0;background:var(--acc);color:#fff;display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.22);cursor:pointer}
 .fab .i{width:26px;height:26px}.fab[hidden]{display:none}
 @media print{.fab{display:none}}
@@ -555,7 +561,10 @@ const TX={
  hideWords:["Hide words","إخفاء الكلمات"],misBtn:["Review","مراجعة"],playMine:["Play my recitation here","استمع لتسميعك هنا"],noRecHere:["No recording was saved for this one.","لم يُحفظ تسجيل لهذا."],
  closeL:["Close","إغلاق"],readDone:["You reached the end. Well done!","وصلت إلى النهاية. أحسنت!"],listenL:["Listening","أستمع"],
  pause:["Pause","إيقاف مؤقت"],resume:["Continue","متابعة"],paused:["Paused. Tap ▶ to carry on from where you stopped.","متوقف مؤقتًا. اضغط ▶ لتكمل من حيث توقفت."],following:["Following you from here","أتابعك من هنا"],
- reciteMis:["Recite your mistakes","سمّع أخطاءك"],reciteMisD:["Goes through only the lessons you slipped in.","يمرّ على الدروس التي أخطأت فيها فقط."],misSet:["Your mistakes","أخطاؤك"],toRev:["to review","للمراجعة"],lessonsL:["Lessons","الدروس"],noMic:["The microphone is not available. Allow microphone access for this site and try again.","الميكروفون غير متاح. اسمح للموقع باستخدام الميكروفون ثم حاول مرة أخرى."],
+ reciteMis:["Recite your mistakes","سمّع أخطاءك"],reciteMisD:["Goes through only the lessons you slipped in.","يمرّ على الدروس التي أخطأت فيها فقط."],misSet:["Your mistakes","أخطاؤك"],planH:["Today's plan","ورد اليوم"],planD:["The classic way of hifz: a new portion, a recent review and an older review. Each one starts hands-free.","على طريقة الحفظ المعروفة: درس جديد، ومراجعة قريبة، ومراجعة بعيدة. كل واحد يبدأ بالتسميع مباشرة."],
+ pNew:["New lesson","الدرس الجديد"],pNewD:["Your next lesson","درسك التالي"],pNear:["Recent review","المراجعة القريبة"],pNearD:["What you learned this week","ما حفظته هذا الأسبوع"],
+ pFar:["Older review","المراجعة البعيدة"],pFarD:["Older lessons, so they stay strong","دروس قديمة حتى تبقى ثابتة"],pStart:["Start","ابدأ"],pDone:["Done today","تم اليوم"],pNone:["Nothing yet","لا شيء بعد"],pAll:["All memorized!","حفظت الكل!"],
+ toRev:["to review","للمراجعة"],lessonsL:["Lessons","الدروس"],noMic:["The microphone is not available. Allow microphone access for this site and try again.","الميكروفون غير متاح. اسمح للموقع باستخدام الميكروفون ثم حاول مرة أخرى."],
  saveFile:["Save to device","احفظ على الجهاز"],sure:["Tap again to delete","اضغط مرة أخرى للحذف"],delAll:["Delete all my recordings","احذف كل تسجيلاتي"],deleted:["Deleted","تم الحذف"],
  storage:["Your data","بياناتك"],
  storageD:["Everything here is free, with no limits and no expiry. Progress and recordings are saved on this device and stay until you delete them. To move them to another device, or to be safe if the browser data is cleared, save a backup file.","كل شيء هنا مجاني بلا حدود ولا مدة. يُحفظ التقدّم والتسجيلات على هذا الجهاز ويبقى حتى تحذفه. لنقلها إلى جهاز آخر، أو للاحتياط إن مُسحت بيانات المتصفح، احفظ نسخة احتياطية."],
@@ -695,7 +704,7 @@ V.home=el=>{
     <div class="cta"><a class="btn pri" href="#memorize">${ic("memorize")}${t("startMem")}</a><a class="btn out" href="#names">${ic("names")}${t("read")}</a></div>
     <ul class="facts"><li><b>${N(DATA.length)}</b> ${t("fLessons")}</li><li><b>${N(TOTAL)}</b> ${t("fNames")}</li><li><b>${N(SETS)}</b> ${t("fSets")}</li><li><b>${t("fEv")}</b></li></ul>
   </div></div></section>
-  <section class="sec"><div class="wrap narrow stack">${whoHTML()}<div class="panel">
+  <section class="sec"><div class="wrap narrow stack">${whoHTML()}${planHTML()}<div class="panel">
     <div class="row" style="justify-content:space-between"><h3>${t("yourProg")}</h3><a class="btn out sm" href="#progress">${t("progress")}</a></div>
     <div class="stats">
       <div class="stat hue3">${ic("cal")}<b>${N(d)} / ${N(3)}</b><span>${t("goal")}</span></div>
@@ -763,6 +772,23 @@ function lessonHTML(i,o={}){
     <div class="blk mn-b"><h4>${ic("bulb")}${t("meaning")} · <span lang="ar">المعنى</span></h4><div class="mn" lang="ar">${L.m.map(x=>`<p>${words(x,lv,o.sp)}</p>`).join("")}</div>${LANG==="en"?`<div class="mn-en" lang="en"><span class="trl">${t("trl")}</span>${MEAN_EN[i].map(x=>`<p>${esc(x)}</p>`).join("")}</div>`:""}</div>
     ${o.foot||""}</article>`;
 }
+
+/* ---------- today's plan (الدرس / المراجعة القريبة / المراجعة البعيدة) ---------- */
+function lastSeen(){const L={};for(const d of Object.keys(ST.days).sort())for(const i of ST.days[d]||[])L[i]=d;return L}
+function dailyPlan(){const L=lastSeen(),td=today(),ago=d=>d?Math.round((Date.parse(td)-Date.parse(d))/864e5):999,all=DATA.map((_,i)=>i);
+  const nw=all.filter(i=>status(i)!=="memorized").slice(0,1);
+  const done=all.filter(i=>status(i)==="memorized"||status(i)==="review");
+  const near=done.filter(i=>!nw.includes(i)&&ago(L[i])>=0&&ago(L[i])<=7).sort((a,b)=>b-a).slice(0,5);
+  const far=done.filter(i=>!near.includes(i)&&!nw.includes(i)).sort((a,b)=>ago(L[b])-ago(L[a])||a-b).slice(0,5);
+  return{new:nw,near,far}}
+function planHTML(){const pl=dailyPlan(),td=ST.days[today()]||[];
+  const card=(k,cls,ttl,d,list)=>{const ok=list.length&&list.every(i=>td.includes(i));
+    return`<div class="pc ${cls} ${ok?"ok":""}"><div class="pt"><b>${t(ttl)}</b>${ok?`<span class="pill memorized">✓ ${t("pDone")}</span>`:""}</div><p class="note">${t(d)}</p>
+      <div class="pl" lang="ar">${list.length?list.map(i=>`<span>${N(i+1)} · ${esc(nm(i))}</span>`).join(""):`<span class="note">${t(k==="new"?"pAll":"pNone")}</span>`}</div>
+      ${list.length?`<button class="btn ${ok?"out":"pri"} sm" data-plan="${k}">${ic("mic")}${t("pStart")}</button>`:""}</div>`};
+  return`<div class="panel"><h3>${ic("history")}${t("planH")}</h3><p class="note">${t("planD")}</p><div class="plan">${card("new","h1","pNew","pNewD",pl.new)}${card("near","h2","pNear","pNearD",pl.near)}${card("far","h4","pFar","pFarD",pl.far)}</div></div>`}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-plan]");if(!b)return;const list=dailyPlan()[b.dataset.plan];if(!list||!list.length)return;
+  LS.set("mq."+PID,{k:-3,rnd:false,list,lab:b.dataset.plan});Mem.stopLive();Mem.mode="mem";if(Mem.startLive())Mem.open(list[0])});
 
 /* ---------- names (read) ---------- */
 let NamesSet=-1, NamesQ="";
@@ -932,7 +958,7 @@ V.memorize=el=>{
   }
   const i=LS.get("cur."+PID,0), p=P(i), lv=LS.get("lv",0), target=LS.get("target",5);
   const hideEv=false, hideNm=LS.get("hideNm",false), MQ=Mem.q(), r=MQ.list.includes(i)?MQ.list:setRange(Math.floor(i/PART)), pos=r.indexOf(i), live=Mem.live&&!!SR;
-  const scope=(MQ.k===-2?t("misSet"):MQ.k<0?t("allL"):setLabel(MQ.k))+(MQ.rnd?" · "+t("ordRnd"):"");
+  const scope=(MQ.k===-3?t({new:"pNew",near:"pNear",far:"pFar"}[MQ.lab]||"planH"):MQ.k===-2?t("misSet"):MQ.k<0?t("allL"):setLabel(MQ.k))+(MQ.rnd?" · "+t("ordRnd"):"");
   el.innerHTML=`<section class="sec"><div class="wrap narrow stack">
     <div class="mbar" id="mbar">
       <div class="r1"><button class="ib" id="prev" ${pos===0?"disabled":""} aria-label="${t("prev")}">${ic(LANG==="ar"?"next":"prev")}</button>
