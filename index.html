@@ -441,6 +441,7 @@ const TX={
  persistIOS:["iPhone didn't allow it in Safari. To fix it: tap Share (the square with an arrow), choose “Add to Home Screen”, open the site from the new icon, then tap this button again. Saving a backup file also keeps your data safe.","لم يسمح الآيفون بذلك داخل سفاري. للحل: اضغط زر المشاركة (المربع مع السهم)، واختر «إضافة إلى الشاشة الرئيسية»، وافتح الموقع من الأيقونة الجديدة، ثم اضغط هذا الزر مرة أخرى. حفظ نسخة احتياطية يحفظ بياناتك أيضًا."],
  persistNo:["This browser didn't allow it. Your data is still saved, but save a backup file now and then to be safe.","لم يسمح هذا المتصفح بذلك. بياناتك ما زالت محفوظة، لكن احفظ نسخة احتياطية من حين لآخر للاحتياط."],
  persistYesT:["Done ✓ Your data is kept permanently","تم ✓ بياناتك محفوظة بشكل دائم"],persistNoT:["Not allowed yet, see the steps above","لم يُسمح بعد، اتبع الخطوات أعلاه"],
+ ownV:["Visits (only on your phone)","الزيارات (على هاتفك فقط)"],ownVD:["Visitors don't see this. Full details are at tasnim.goatcounter.com.","الزوار لا يرون هذا. التفاصيل الكاملة في tasnim.goatcounter.com."],ownR:["Refresh","تحديث"],ownH:["Hide on this phone","إخفاء على هذا الهاتف"],ownHere:["This site","هذا الموقع"],ownAll:["All your sites","كل مواقعك"],ownNone:["No visits counted yet.","لا توجد زيارات بعد."],ownErr:["Couldn't load the numbers. In GoatCounter, open Settings and tick “Allow adding visitor counts on your website”, then tap Refresh.","تعذّر تحميل الأرقام. افتح الإعدادات في GoatCounter وفعّل «Allow adding visitor counts on your website»، ثم اضغط تحديث."],
  persistOff:["This browser may clear site data if the device runs out of space. Tap the button, install the site as an app, and save a backup now and then.","قد يمسح المتصفح بيانات الموقع إذا امتلأت مساحة الجهاز. اضغط الزر، وثبّت الموقع كتطبيق، واحفظ نسخة احتياطية من حين لآخر."],
  persistBtn:["Keep my data permanently","احتفظ ببياناتي دائمًا"],backup:["Save backup file","احفظ نسخة احتياطية"],restore:["Restore backup","استعد نسخة احتياطية"],
  restoreQ:["Replace the progress on this device with the backup? Recordings in the backup are added to the ones here.","هل تريد استبدال التقدّم على هذا الجهاز بالنسخة الاحتياطية؟ تُضاف تسجيلات النسخة إلى الموجودة هنا."],
@@ -537,6 +538,7 @@ $("#pfBtn").onclick=()=>location.hash="#settings";
 const V={};
 function render(){
   stopSpeech();Game.stop();if(Rec.mr&&!(VIEW==="memorize"&&location.hash==="#memorize"))Rec.stop();
+  if(location.hash==="#owner-tasnim"){LS.set("owner",true);location.replace("#settings");return}
   const h=location.hash.slice(1);VIEW=[...VIEWS,"settings"].includes(h)?h:"home";
   renderTop();$("#main").innerHTML="";(V[VIEW])($("#main"));bindEvSw($("#main"));
 }
@@ -909,9 +911,16 @@ V.settings=el=>{
       <div class="row"><button class="btn out sm" id="addL">${t("addLearner")}</button></div></div>
     <div class="panel"><h3 class="hue3">${ic("shield")}${t("storage")}</h3><p class="note">${t("storageD")}</p><p class="note" id="pst"></p>
       <div class="row"><button class="btn out sm" id="persist" hidden>${t("persistBtn")}</button><button class="btn pri sm" id="bk">${ic("save")}${t("backup")}</button><button class="btn out sm" id="rsBtn">${ic("upload")}${t("restore")}</button><input type="file" id="rsFile" accept="application/json,.json" hidden></div><div id="rcf"></div></div>
+    ${LS.get("owner",false)?`<div class="panel"><h3 class="hue4">${ic("progress")}${t("ownV")}</h3><p class="note">${t("ownVD")}</p><div class="stats" id="ownv"><p class="note">…</p></div><div class="row"><button class="btn out sm" id="ownR">${ic("refresh")}${t("ownR")}</button><button class="btn sm" id="ownH">${t("ownH")}</button></div></div>`:""}
     <div class="panel"><div class="row"><button class="btn warn" id="rst">${t("resetP")}</button></div><div id="cf"></div></div>
   </div></section>`;
   const showP=async()=>{const on=await persisted();const el=$("#pst");if(!el)return;el.textContent=on?t("persistOn"):t("persistOff")+" "+t("persistWhat");$("#persist").hidden=on};showP();
+  if($("#ownv")){const load=async()=>{const box=$("#ownv");box.innerHTML=`<p class="note">…</p>`;
+      const get=async k=>{const r=await fetch(`https://${GOAT}.goatcounter.com/counter/${encodeURIComponent(k)}.json`,{cache:"no-store"});if(!r.ok)throw r.status;const d=await r.json();return String(d.count).replace(/[\s,\u202f\u00a0]/g,"")};
+      try{const [here,all]=await Promise.all([get(location.pathname),get("TOTAL")]);if(!box.isConnected)return;
+        box.innerHTML=`<div class="stat hue4">${ic("home")}<b>${N(+here||0)}</b><span>${t("ownHere")}</span></div><div class="stat hue2">${ic("progress")}<b>${N(+all||0)}</b><span>${t("ownAll")}</span></div>`}
+      catch(e){if(box.isConnected)box.innerHTML=`<p class="note">${e===404?t("ownNone"):t("ownErr")}</p>`}};
+    load();$("#ownR").onclick=load;$("#ownH").onclick=()=>{LS.set("owner",false);render()}}
   $("#persist").onclick=async()=>{const b=$("#persist");b.disabled=true;const ok=await keepForever();b.disabled=false;
     const ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
     const app=matchMedia("(display-mode: standalone)").matches||navigator.standalone;
