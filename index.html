@@ -350,6 +350,9 @@ html[data-theme=dark] .mline .tx .r{color:#ff9b8f}
 .emoin{flex:1;min-width:160px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 10px;font:inherit}
 .learner input{flex:1 1 100px;width:0;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 10px}
 .confirm{background:var(--bad-soft);border-radius:12px;padding:12px;display:grid;gap:8px}
+.fab{position:fixed;inset-inline-end:max(16px,env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:65;width:58px;height:58px;border-radius:50%;border:0;background:var(--acc);color:#fff;display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.22);cursor:pointer}
+.fab .i{width:26px;height:26px}.fab[hidden]{display:none}
+@media print{.fab{display:none}}
 .toast{max-width:calc(100vw - 32px);text-align:center;position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-weight:600;font-size:.9rem;z-index:80;box-shadow:var(--shadow);max-width:calc(100% - 32px);text-align:center}
 
 .recs{display:grid;gap:10px}
@@ -377,6 +380,7 @@ footer a{color:var(--acc);font-weight:600}
 </div></header>
 <main id="main"></main>
 <footer><div class="wrap" id="foot"></div></footer>
+<button class="fab" id="fab" type="button" aria-label="Recite"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button>
 <div class="toast" id="toast" hidden role="status"></div>
 <script>
 "use strict";
@@ -617,7 +621,12 @@ function render(){
   if(location.hash==="#owner-tasnim"){LS.set("owner",true);location.replace("#settings");return}
   const h=location.hash.slice(1);VIEW=[...VIEWS,"settings","mistakes"].includes(h)?h:"home";
   renderTop();$("#main").innerHTML="";(V[VIEW])($("#main"));bindEvSw($("#main"));
+  const fab=$("#fab");fab.hidden=VIEW==="memorize"&&Mem.run||VIEW==="settings";fab.setAttribute("aria-label",t("recite"));
 }
+/* Mic button on every page: recite from the lesson you are looking at (or the last one), hands-free, with recording. */
+$("#fab").onclick=()=>{let i=LS.get("cur."+PID,0);
+  if(VIEW==="names"){const c=$$(".lesson[data-i]").find(e=>e.getBoundingClientRect().bottom>140);if(c)i=+c.dataset.i}
+  if(Mem.startLive())Mem.open(i)};
 addEventListener("hashchange",()=>{const was=VIEW;if(!Mem.opening&&location.hash!=="#"+was){Game.id=null;Game.set=null;Mem.run=false}if(location.hash!=="#memorize")Mem.stopLive();Mem.opening=false;render();scrollTo(0,0)});
 
 /* ---------- home ---------- */
@@ -743,10 +752,12 @@ const Mem={run:false,live:false,L:null,W:[],at:0,lock:false,
   q(){const q=LS.get("mq."+PID,null);return q&&Array.isArray(q.list)&&q.list.length?q:{k:-1,rnd:false,list:DATA.map((_,i)=>i)}},
   setQ(k,rnd){const list=k<0?DATA.map((_,i)=>i):setRange(k);LS.set("mq."+PID,{k,rnd,list:rnd?shuffle(list):list});return this.q()},
   open(i){if(!this.q().list.includes(i))this.setQ(Math.floor(i/PART),false);LS.set("cur."+PID,i);this.run=true;if(location.hash!=="#memorize"){this.opening=true;location.hash="#memorize"}else{render();scrollTo(0,0)}},
-  startLive(){if(!SR){toast(t("noSR"));return false}if(Rec.mr){Rec.stop();clearInterval(Rec.tick)}
+  startLive(){if(!SR){toast(t("noSR"));return false}
     if(!this.L){this.L=new Listener(ws=>this.heard(ws),st=>{if(st==="denied"){this.stopLive();toast(t("noMic"));if(VIEW==="memorize")render()}});this.L.onPeek=w=>this.peek(w);this.L.onRevise=()=>{this.pend=[]}}
     this.live=true;this.L.start();try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(l=>this.wl=l).catch(()=>{})}catch(e){}return true},
-  stopLive(){this.live=false;if(this.L)this.L.stop();try{this.wl&&this.wl.release()}catch(e){}this.wl=null},
+  stopLive(){const was=this.live;this.live=false;if(this.L)this.L.stop();if(was&&Rec.mr)Rec.stop().then(()=>{const l=$("#recList");if(l&&l.refresh)l.refresh()});try{this.wl&&this.wl.release()}catch(e){}this.wl=null},
+  /* While reciting hands-free, your voice is also recorded: one recording per lesson, saved to My recitation. */
+  async recLesson(i){if(!this.live||(Rec.mr&&Rec.lesson===i))return;if(Rec.mr)await Rec.stop();if(this.live&&await Rec.start(i)){const b=$("#recBtn");if(b){b.className="btn recon";b.textContent="■ "+t("recStop")}}},
   /* Collect the words to recite, in reading order: names, then the daleel (if shown), then the meaning. */
   hook(){const ev=!document.documentElement.classList.contains("noev");
     this.W=$$(".lesson .names .w, .lesson .ev p .w, .lesson .mn p .w").filter(w=>ev||!w.closest(".evx")).map(el=>({el,n:snorm(el.textContent)})).filter(x=>x.n);
@@ -855,10 +866,9 @@ V.memorize=el=>{
   if($("#listen"))$("#listen").onclick=()=>speak(AUDIO[i]);
   const fillRecs=async()=>{const box=$("#recList");if(!box)return;const all=(await DB.all()).filter(r=>r.pid===PID&&r.lesson===i).sort((a,b)=>b.date-a.date);
     box.innerHTML=all.length?all.map(recItem).join(""):`<p class="note">${t("noRecs")}</p>`;bindRecs(box,fillRecs)};
-  fillRecs();
+  fillRecs();$("#recList").refresh=fillRecs;if(live)Mem.recLesson(i);
   $("#recBtn").onclick=async()=>{const b=$("#recBtn");
     if(Rec.mr){await Rec.stop();clearInterval(Rec.tick);const b2=$("#recBtn");if(b2){b2.className="btn out";b2.textContent="● "+t("rec")}fillRecs();return}
-    if(Mem.live){Mem.stopLive();$("#live").outerHTML=`<button class="btn pri live" id="live">${ic("mic")+t("live")}</button>`;$("#live").onclick=()=>{Mem.startLive();render()}}
     if(!await Rec.start(i)){toast(t("noMic"));return}
     b.className="btn recon";const upd=()=>{const b2=$("#recBtn");if(b2)b2.textContent="■ "+t("recStop")+" · "+fmtT((Date.now()-Rec.t0)/1000)};upd();Rec.tick=setInterval(upd,1000)};
 };
