@@ -444,6 +444,7 @@ body:not(.mdocked):not(.reading) .mv{bottom:calc(14px + env(safe-area-inset-bott
 .picking [data-pick].picked{border-color:#c0392b}.picking [data-pick].picked::before{border-color:#c0392b;background:#c0392b;box-shadow:inset 0 0 0 4px var(--surface)}
 .picking .sess:not([open])>.mis{display:none}
 /* meaning of each name (tap a name) */
+.nsay{border:0;background:none;color:var(--acc);padding:4px 6px;margin-inline-start:4px;vertical-align:middle;border-radius:999px;cursor:pointer}.nsay .i{width:18px;height:18px}.nsay.on{background:var(--h1s)}
 .names [data-wm]{cursor:pointer;border-bottom:2px dotted color-mix(in srgb,var(--acc) 45%,transparent)}
 .wmhint{margin:2px 0 0;text-align:center;font-size:.8rem;color:var(--muted);display:flex;gap:6px;justify-content:center;align-items:center}
 .wmhint svg{width:14px;height:14px}
@@ -991,7 +992,7 @@ function lessonHTML(i,o={}){
   const L=DATA[i],st=status(i),lv=o.lv||0;
   return`<article class="lesson ${o.framed?"framed":""} ${hue(i)}" data-i="${i}">
     <div class="lhead"><span class="lnum">${N(i+1)}</span><span class="pill ${st}">${t("st_"+st)}</span></div>
-    <div class="names ${o.hideNames?"hid":""}">${L.names.map((n,k)=>`<div><span class="nm" lang="ar"${o.wm?` data-wm="${i}:${k}" role="button" tabindex="0"`:""}>${o.sp?n.split(/\s+/).map(x=>`<span class="w">${esc(x)}</span>`).join(" "):esc(n)}</span><span class="gl">${esc(GLOSS[i][k]||"")}</span></div>`).join("")}</div>${o.wm?`<p class="wmhint">${ic("bulb")}${t("wmHint")}</p>`:""}
+    <div class="names ${o.hideNames?"hid":""}">${L.names.map((n,k)=>`<div><span class="nm" lang="ar"${o.wm?` data-wm="${i}:${k}" role="button" tabindex="0"`:""}>${o.sp?n.split(/\s+/).map(x=>`<span class="w">${esc(x)}</span>`).join(" "):esc(n)}</span><span class="gl">${esc(GLOSS[i][k]||"")}${o.sp||o.hideNames?"":`<button class="nsay" data-say="${i}:${k}" aria-label="${esc(t("listen"))}" title="${esc(t("listen"))}">${ic("sound")}</button>`}</span></div>`).join("")}</div>${o.wm?`<p class="wmhint">${ic("bulb")}${t("wmHint")}</p>`:""}
     <div class="blk ev-b evx"><h4>${ic("book")}${t("evidence")}${LANG==="ar"?"":` · <span lang="ar">الدليل</span>`}</h4>${L.ev.map(([x,r])=>`<div class="ev" lang="ar"><p>${words(x,o.hideEv?(lv||4):0,o.sp)}</p><cite>${esc(r)}</cite></div>`).join("")}</div>
     <div class="blk mn-b"><h4>${ic("bulb")}${t("meaning")}${LANG==="ar"?"":` · <span lang="ar">المعنى</span>`}</h4><div class="mn" lang="ar">${L.m.map(x=>`<p>${words(x,lv,o.sp)}</p>`).join("")}</div></div>
     ${o.foot||""}</article>`;
@@ -1006,6 +1007,13 @@ function wmSheet(i,k){const L=DATA[i],qs=WM[i]||[],has=new Set(qs.flatMap(q=>q[0
   $("#misSheet").hidden=false;const on=$("#shB .wmq.on");if(on)on.scrollIntoView({block:"nearest"})}
 document.addEventListener("click",e=>{const n=e.target.closest("[data-wm]");if(!n||n.closest(".names.hid"))return;const [i,k]=n.dataset.wm.split(":").map(Number);wmSheet(i,k)});
 document.addEventListener("keydown",e=>{if(e.key!=="Enter")return;const n=e.target.closest&&e.target.closest("[data-wm]");if(n)n.click()});
+/* Tap the speaker by a name to hear just that name (audio/n/LL-K.mp3; lesson 3 is one file for both names). */
+let SayA=null;
+document.addEventListener("click",e=>{const b=e.target.closest("[data-say]");if(!b)return;e.stopPropagation();const [i,k]=b.dataset.say.split(":").map(Number);
+  Player.stop();stopSpeech();if(SayA){SayA.pause();$$(".nsay.on").forEach(x=>x.classList.remove("on"))}
+  const src=i===2?AUDIO[2]:`audio/n/${String(i+1).padStart(2,"0")}-${k+1}.mp3`,a=new Audio();SayA=a;b.classList.add("on");
+  a.onended=a.onerror=()=>b.classList.remove("on");
+  fetch(src).then(r=>r.ok?r.blob():Promise.reject()).then(bl=>{if(SayA!==a)return;a.src=URL.createObjectURL(bl);return a.play()}).catch(()=>b.classList.remove("on"))});
 
 /* ---------- today's plan (الدرس / المراجعة القريبة / المراجعة البعيدة) ---------- */
 function lastSeen(){const L={};for(const d of Object.keys(ST.days).sort())for(const i of ST.days[d]||[])L[i]=d;return L}
