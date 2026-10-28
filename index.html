@@ -241,6 +241,7 @@ html[lang="ar"] .names .gl{display:none}
 .w.cur,.w.cur .rest{background:var(--cur)!important;box-shadow:0 0 0 2px var(--acc)}
 /* hands-free recite: read = said while visible, mem = said from memory, miss = skipped */
 .w.rd{color:var(--h3);transition:color .2s}
+.w.pk{color:var(--h3);text-decoration:underline dotted;text-underline-offset:6px}
 .w.wm{color:var(--acc);background:var(--h1s);border-radius:6px;box-shadow:inset 0 -2px 0 var(--acc);transition:background .2s}
 .w.miss{color:#c0392b;background:#fbe3e0;border-radius:6px}
 html[data-theme=dark] .w.miss{color:#ff9b8f;background:#3a1f1c}
@@ -383,8 +384,8 @@ body:has(#mv) .retc{display:none}
 .mfocus .mbar .r2 .evsw{flex:none;font-size:.8rem;padding:4px 10px;min-height:30px;display:inline-flex;align-items:center;gap:5px}.mfocus .mbar .r2 .evsw .i{width:15px;height:15px}
 .mdock{position:fixed;left:0;right:0;bottom:0;z-index:60;padding:0 12px calc(10px + env(safe-area-inset-bottom,0px));pointer-events:none}
 .mdock .in{pointer-events:auto;margin:0 auto;width:max-content;max-width:100%;display:flex;align-items:flex-end;gap:6px;padding:8px 10px;border-radius:28px;background:color-mix(in srgb,var(--surface) 94%,transparent);border:1px solid var(--line);box-shadow:0 10px 28px rgba(0,0,0,.14);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
-.mdock .dk{position:relative;border:0;background:transparent;color:var(--ink);font:inherit;font-size:.72rem;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;width:68px;padding:6px 2px;border-radius:16px;cursor:pointer}
-.mdock .dk .i{width:22px;height:22px}.mdock .dk span{white-space:nowrap;max-width:68px;overflow:hidden;text-overflow:ellipsis}
+.mdock .dk{position:relative;border:0;background:transparent;color:var(--ink);font:inherit;font-size:.72rem;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:56px;padding:6px 4px;border-radius:16px;cursor:pointer}
+.mdock .dk .i{width:22px;height:22px}.mdock .dk span{white-space:nowrap;max-width:84px;overflow:hidden;text-overflow:ellipsis}
 .mdock .dk:active{background:var(--band)}
 .mdock .dk .cnt{position:absolute;top:0;inset-inline-end:10px;min-width:18px;height:18px;border-radius:9px;background:#c0392b;color:#fff;font-size:.7rem;display:grid;place-items:center;padding:0 5px}
 .mdock .dk .cnt[hidden]{display:none}
@@ -690,7 +691,7 @@ const TX={
  trl:["English translation of the meaning · please review with a teacher","ترجمة المعنى بالإنجليزية"],
  pdfB:["Download the book (PDF)","حمّل الكتاب (PDF)"],pdfD:["The original book متن الأسماء, free to download, print and share.","الكتاب الأصلي «متن الأسماء»، مجاني للتحميل والطباعة والنشر."],
  hideEv:["Hide the evidence (tap to reveal)","أخفِ الدليل (اضغط لإظهاره)"],showEv:["Show the evidence (daleel)","إظهار الدليل"],showEvD:["Memorizing the daleel is optional. Turn this off to see only the names and their meanings.","حفظ الدليل اختياري. أطفئ هذا الخيار لترى الأسماء ومعانيها فقط."],evOnT:["The daleel is now shown","تم إظهار الدليل"],evOffT:["The daleel is now hidden","تم إخفاء الدليل"],evOn:["Daleel shown","الدليل ظاهر"],evOff:["Daleel hidden","الدليل مخفي"],hideNm:["Hide the name","أخفِ الاسم"],
- nextWord:["Show next word","أظهر الكلمة التالية"],showAll:["Show all","أظهر الكل"],listen:["Listen","استمع"],stop:["Stop","إيقاف"],
+ nextWord:["Show next word","أظهر الكلمة التالية"],peekB:["Peek","لمحة"],showAll:["Show all","أظهر الكل"],listen:["Listen","استمع"],stop:["Stop","إيقاف"],
  noVoice:["This device has no Arabic voice installed, so Listen is not available here.","لا يوجد صوت عربي على هذا الجهاز، لذلك لا يعمل الاستماع هنا."],
  reps:["Repetitions","التكرار"],repsHint:["Read it aloud, then tap.","اقرأ بصوت مسموع ثم اضغط."],recited:["I recited it","قرأته"],reset:["Reset","إعادة"],
  markMem:["Memorized, next","حفظته، التالي"],needRev:["Needs review","يحتاج مراجعة"],unRev:["Remove from review","أزل من المراجعة"],
@@ -838,6 +839,7 @@ const ICON={
  trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
  history:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2"/>',
  chev:'<path d="M6 9l6 6 6-6"/>',
+ peek:'<path d="M3 14.5c2.2-4 5.4-6 9-6s6.8 2 9 6"/><path d="M8.6 14.5a3.4 3.4 0 0 1 6.8 0"/><path d="M2.5 14.5h19"/><path d="M12 4.5v1.6M6.4 6.3l.9 1.3M17.6 6.3l-.9 1.3"/>',
  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
  eyeoff:'<path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.2M6.6 6.6C3.9 8.4 2 12 2 12s3.5 7 10 7c1.6 0 3-.4 4.3-1M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
  play2:'<path d="M7 5v14l12-7z"/>',
@@ -1112,7 +1114,7 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
   cur(){$$(".w.cur").forEach(w=>w.classList.remove("cur"));const x=this.W[this.at];if(!x)return;x.el.classList.add("cur");
     const r=x.el.getBoundingClientRect();if(r.top<90||r.bottom>innerHeight-90)x.el.scrollIntoView({block:"center",behavior:"smooth"})},
   mark(j,kind){const x=this.W[j];if(!x)return;const el=x.el,hid=el.hasAttribute("data-h")||!!el.closest(".names.hid");
-    const c=kind==="miss"?"miss":hid?"wm":"rd";el.classList.remove("h","fl","cur","wm","rd","miss");el.removeAttribute("data-h");el.classList.add(c);this.mk[x.id]=c},
+    const c=kind==="miss"?"miss":hid?"wm":"rd";el.classList.remove("h","fl","cur","wm","rd","miss","pk");el.removeAttribute("data-h");el.classList.add(c);this.mk[x.id]=c},
   step(n,kind){this.stuck=0;this.trail=[];for(let k=0;k<n;k++){this.mark(this.at,k<n-1||kind==="miss"?kind:"ok");this.at++}
     if(this.ret!=null&&this.retDir>0&&this.at>=this.ret){this.ret=null;this.retUI()}
     const rt=this.root(),nm=rt&&$(".names.hid",rt);if(nm&&!nm.querySelector(".w:not(.wm):not(.rd):not(.miss)"))nm.classList.remove("hid");
@@ -1229,6 +1231,7 @@ V.memorize=el=>{
   </div></section>
   <div class="mdock" id="mdock"><div class="in">
     <button class="dk" type="button" id="lvBtn" aria-pressed="${!!lv}">${ic(lv?"eye":"eyeoff")}<span>${lv?t("showAllW"):t("hideAll")}</span></button>
+    ${lv?`<button class="dk" type="button" id="pkBtn">${ic("peek")}<span>${t("peekB")}</span></button>`:""}
     <div class="mw"><button class="mic ${live&&!Mem.paused?"on":""}" type="button" id="live" aria-label="${live?(Mem.paused?t("resume"):t("pause")):t("live")}">${live?(Mem.paused?ic("play2"):'<svg class="i" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>'):ic("mic")}</button><small>${live?(Mem.paused?t("resume"):t("pause")):t("startL")}</small></div>
     <button class="dk" type="button" id="mvOpen">${ic("rev")}<span>${t("misBtn")}</span><b class="cnt" ${nMis?"":"hidden"}>${N(nMis)}</b></button>
     ${live?`<button class="dk stop" type="button" id="liveStop" aria-label="${t("liveStop")}"><svg class="i" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span>${t("liveStop")}</span></button>`:""}
@@ -1237,6 +1240,8 @@ V.memorize=el=>{
   const go=n=>{LS.set("cur."+PID,n);Mem.autoLv(n);render();scrollTo(0,0)};
   $("#sets").onclick=()=>{Mem.stopLive();Mem.run=false;render()};
   $("#prev").onclick=()=>pos>0&&go(r[pos-1]);$("#next").onclick=()=>pos<r.length-1&&go(r[pos+1]);
+  /* Peek: show the next hidden word. A peeked word counts as read, not from memory. */
+  if($("#pkBtn"))$("#pkBtn").onclick=()=>{const x=Mem.live&&Mem.W&&Mem.W[Mem.at],c=x&&x.el.hasAttribute("data-h")?x.el:($(".w.cur[data-h]")||$(".w[data-h]"));if(c){c.classList.remove("h","fl");c.removeAttribute("data-h");c.classList.add("pk")}};
   $("#live").onclick=()=>{if(Mem.live){if(Mem.paused)Mem.resume();else Mem.pause()}else{Mem.mode="mem";Mem.startLive()}render()};
   if($("#liveStop"))$("#liveStop").onclick=()=>{Mem.stopLive();render()};
   $("#lvBtn").onclick=()=>{const n=lv?0:(LS.get("lvHide",4)||4);if(lv)LS.set("lvHide",lv);LS.set("lv",n);render();toast(t("lv"+n))};
