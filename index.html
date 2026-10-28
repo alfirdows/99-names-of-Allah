@@ -364,6 +364,55 @@ body.reading .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 .rbar .cnt{background:#c0392b;color:#fff;border-radius:999px;padding:0 7px;font-size:.8rem}
 @media (max-width:430px){.rbar .lbl{display:none}.rbar .st span{display:none}}
 body.reading .sec{padding-bottom:110px}
+
+/* ---- calm Memorize screen: slim top bar, lesson, and a small floating bar at the bottom ---- */
+body.mdocked .sec.mfocus{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))}
+body.mdocked #toast,body.reading #toast{bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+body:has(#mv) .retc{display:none}
+.mfocus .mbar{gap:6px;padding:6px 0 8px}
+.mfocus .mbar .where{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;line-height:1.15}
+.mfocus .mbar .where small{font-weight:600;color:var(--muted)}
+.mfocus .mbar .rp{display:flex;gap:4px}.mfocus .mbar .rp i{width:6px;height:6px;border-radius:50%;background:var(--line)}.mfocus .mbar .rp i.on{background:var(--acc)}
+.mfocus .mbar .r2{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;min-height:30px}
+.mfocus .mbar .r2 .sp{flex:1}.mfocus .mbar .r2 .note{font-size:.8rem;margin:0}
+.mfocus .mbar .r2 .lv{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:.85rem;color:#c0392b}.mfocus .mbar .r2 .lv i{width:8px;height:8px;border-radius:50%;background:#c0392b;animation:blink 1.4s infinite}
+.mfocus .mbar .r2 .lv.ps{color:var(--muted)}.mfocus .mbar .r2 .lv.ps i{background:var(--muted);animation:none}
+.mfocus .mbar .r2 .evsw{flex:none;font-size:.8rem;padding:4px 10px;min-height:30px;display:inline-flex;align-items:center;gap:5px}.mfocus .mbar .r2 .evsw .i{width:15px;height:15px}
+.mdock{position:fixed;left:0;right:0;bottom:0;z-index:60;padding:0 12px calc(10px + env(safe-area-inset-bottom,0px));pointer-events:none}
+.mdock .in{pointer-events:auto;margin:0 auto;width:max-content;max-width:100%;display:flex;align-items:flex-end;gap:6px;padding:8px 10px;border-radius:28px;background:color-mix(in srgb,var(--surface) 94%,transparent);border:1px solid var(--line);box-shadow:0 10px 28px rgba(0,0,0,.14);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.mdock .dk{position:relative;border:0;background:transparent;color:var(--ink);font:inherit;font-size:.72rem;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;width:68px;padding:6px 2px;border-radius:16px;cursor:pointer}
+.mdock .dk .i{width:22px;height:22px}.mdock .dk span{white-space:nowrap;max-width:68px;overflow:hidden;text-overflow:ellipsis}
+.mdock .dk:active{background:var(--band)}
+.mdock .dk .cnt{position:absolute;top:0;inset-inline-end:10px;min-width:18px;height:18px;border-radius:9px;background:#c0392b;color:#fff;font-size:.7rem;display:grid;place-items:center;padding:0 5px}
+.mdock .dk .cnt[hidden]{display:none}
+.mdock .dk.stop{color:#c0392b}
+.mdock .mw{display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px}.mdock .mw small{font-size:.72rem;font-weight:700;color:var(--muted)}
+.mdock .mic{width:60px;height:60px;border-radius:50%;border:0;background:var(--acc);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 14px color-mix(in srgb,var(--acc) 40%,transparent)}
+.mdock .mic .i{width:26px;height:26px}.mdock .mic.on{background:#c0392b;animation:pulse 1.6s ease-in-out infinite}
+.opts{display:grid;gap:14px}.opts .og{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px}.opts .og:first-child{border-top:0;padding-top:0}
+.opts h4{margin:0;font-size:.85rem;color:var(--muted)}
+.opts .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.opts .chip,.opts .btn{font-family:inherit;font-weight:700;display:inline-flex;flex-direction:row;align-items:center;gap:6px;color:var(--ink)}.opts .btn.pri{color:var(--acc-ink)}.opts .btn.warn{color:var(--warn)}.opts .chip.on{color:var(--acc)}.opts .chip .i,.opts .btn .i{width:17px;height:17px;flex:none}
+.seg5{display:flex;border:1px solid var(--line);border-radius:12px;overflow:hidden}.seg5 button{flex:1;border:0;background:var(--surface);color:var(--ink);font:inherit;font-size:.78rem;font-weight:700;padding:9px 2px;cursor:pointer}
+.seg5 button+button{border-inline-start:1px solid var(--line)}.seg5 button.on{background:var(--acc);color:#fff}
+/* return to where you were */
+.retc{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(98px + env(safe-area-inset-bottom,0px));z-index:65;display:flex;align-items:center;gap:2px;padding:4px;border-radius:999px;background:var(--ink);color:var(--bg);box-shadow:0 8px 22px rgba(0,0,0,.22);animation:up .2s ease-out}
+body.reading .retc{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+.retc button{border:0;background:transparent;color:inherit;font:inherit;font-weight:700;font-size:.86rem;display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.retc .x{padding:7px;opacity:.7}.retc .i{width:17px;height:17px}
+/* mistakes card (one at a time) */
+.mv{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(98px + env(safe-area-inset-bottom,0px));z-index:70;width:min(560px,calc(100vw - 20px));max-height:62vh;display:flex;flex-direction:column;background:var(--bg);border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:20px;box-shadow:0 14px 36px rgba(0,0,0,.22);animation:up .2s ease-out}
+body.reading .mv{bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+body:not(.mdocked):not(.reading) .mv{bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+.mv .mvh{display:flex;align-items:center;gap:8px;padding:10px 12px 6px}.mv .mvh .sp{flex:1}
+.mv .mvi{width:30px;height:30px;border-radius:10px;background:var(--gold-soft);color:var(--gold);display:grid;place-items:center}.mv .mvi .i{width:18px;height:18px}
+.mv .mvh .c{color:var(--muted);font-weight:700;font-size:.85rem;font-variant-numeric:tabular-nums}
+.mv .mvt{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;font:inherit;font-size:.78rem;font-weight:700;padding:5px 10px;cursor:pointer}
+.mv .mvx{border:0;background:var(--band);color:var(--ink);width:32px;height:32px;border-radius:50%;display:grid;place-items:center;cursor:pointer}.mv .mvx .i{width:16px;height:16px}
+.mv .mvb{overflow:auto;padding:4px 12px 10px;display:grid;gap:10px}
+.mv .mvf{display:flex;align-items:center;gap:8px;padding:8px 12px 12px;border-top:1px solid var(--line)}
+.mv .mvf button{border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:700;font-size:.85rem;border-radius:999px;padding:7px 12px;display:inline-flex;align-items:center;gap:4px;cursor:pointer}
+.mv .mvf button:disabled{opacity:.35}.mv .mvf button .i{width:16px;height:16px}
+.mv .mvf .dots{flex:1;display:flex;justify-content:center;gap:5px;flex-wrap:wrap}.mv .mvf .dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}.mv .mvf .dots i.on{background:var(--gold);width:16px;border-radius:4px}
 /* mistakes sheet (slides up from the bottom) */
 .sheet{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.38);display:flex;align-items:flex-end;justify-content:center}
 .sheet[hidden]{display:none}
@@ -459,22 +508,39 @@ function wmatch(h,e){if(!h||!e)return false;if(h===e)return true;const need=L=>L
  const ok=(a,b)=>{const L=Math.max(a.length,b.length);return L<=3?a===b:sim(a,b)>=need(L)};if(ok(h,e))return true;
  const h2=h.replace(/^[وف]/,""),e2=e.replace(/^[وف]/,"");if(h2.length>1&&e2.length>1&&(h2!==h||e2!==e)&&ok(h2,e2))return true;
  const a=h.replace(/^ال/,""),b=e.replace(/^ال/,"");return a.length>2&&b.length>2&&ok(a,b)}
+/* Sounds the phone often mixes up (ص/س, ض/د, ط/ت, ق/ك, ح/ه, ذ/ظ/ز, ث/س, ع and alif) count as one, and "ال" is ignored. */
+const fold=s=>s.replace(/^[وف]?ال/,"").replace(/[صث]/g,"س").replace(/ض/g,"د").replace(/[ذظ]/g,"ز").replace(/ط/g,"ت").replace(/ق/g,"ك").replace(/ح/g,"ه").replace(/غ/g,"خ").replace(/[عا]/g,"").replace(/(.)\1+/g,"$1");
+/* Kinder check: the same word as the phone usually mishears it. "again" = you are already trying this word, so a close word is enough. */
+function wnear(h,e,again){if(wmatch(h,e))return true;if(!h||!e)return false;const a=fold(h),b=fold(e);if(!a||!b)return false;if(a===b)return true;if(!again)return false;
+ const L=Math.max(a.length,b.length);return L<=2?false:L<=4?lev(a,b)<=1:sim(a,b)>=.6}
 class Listener{constructor(onWords,onState){this.onWords=onWords;this.onState=onState;this.active=false;this.done=0}
- start(){if(!SR)return false;this.active=true;this._spin();return true}
+ start(){if(!SR)return false;this.active=true;this.last=Date.now();this._spin();clearInterval(this.dog);
+  /* The iPhone sometimes stops sending words without saying so. If nothing has come for a while, start again quietly. */
+  this.dog=setInterval(()=>{if(this.active&&Date.now()-this.last>7000)this.refresh()},1000);return true}
+ /* Listen afresh. The phone guesses each word from the words before it, so after one misheard word it can keep hearing
+    the same wrong word however many times it is repeated. A fresh start clears that. */
+ refresh(){if(!this.active||Date.now()-(this.ref||0)<2500)return;this.ref=this.last=Date.now();const old=this.r;
+  if(old){old.onresult=old.onend=old.onerror=null;try{old.abort()}catch(e){try{old.stop()}catch(e){}}}
+  setTimeout(()=>{if(this.active&&this.r===old)try{this._spin()}catch(e){}},250)}
  _spin(){const r=new SR();this.r=r;r.lang="ar-SA";r.continuous=true;r.interimResults=true;this.prev=[];
   /* Words count as soon as they appear; the newest (still being heard) word only counts if it is the expected one. */
-  r.onresult=e=>{let ws=[],tail=null;for(let i=0;i<e.results.length;i++){const res=e.results[i];const w=res[0].transcript.split(/\s+/).filter(Boolean);
+  r.onresult=e=>{if(this.r!==r)return;this.last=Date.now();let ws=[],tail=null;for(let i=0;i<e.results.length;i++){const res=e.results[i];const w=res[0].transcript.split(/\s+/).filter(Boolean);
     if(res.isFinal||i<e.results.length-1)ws.push(...w);else{ws.push(...w.slice(0,-1));tail=w.length?w[w.length-1]:null}}
    /* Phones (iPhone especially) rewrite earlier words and restart the list after a pause, so compare with the words
-      already used instead of counting them: only words that are new or changed are passed on. */
+      already used instead of counting them: only words that are new or changed are passed on. An old word that was
+      rewritten far back is not passed on again (that used to look like going back and caused false mistakes). */
    const P=this.prev;let k=0;while(k<P.length&&k<ws.length&&snorm(P[k])===snorm(ws[k]))k++;
-   if(k<P.length&&this.onRevise)this.onRevise();this.prev=ws.slice();
-   if(ws.length>k)this.onWords(ws.slice(k));
-   if(tail&&this.onPeek&&this.onPeek(tail))this.prev.push(tail)};
-  r.onerror=e=>{if(["not-allowed","service-not-allowed","audio-capture"].includes(e.error)){this.active=false;this.onState("denied")}};
-  r.onend=()=>{if(this.active)setTimeout(()=>{if(this.active)try{this._spin()}catch(e){}},0)};
-  try{r.start()}catch(e){this.active=false;this.onState("denied")}}
- stop(){this.active=false;try{this.r&&this.r.stop()}catch(e){}}}
+   const fresh=k===0&&P.length&&ws.length&&snorm(ws[0])!==snorm(P[0])&&ws.length<=P.length;
+   if(k<P.length&&this.onRevise)this.onRevise();const from=fresh?0:Math.max(k,Math.min(ws.length,P.length-2));this.prev=ws.slice();
+   if(ws.length>from)this.onWords(ws.slice(from));
+   clearTimeout(this.ft);if(tail&&this.onPeek&&this.onPeek(tail))this.prev.push(tail);
+   /* The newest word is still being heard. If you stop on it, use it after a short pause anyway, so a word said on its own
+      (or the second word of a jump back) is not left waiting. */
+   else if(tail)this.ft=setTimeout(()=>{if(this.r===r&&this.prev.length===ws.length){this.prev.push(tail);this.onWords([tail])}},800)};
+  r.onerror=e=>{if(["not-allowed","service-not-allowed","audio-capture"].includes(e.error)){this.active=false;clearInterval(this.dog);this.onState("denied")}};
+  r.onend=()=>{if(this.active&&this.r===r)setTimeout(()=>{if(this.active&&this.r===r)try{this._spin()}catch(e){}},0)};
+  try{r.start()}catch(e){this.active=false;clearInterval(this.dog);this.onState("denied")}}
+ stop(){this.active=false;clearInterval(this.dog);try{this.r&&this.r.stop()}catch(e){}}}
 const norm=s=>s.replace(/[ً-ٰٟۖ-ۭـ]/g,"").replace(/[أإآٱ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").toLowerCase();
 const LS={get(k,d){try{const v=localStorage.getItem("asma1."+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("asma1."+k,JSON.stringify(v))}catch(e){}}};
 /* Visitor count: GoatCounter (account "tasnim"). No cookies or personal data; only the owner sees the numbers at https://tasnim.goatcounter.com. Works on any domain; skipped during local testing. */
@@ -568,6 +634,8 @@ const TX={
  closeL:["Close","إغلاق"],readDone:["You reached the end. Well done!","وصلت إلى النهاية. أحسنت!"],listenL:["Listening","أستمع"],
  pause:["Pause","إيقاف مؤقت"],resume:["Continue","متابعة"],paused:["Paused. Tap ▶ to carry on from where you stopped.","متوقف مؤقتًا. اضغط ▶ لتكمل من حيث توقفت."],following:["Following you from here","أتابعك من هنا"],
  reciteMis:["Recite your mistakes","سمّع أخطاءك"],reciteMisD:["Goes through only the lessons you slipped in.","يمرّ على الدروس التي أخطأت فيها فقط."],misSet:["Your mistakes","أخطاؤك"],planH:["Today's plan","ورد اليوم"],planD:["The classic way of hifz: a new portion, a recent review and an older review. Each one starts hands-free.","على طريقة الحفظ المعروفة: درس جديد، ومراجعة قريبة، ومراجعة بعيدة. كل واحد يبدأ بالتسميع مباشرة."],
+ retGo:["Back to where you were","ارجع إلى حيث كنت"],retDone:["Back where you were","رجعتَ إلى موضعك"],oneByOne:["One by one","واحدًا واحدًا"],hideL:["Hide","إخفاء"],
+ moreL:["More","المزيد"],levelL:["Hiding","الإخفاء"],optL:["Tools","أدوات"],thisLesson:["This lesson","هذا الدرس"],colorsL:["Colours","الألوان"],startL:["Start","ابدأ"],tapWordHint:["Tap a hidden word to peek at it.","اضغط على كلمة مخفية لتراها."],
  pNew:["New lesson","الدرس الجديد"],pNewD:["Your next lesson","درسك التالي"],pNear:["Recent review","المراجعة القريبة"],pNearD:["What you learned this week","ما حفظته هذا الأسبوع"],
  pFar:["Older review","المراجعة البعيدة"],pFarD:["Older lessons, so they stay strong","دروس قديمة حتى تبقى ثابتة"],pStart:["Start","ابدأ"],pDone:["Done today","تم اليوم"],pNone:["Nothing yet","لا شيء بعد"],pAll:["All memorized!","حفظت الكل!"],
  weakH:["Weak spots","مواضع الضعف"],weakD:["Darker means more slips. Tap a lesson to recite it.","كلما كان اللون أغمق كانت الأخطاء أكثر. اضغط على درس لتسمّعه."],weakGo:["Recite the 5 weakest","سمّع أضعف ٥ دروس"],weakNone:["No slips recorded yet. Recite with the microphone to fill this map.","لا توجد أخطاء مسجّلة بعد. سمّع بالميكروفون ليمتلئ هذا الجدول."],
@@ -661,7 +729,11 @@ const ICON={
  play2:'<path d="M7 5v14l12-7z"/>',
  mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/>',
  shuffle:'<path d="M3 7h3.5c4.5 0 6.5 10 11 10H21M3 17h3.5c1.6 0 2.8-1.3 3.8-3M14 7.6C15 6.6 16 7 17.5 7H21M18.5 4.5 21 7l-2.5 2.5M18.5 14.5 21 17l-2.5 2.5"/>',
- arrows:'<path d="M4 12h16M14 6l6 6-6 6"/>'
+ arrows:'<path d="M4 12h16M14 6l6 6-6 6"/>',
+ x:'<path d="M6 6l12 12M18 6 6 18"/>',
+ dots:'<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>',
+ undo:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/>',
+ rev:'<path d="M8 4h8l3 3v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="m8.5 12 2.2 2.2L15.5 9.5M8.5 18h7"/>'
 };
 const ic=(k,st="")=>`<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" ${st}>${ICON[k]}</svg>`;
 const PERSON='<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg>';
@@ -689,6 +761,7 @@ $("#pfBtn").onclick=()=>location.hash="#settings";
 /* ================= views ================= */
 const V={};
 function render(){
+  document.body.classList.remove("mdocked");if(typeof MV!=="undefined"&&MV.list.length)MV.close();
   stopSpeech();Game.stop();if(Rec.mr&&!Mem.live&&!(VIEW==="memorize"&&location.hash==="#memorize"))Rec.stop();
   if(location.hash==="#owner-tasnim"){LS.set("owner",true);location.replace("#settings");return}
   const h=location.hash.slice(1);VIEW=[...VIEWS,"settings","mistakes"].includes(h)?h:"home";
@@ -871,6 +944,22 @@ const MIS={all(){return LS.get("mis."+PID,[])},save(a){LS.set("mis."+PID,a.slice
     setTimeout(()=>{if(this.audio===a){a.pause();btn.classList.remove("on");this.audio=null}},9000)},
   openSheet(){$("#shT").textContent=t("mistakes");$("#shX").textContent=t("closeL");const body=$("#shB"),draw=()=>{body.innerHTML=this.sessionsHTML();this.bind(body,draw)};draw();$("#misSheet").hidden=false},
   closeSheet(){$("#misSheet").hidden=true;if(this.audio){this.audio.pause();this.audio=null}}};
+/* Mistakes, one at a time (our own design): a small card above the bottom bar shows one slip with what was expected and
+   what was heard. Next / Previous move through them, "Show all" lists them, × hides the card. */
+const MV={list:[],i:0,all:false,h:{},
+  open(list,at,h){MIS.closeSheet();if(!list.length){toast(t("noMis"));return}this.list=list;this.i=Math.max(0,Math.min(list.length-1,at||0));this.all=false;this.h=h||{};this.draw()},
+  close(){const b=$("#mv");if(b)b.remove();this.list=[];if(MIS.audio){MIS.audio.pause();MIS.audio=null}},
+  draw(){if(!this.list.length)return this.close();this.i=Math.min(this.i,this.list.length-1);let b=$("#mv");
+    if(!b){b=document.createElement("div");b.id="mv";b.className="mv";b.setAttribute("role","dialog");document.body.appendChild(b);b.onclick=e=>this.click(e)}
+    const n=this.list.length,fw=LANG==="ar"?"prev":"next",bw=LANG==="ar"?"next":"prev";
+    b.innerHTML=`<div class="mvh"><span class="mvi">${ic("rev")}</span><b>${t("mistakes")}</b><span class="c">${this.all?N(n):N(this.i+1)+" / "+N(n)}</span><span class="sp"></span>
+      ${n>1?`<button class="mvt" type="button" data-v="all">${this.all?t("oneByOne"):t("showAll")}</button>`:""}<button class="mvx" type="button" data-v="x" aria-label="${esc(t("hideL"))}">${ic("x")}</button></div>
+      <div class="mvb">${(this.all?this.list:[this.list[this.i]]).map(m=>MIS.card(m)).join("")}</div>
+      ${!this.all&&n>1?`<div class="mvf"><button type="button" data-v="prev" ${this.i?"":"disabled"}>${ic(bw)}${t("prev")}</button><span class="dots">${n<=12?this.list.map((_,k)=>`<i class="${k===this.i?"on":""}"></i>`).join(""):""}</span><button type="button" data-v="next" ${this.i<n-1?"":"disabled"}>${t("next")}${ic(fw)}</button></div>`:""}`},
+  click(e){const v=e.target.closest("[data-v]");if(v){const k=v.dataset.v;if(k==="x")this.close();else{if(k==="all")this.all=!this.all;if(k==="next")this.i++;if(k==="prev")this.i--;this.draw()}return}
+    const d=e.target.closest("[data-mdel]");if(d){const m=this.list.find(x=>x.id===d.dataset.mdel);this.list=this.list.filter(x=>x!==m);MIS.del(m.id);toast(t("misDone"));this.draw();this.h.after&&this.h.after();Mem.dockUI();return}
+    const p=e.target.closest("[data-mplay]");if(p){MIS.play(p.dataset.mplay,p);return}
+    const o=e.target.closest("[data-mopen]");if(o){const li=+o.dataset.mopen;this.close();if(!(VIEW==="memorize"&&Mem.run&&LS.get("cur."+PID,0)===li)){Mem.stopLive();Mem.open(li)}}}};
 $("#shX").onclick=()=>MIS.closeSheet();$("#misSheet").onclick=e=>{if(e.target.id==="misSheet")MIS.closeSheet()};
 document.addEventListener("click",e=>{const a=e.target.closest('a[href="#mistakes"]');if(a){e.preventDefault();MIS.openSheet()}});
 /* The lessons being memorized: one set or all lessons, in book order or shuffled. Kept per learner. */
@@ -890,14 +979,14 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
   startLive(){if(!SR){toast(t("noSR"));return false}
     if(!this.L){this.L=new Listener(ws=>this.heard(ws),st=>{if(st==="denied"){this.stopLive();toast(t("noMic"));if(VIEW==="memorize")render()}});this.L.onPeek=w=>this.peek(w);this.L.onRevise=()=>{this.pend=[]}}
     this.live=true;this.paused=false;this.sid=Date.now().toString(36);this.L.start();try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(l=>this.wl=l).catch(()=>{})}catch(e){}return true},
-  stopLive(){const was=this.live;this.live=false;this.paused=false;if(was&&this.mode==="read"){this.mode="mem";$$(".w.cur").forEach(w=>w.classList.remove("cur"));if(VIEW==="names")setTimeout(render,0)}if(this.L)this.L.stop();if(was&&Rec.mr)Rec.stop().then(()=>{const l=$("#recList");if(l&&l.refresh)l.refresh()});try{this.wl&&this.wl.release()}catch(e){}this.wl=null},
+  stopLive(){const was=this.live;this.live=false;this.paused=false;this.retUI();if(was&&this.mode==="read"){this.mode="mem";$$(".w.cur").forEach(w=>w.classList.remove("cur"));if(VIEW==="names")setTimeout(render,0)}if(this.L)this.L.stop();if(was&&Rec.mr)Rec.stop().then(()=>{const l=$("#recList");if(l&&l.refresh)l.refresh()});try{this.wl&&this.wl.release()}catch(e){}this.wl=null},
   /* While reciting hands-free, your voice is also recorded: one recording per lesson, saved to My recitation. */
   async recLesson(i){if(!this.live||(Rec.mr&&Rec.lesson===i))return;if(Rec.mr)await Rec.stop();if(this.live&&await Rec.start(i)){const b=$("#recBtn");if(b){b.className="btn recon";b.textContent="■ "+t("recStop")}}},
   /* Collect the words to recite, in reading order: names, then the daleel (if shown), then the meaning. */
   hook(){const ev=!document.documentElement.classList.contains("noev"),root=this.root();if(!root){this.W=[];return}
     /* Each word gets a fixed id (section + position) so your place survives showing/hiding the daleel, names or words. */
     this.W=[];[["n",".names .w"],["e",".ev p .w"],["m",".mn p .w"]].forEach(([p,sel])=>$$(sel,root).forEach((el,k)=>{const n=snorm(el.textContent);if(n&&(p!=="e"||ev))this.W.push({el,n,id:p+k})}));
-    this.at=0;this.lock=false;this.pend=[];this.mk={};
+    this.at=0;this.lock=false;this.pend=[];this.trail=[];this.stuck=0;this.ret=null;this.retUI();this.mk={};
     /* Coming back to a lesson you stopped in the middle of: carry on from the same word, not from the start. */
     const sv=this.saved[this.key()];if(sv){this.mk=Object.assign({},sv.mk);this.W.forEach(x=>{const c=this.mk[x.id];if(c){x.el.classList.remove("h","fl");x.el.removeAttribute("data-h");x.el.classList.add(c)}});
       let j=this.W.findIndex(x=>x.id===sv.cur);if(j<0)j=this.W.findIndex(x=>!this.mk[x.id]);this.at=Math.max(0,j<0?this.W.length:j);if(this.at>=this.W.length)this.at=0}
@@ -905,8 +994,9 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
   cur(){$$(".w.cur").forEach(w=>w.classList.remove("cur"));const x=this.W[this.at];if(!x)return;x.el.classList.add("cur");
     const r=x.el.getBoundingClientRect();if(r.top<90||r.bottom>innerHeight-90)x.el.scrollIntoView({block:"center",behavior:"smooth"})},
   mark(j,kind){const x=this.W[j];if(!x)return;const el=x.el,hid=el.hasAttribute("data-h")||!!el.closest(".names.hid");
-    const c=kind==="miss"?"miss":hid?"wm":"rd";el.classList.remove("h","fl","cur");el.removeAttribute("data-h");el.classList.add(c);this.mk[x.id]=c},
-  step(n,kind){for(let k=0;k<n;k++){this.mark(this.at,k<n-1||kind==="miss"?kind:"ok");this.at++}
+    const c=kind==="miss"?"miss":hid?"wm":"rd";el.classList.remove("h","fl","cur","wm","rd","miss");el.removeAttribute("data-h");el.classList.add(c);this.mk[x.id]=c},
+  step(n,kind){this.stuck=0;this.trail=[];for(let k=0;k<n;k++){this.mark(this.at,k<n-1||kind==="miss"?kind:"ok");this.at++}
+    if(this.ret!=null&&this.retDir>0&&this.at>=this.ret){this.ret=null;this.retUI()}
     const rt=this.root(),nm=rt&&$(".names.hid",rt);if(nm&&!nm.querySelector(".w:not(.wm):not(.rd):not(.miss)"))nm.classList.remove("hid");
     if(this.at>=this.W.length){delete this.saved[this.key()];this.finish()}else{this.saved[this.key()]={cur:this.W[this.at].id,mk:Object.assign({},this.mk)};this.cur()}},
   /* Find where you are reciting: the last few words heard, in a row, anywhere in the lesson (nearest to where we were). */
@@ -914,17 +1004,33 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
       for(let k=0;k+len<=this.W.length;k++){if(k===this.at)continue;let ok=true;for(let x=0;x<len;x++)if(!wmatch(q[x],this.W[k+x].n)){ok=false;break}
         if(ok&&(best<0||Math.abs(k-this.at)<Math.abs(best-this.at)))best=k}
       if(best>=0)return{k:best,len}}return null},
-  peek(raw){if(!this.live||this.lock||this.paused)return false;const x=this.W[this.at];if(x&&wmatch(snorm(raw),x.n)){this.step(1,"ok");return true}return false},
+  /* "again": you are already trying this word (a slip was heard, or nothing moved for a few words), so a close word is enough. */
+  again(){return this.pend.length>0||this.stuck>=2},
+  /* Said again and now close enough: earlier tries that were also close were the phone mishearing you, not mistakes. */
+  near(x){if(this.pend.every(p=>wnear(snorm(p),x.n,true)))this.pend=[];this.resolve(0,1)},
+  peek(raw){if(!this.live||this.lock||this.paused)return false;const x=this.W[this.at];if(x&&wnear(snorm(raw),x.n,this.again())){this.near(x);return true}return false},
   heard(ws){if(!this.live||this.lock||this.paused||VIEW!==(this.mode==="read"?"names":"memorize"))return;for(const raw of ws){if(this.lock)return;const h=snorm(raw),W=this.W,i=this.at;if(!h||!W[i])continue;
     if(wmatch(h,W[i].n)){this.resolve(0,1);continue}
+    if(wnear(h,W[i].n,this.again())){this.near(W[i]);continue}
     if(W[i+1]&&wmatch(h,W[i].n+W[i+1].n)){this.resolve(0,2);continue}
     let j=0;for(let d=1;d<=3&&W[i+d];d++)if((d===1||h.length>3)&&wmatch(h,W[i+d].n)){j=d;break}
     if(j){this.resolve(j,1);continue}
+    /* Nothing moved: after a few words, listen afresh so the phone stops repeating the same wrong guess. */
+    this.stuck=(this.stuck||0)+1;if(this.stuck===3&&this.L)this.L.refresh();if(h.length<2)continue;
+    /* Words from another place: after two in a row, follow you there, back or ahead, anywhere in the lesson. */
+    this.trail=(this.trail||[]).concat([h]).slice(-3);
+    if(this.trail.length>=2){const f=this.locate(this.trail);if(f){this.jump(f);continue}}
     /* Not the expected word: hold it until we know whether it replaced a word or was extra. Repeating a word just said is fine. */
-    let again=false;for(let b=1;b<=8;b++)if(W[i-b]&&wmatch(h,W[i-b].n)){again=true;break}if(again||h.length<2)continue;
+    let again=false;for(let b=1;b<=8;b++)if(W[i-b]&&wmatch(h,W[i-b].n)){again=true;break}if(again)continue;
     this.pend.push(raw);
-    if(this.pend.length>=2){const f=this.locate(this.pend.map(snorm));if(f){this.pend=[];for(let x=0;x<f.len;x++)this.mark(f.k+x,"ok");this.at=f.k+f.len;toast(t("following"));this.step(0);continue}}
     if(this.pend.length>=5){const p=this.pend;this.pend=[];this.log([{k:i,s:p.join(" ")}],[],[],i,1);this.mark(i,"miss");this.at++;this.step(0)}}},
+  /* Follow the reader to another place. A long way back or ahead keeps a button to return to where you were. */
+  jump(f){const i=this.at,to=f.k+f.len;if(to===i){this.trail=[];return}if(Math.abs(to-i)>10){if(this.ret==null||(to<i&&i>this.ret)){this.ret=i;this.retDir=to<i?1:-1}}
+    this.pend=[];for(let x=0;x<f.len;x++)this.mark(f.k+x,"ok");this.at=to;toast(t("following"));this.step(0);this.retUI()},
+  retUI(){let c=$("#retc");if(this.ret==null||!this.live||!this.W[this.ret]){if(c)c.remove();return}
+    if(!c){c=document.createElement("div");c.id="retc";c.className="retc";document.body.appendChild(c)}
+    c.innerHTML=`<button class="go" type="button">${ic("undo")}<span>${t("retGo")}</span></button><button class="x" type="button" aria-label="${esc(t("closeL"))}">${ic("x")}</button>`;
+    $(".go",c).onclick=()=>{const k=this.ret;this.ret=null;this.pend=[];this.at=k;this.step(0);this.retUI();toast(t("retDone"))};$(".x",c).onclick=()=>{this.ret=null;this.retUI()}},
   /* The next d expected words were not matched, then n words were. Words heard in between replaced them (incorrect), or were extra. */
   resolve(d,n){const i=this.at,P=this.pend||[];this.pend=[];const pr=Math.min(d,P.length);
     const wrong=[],missed=[];for(let k=0;k<d;k++){if(k<pr)wrong.push({k:i+k,s:P[k]});else missed.push(i+k);this.mark(i+k,"miss")}
@@ -936,16 +1042,17 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
       ctx.push(w?{e:txt,s:w.s,b:1}:missed.includes(k)?{e:txt,s:null,b:1}:{e:txt,s:txt})}
     if(i+d>z)extra.forEach(x=>ctx.push({e:null,s:x,b:1}));
     MIS.add({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),t:Date.now(),sid:this.sid,i:this.lesson(),type:wrong.length?"wrong":missed.length?"missed":"extra",ctx});
-    const box=$("#misBox");if(box)box.dispatchEvent(new Event("redraw"));this.bar()},
+    this.bar();this.dockUI()},
+  dockUI(){const c=$("#mvOpen .cnt");if(c){const n=MIS.all().filter(m=>m.i===this.lesson()).length;c.textContent=n?N(n):"";c.hidden=!n}},
   /* The bar at the bottom of the reading page while listening. */
   bar(){const b=$("#rbar");if(!b)return;const on=this.live&&this.mode==="read"&&VIEW==="names";b.hidden=!on;document.body.classList.toggle("reading",on);if(!on)return;
     const n=MIS.all().filter(m=>m.sid===this.sid).length,hw=LS.get("hideRead",false);
     b.innerHTML=`<span class="st"><i style="${this.paused?"animation:none;background:var(--muted)":""}"></i><span>${this.paused?t("pause"):t("listenL")} · </span>${t("lessonN")} ${N(this.li+1)}</span>
       <button id="rbHide" class="${hw?"on":""}" aria-pressed="${hw}">${ic(hw?"eyeoff":"eye")}<span class="lbl">${t("hideWords")}</span></button>
-      <button id="rbMis">${ic("history")}<span class="lbl">${t("misBtn")}</span>${n?`<span class="cnt">${N(n)}</span>`:""}</button>
+      <button id="rbMis">${ic("rev")}<span class="lbl">${t("misBtn")}</span>${n?`<span class="cnt">${N(n)}</span>`:""}</button>
       <button id="rbPause" aria-label="${this.paused?t("resume"):t("pause")}">${this.paused?"▶":"❚❚"}</button>
       <button class="stop" id="rbStop">■ <span class="lbl">${t("liveStop")}</span></button>`;
-    $("#rbHide").onclick=()=>{LS.set("hideRead",!hw);render()};$("#rbMis").onclick=()=>MIS.openSheet();$("#rbStop").onclick=()=>{this.stopLive()};$("#rbPause").onclick=()=>{if(this.paused)this.resume();else this.pause();this.bar()}},
+    $("#rbHide").onclick=()=>{LS.set("hideRead",!hw);render()};$("#rbMis").onclick=()=>MV.open(MIS.all().filter(m=>m.sid===this.sid),0,{after:()=>this.bar()});$("#rbStop").onclick=()=>{this.stopLive()};$("#rbPause").onclick=()=>{if(this.paused)this.resume();else this.pause();this.bar()}},
   nextRead(){const i=this.li,p=P(i);if(p.s==="new")p.s="learning";touch(i);saveST();
     const nx=this.root()&&this.root().nextElementSibling;
     if(!nx||!nx.dataset.i){this.stopLive();toast(t("readDone"));return}
@@ -980,59 +1087,68 @@ V.memorize=el=>{
   const i=LS.get("cur."+PID,0), p=P(i), lv=LS.get("lv",0), target=LS.get("target",5);
   const hideEv=false, hideNm=LS.get("hideNm",false), MQ=Mem.q(), r=MQ.list.includes(i)?MQ.list:setRange(setOf(i)), pos=r.indexOf(i), live=Mem.live&&!!SR;
   const scope=(MQ.k===-3?t({new:"pNew",near:"pNear",far:"pFar"}[MQ.lab]||"planH"):MQ.k===-2?t("misSet"):MQ.k<0?t("allL"):setLabel(MQ.k))+(MQ.rnd?" · "+t("ordRnd"):"");
-  el.innerHTML=`<section class="sec"><div class="wrap narrow stack">
+  const nMis=MIS.all().filter(m=>m.i===i).length;
+  /* A calm screen: the lesson in the middle, one slim bar on top, and only four buttons at the bottom
+     (how much to hide, the microphone, the review, stop). Everything else waits in Tools. */
+  el.innerHTML=`<section class="sec mfocus"><div class="wrap narrow stack">
     <div class="mbar" id="mbar">
       <div class="r1"><button class="ib" id="prev" ${pos===0?"disabled":""} aria-label="${t("prev")}">${ic(LANG==="ar"?"next":"prev")}</button>
-        <button class="where" id="sets" title="${esc(scope)}">${t("lessonN")} ${N(pos+1)} ${t("of")} ${N(r.length)}</button>
+        <button class="where" id="sets" title="${esc(scope)}"><b>${t("lessonN")} ${N(pos+1)} <small>${t("of")} ${N(r.length)}</small></b><span class="rp" aria-label="${t("reps")} ${p.reps}/${target}">${Array.from({length:target},(_,n)=>`<i class="${n<p.reps?"on":""}"></i>`).join("")}</span></button>
         <button class="ib" id="next" ${pos===r.length-1?"disabled":""} aria-label="${t("next")}">${ic(LANG==="ar"?"prev":"next")}</button>
-        ${live?`<button class="ib" id="liveStop" aria-label="${t("liveStop")}">■</button><button class="mic ${Mem.paused?"":"on"}" id="live" aria-label="${Mem.paused?t("resume"):t("pause")}">${Mem.paused?"▶":"❚❚"}</button>`:`<button class="mic" id="live" aria-label="${t("live")}">${ic("mic")}</button>`}</div>
-      <div class="r2"><select class="mini" id="lvSel" aria-label="${t("lv0")}">${[0,1,2,3,4].map(n=>`<option value="${n}" ${n===lv?"selected":""}>${t("lv"+n)}</option>`).join("")}</select>
-        ${evSw()}<button class="chip ${hideNm?"on":""}" id="hNm" aria-pressed="${hideNm}">${ic(hideNm?"eyeoff":"eye")}${t("hideNm")}</button>
-        <a class="chip" href="#mistakes">${ic("history")}${t("misBtn")}</a></div>
-      ${live?`<div class="r3"><span class="lv ${Mem.paused?"ps":""}"><i></i>${Mem.paused?t("paused"):t("liveOn")}</span><span class="legend"><span><i class="k-mem"></i>${t("kMem")}</span><span><i class="k-rd"></i>${t("kRd")}</span><span><i class="k-miss"></i>${t("kMiss")}</span></span></div>`:`<p class="note r3">${t("liveHint")}</p>`}
+        <button class="ib" id="more" aria-label="${t("optL")}">${ic("dots")}</button></div>
+      <div class="r2">${live?`<span class="lv ${Mem.paused?"ps":""}"><i></i>${Mem.paused?t("pause"):t("listenL")}</span>`:`<span class="note">${t("tapWordHint")}</span>`}<span class="sp"></span>${evSw()}</div>
     </div>
     ${lessonHTML(i,{framed:true,lv,hideEv,hideNames:hideNm,sp:live})}
-    <div class="panel" id="misWrap"><div class="row" style="justify-content:space-between"><h3>${ic("history")}${t("misHere")}</h3><a class="btn out sm" href="#mistakes">${t("pastMis")}</a></div><div class="mis" id="misBox"></div></div>
-    <div class="row" style="justify-content:center">
-      ${lv?`<button class="btn out sm" id="nw">${t("nextWord")}</button><button class="btn sm" id="sa">${t("showAll")}</button>`:""}
-      ${AUDIO[i]?`<button class="btn sm" id="listen">${ic("sound")}<span>${t("listen")}</span></button>`:""}
-    </div>
-    <p class="note" id="noVoice" hidden>${t("noVoice")}</p>
-    <div class="reps"><div><b>${t("reps")}</b><div class="note">${t("repsHint")}</div></div>
-      <div class="dots" aria-label="${p.reps}/${target}">${Array.from({length:target},(_,n)=>`<i class="${n<p.reps?"on":""}"></i>`).join("")}</div>
-      <div class="row"><button class="btn pri" id="tap">${ic("star")}${t("recited")}</button><button class="btn sm" id="rr">${ic("refresh")}${t("reset")}</button></div></div>
-    <div class="row" style="justify-content:center"><button class="btn pri" id="mm">${ic("check")}${t("markMem")}</button><button class="btn warn" id="rv">${p.rev?t("unRev"):t("needRev")}</button></div>
-    <div class="panel"><div class="row" style="justify-content:space-between"><h3>${ic("memorize")}${t("myRec")}</h3><button class="btn ${Rec.mr?"recon":"out"}" id="recBtn">${Rec.mr?"■ "+t("recStop"):"● "+t("rec")}</button></div>
-      <p class="note">${t("recHint")}</p><div class="recs" id="recList"></div></div>
-  </div></section>`;
+  </div></section>
+  <div class="mdock" id="mdock"><div class="in">
+    <button class="dk" type="button" id="lvBtn">${ic(lv?"eyeoff":"eye")}<span>${t("lv"+lv)}</span></button>
+    <div class="mw"><button class="mic ${live&&!Mem.paused?"on":""}" type="button" id="live" aria-label="${live?(Mem.paused?t("resume"):t("pause")):t("live")}">${live?(Mem.paused?ic("play2"):'<svg class="i" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>'):ic("mic")}</button><small>${live?(Mem.paused?t("resume"):t("pause")):t("startL")}</small></div>
+    <button class="dk" type="button" id="mvOpen">${ic("rev")}<span>${t("misBtn")}</span><b class="cnt" ${nMis?"":"hidden"}>${N(nMis)}</b></button>
+    ${live?`<button class="dk stop" type="button" id="liveStop" aria-label="${t("liveStop")}"><svg class="i" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span>${t("liveStop")}</span></button>`:""}
+  </div></div>`;
+  document.body.classList.add("mdocked");
   const go=n=>{LS.set("cur."+PID,n);render();scrollTo(0,0)};
-  const drawMis=()=>{const box=$("#misBox");if(!box)return;const ms=MIS.all().filter(m=>m.i===i).slice(0,6);$("#misWrap").hidden=!ms.length;box.innerHTML=ms.map(m=>MIS.card(m)).join("");MIS.bind(box,drawMis)};
-  drawMis();$("#misBox").addEventListener("redraw",drawMis);
   $("#sets").onclick=()=>{Mem.stopLive();Mem.run=false;render()};
   $("#prev").onclick=()=>pos>0&&go(r[pos-1]);$("#next").onclick=()=>pos<r.length-1&&go(r[pos+1]);
   $("#live").onclick=()=>{if(Mem.live){if(Mem.paused)Mem.resume();else Mem.pause()}else{Mem.mode="mem";Mem.startLive()}render()};
   if($("#liveStop"))$("#liveStop").onclick=()=>{Mem.stopLive();render()};
-  $("#lvSel").onchange=e=>{LS.set("lv",+e.target.value);render()};
+  $("#lvBtn").onclick=()=>{LS.set("lv",(lv+1)%5);render();toast(t("levelL")+": "+t("lv"+((lv+1)%5)))};
+  $("#mvOpen").onclick=()=>MV.open(MIS.all().filter(m=>m.i===i),0);
   const markCur=()=>{$$(".w.cur").forEach(w=>w.classList.remove("cur"));const f=$(".w[data-h]");if(f)f.classList.add("cur")};
   const reveal=w=>{w.classList.remove("h","fl","cur");w.removeAttribute("data-h");markCur()};
   $$(".w[data-h]").forEach(w=>w.onclick=()=>{if(!live)return reveal(w);w.classList.remove("h","fl");w.removeAttribute("data-h")});if(live)Mem.hook();else markCur();
-  if($("#nw")){$("#nw").onclick=()=>{const c=$(".w.cur");if(c)reveal(c)};$("#sa").onclick=()=>$$(".w[data-h]").forEach(reveal)}
+  /* Tap a red word to see that slip. */
+  $(".lesson").addEventListener("click",e=>{if(e.target.closest(".w.miss")){const ms=MIS.all().filter(m=>m.i===i);if(ms.length)MV.open(ms,0)}});
   $(".names").onclick=e=>{if(hideNm)e.currentTarget.classList.toggle("hid")};
-  bindEvSw(el);if($("#hEv"))$("#hEv").onchange=e=>{LS.set("hideEv",e.target.checked);render()};$("#hNm").onclick=()=>{LS.set("hideNm",!hideNm);render()};
-  $("#tap").onclick=()=>{p.reps++;if(p.s==="new")p.s="learning";touch(i);
-    if(p.reps===target&&lv<4)LS.set("lv",lv+1);saveST();addXP(2);render()};
-  $("#rr").onclick=()=>{p.reps=0;saveST();render()};
-  $("#mm").onclick=()=>{const was=p.s==="memorized"&&!p.rev;p.s="memorized";p.rev=false;touch(i);saveST();if(!was)addXP(10);LS.set("lv",0);
-    const nx=r.slice(pos+1).find(x=>status(x)!=="memorized");if(nx!=null)go(nx);else{toast(t("setDone"));Mem.stopLive();Mem.run=false;render()}};
-  $("#rv").onclick=()=>{p.rev=!p.rev;if(p.s==="new")p.s="learning";touch(i);saveST();render()};
-  if($("#listen"))$("#listen").onclick=()=>speak(AUDIO[i]);
-  const fillRecs=async()=>{const box=$("#recList");if(!box)return;const all=(await DB.all()).filter(r=>r.pid===PID&&r.lesson===i).sort((a,b)=>b.date-a.date);
-    box.innerHTML=all.length?all.map(recItem).join(""):`<p class="note">${t("noRecs")}</p>`;bindRecs(box,fillRecs)};
-  fillRecs();$("#recList").refresh=fillRecs;if(live)Mem.recLesson(i);
-  $("#recBtn").onclick=async()=>{const b=$("#recBtn");
-    if(Rec.mr){await Rec.stop();clearInterval(Rec.tick);const b2=$("#recBtn");if(b2){b2.className="btn out";b2.textContent="● "+t("rec")}fillRecs();return}
-    if(!await Rec.start(i)){toast(t("noMic"));return}
-    b.className="btn recon";const upd=()=>{const b2=$("#recBtn");if(b2)b2.textContent="■ "+t("recStop")+" · "+fmtT((Date.now()-Rec.t0)/1000)};upd();Rec.tick=setInterval(upd,1000)};
+  bindEvSw(el);
+  /* Tools: everything that is not needed while reciting. */
+  $("#more").onclick=()=>{$("#shT").textContent=t("optL");$("#shX").textContent=t("closeL");const B=$("#shB");
+    B.innerHTML=`<div class="opts">
+      <div class="og"><h4>${t("levelL")}</h4><div class="seg5">${[0,1,2,3,4].map(n=>`<button type="button" data-lv="${n}" class="${n===lv?"on":""}">${t("lv"+n)}</button>`).join("")}</div>
+        <div class="row"><button class="chip ${hideNm?"on":""}" id="oNm" aria-pressed="${hideNm}">${ic(hideNm?"eyeoff":"eye")}${t("hideNm")}</button>${lv?`<button class="chip" id="oNw">${t("nextWord")}</button><button class="chip" id="oSa">${t("showAll")}</button>`:""}${AUDIO[i]?`<button class="chip" id="listen">${ic("sound")}<span>${t("listen")}</span></button>`:""}</div></div>
+      <div class="og"><h4>${t("thisLesson")}</h4><div class="row"><span class="note" style="flex:1">${t("reps")} · ${N(p.reps)}/${N(target)}</span><button class="chip" id="tap">${ic("star")}${t("recited")}</button><button class="chip" id="rr">${ic("refresh")}${t("reset")}</button></div>
+        <div class="row"><button class="btn pri sm" id="mm">${ic("check")}${t("markMem")}</button><button class="btn warn sm" id="rv">${p.rev?t("unRev"):t("needRev")}</button></div></div>
+      <div class="og"><h4>${t("colorsL")}</h4><span class="legend"><span><i class="k-mem"></i>${t("kMem")}</span><span><i class="k-rd"></i>${t("kRd")}</span><span><i class="k-miss"></i>${t("kMiss")}</span></span></div>
+      <div class="og"><div class="row" style="justify-content:space-between"><h4>${t("myRec")}</h4><button class="btn sm ${Rec.mr?"recon":"out"}" id="recBtn">${Rec.mr?"■ "+t("recStop"):"● "+t("rec")}</button></div><div class="recs" id="recList"></div></div>
+      <a class="btn out" href="#mistakes" style="width:100%">${ic("history")}${t("pastMis")}</a></div>`;
+    $("#misSheet").hidden=false;const close=()=>MIS.closeSheet();
+    $$("[data-lv]",B).forEach(b=>b.onclick=()=>{LS.set("lv",+b.dataset.lv);close();render()});
+    $("#oNm").onclick=()=>{LS.set("hideNm",!hideNm);close();render()};
+    if($("#oNw")){$("#oNw").onclick=()=>{const c=$(".w.cur")||$(".w[data-h]");if(c)reveal(c)};$("#oSa").onclick=()=>{$$(".w[data-h]").forEach(reveal);close()}}
+    if($("#listen"))$("#listen").onclick=()=>speak(AUDIO[i]);
+    $("#tap").onclick=()=>{p.reps++;if(p.s==="new")p.s="learning";touch(i);if(p.reps===target&&lv<4)LS.set("lv",lv+1);saveST();addXP(2);close();render()};
+    $("#rr").onclick=()=>{p.reps=0;saveST();close();render()};
+    $("#mm").onclick=()=>{close();const was=p.s==="memorized"&&!p.rev;p.s="memorized";p.rev=false;touch(i);saveST();if(!was)addXP(10);LS.set("lv",0);
+      const nx=r.slice(pos+1).find(x=>status(x)!=="memorized");if(nx!=null)go(nx);else{toast(t("setDone"));Mem.stopLive();Mem.run=false;render()}};
+    $("#rv").onclick=()=>{p.rev=!p.rev;if(p.s==="new")p.s="learning";touch(i);saveST();close();render()};
+    const fillRecs=async()=>{const box=$("#recList");if(!box)return;const all=(await DB.all()).filter(r=>r.pid===PID&&r.lesson===i).sort((a,b)=>b.date-a.date);
+      box.innerHTML=all.length?all.map(recItem).join(""):`<p class="note">${t("noRecs")}</p>`;bindRecs(box,fillRecs)};
+    fillRecs();$("#recList").refresh=fillRecs;
+    $("#recBtn").onclick=async()=>{const b=$("#recBtn");
+      if(Rec.mr){await Rec.stop();clearInterval(Rec.tick);const b2=$("#recBtn");if(b2){b2.className="btn sm out";b2.textContent="● "+t("rec")}fillRecs();return}
+      if(!await Rec.start(i)){toast(t("noMic"));return}
+      b.className="btn sm recon";const upd=()=>{const b2=$("#recBtn");if(b2)b2.textContent="■ "+t("recStop")+" · "+fmtT((Date.now()-Rec.t0)/1000)};upd();Rec.tick=setInterval(upd,1000)}};
+  if(live)Mem.recLesson(i);
 };
 addEventListener("keydown",e=>{if(VIEW!=="memorize"||!Mem.run||e.target.matches("input,select,textarea"))return;
   const fwd=LANG==="ar"?"ArrowLeft":"ArrowRight",bwd=LANG==="ar"?"ArrowRight":"ArrowLeft";const i=LS.get("cur."+PID,0);
