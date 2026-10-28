@@ -967,8 +967,8 @@ function lessonHTML(i,o={}){
   return`<article class="lesson ${o.framed?"framed":""} ${hue(i)}" data-i="${i}">
     <div class="lhead"><span class="lnum">${N(i+1)}</span><span class="pill ${st}">${t("st_"+st)}</span></div>
     <div class="names ${o.hideNames?"hid":""}">${L.names.map((n,k)=>`<div><span class="nm" lang="ar">${o.sp?n.split(/\s+/).map(x=>`<span class="w">${esc(x)}</span>`).join(" "):esc(n)}</span><span class="gl">${esc(GLOSS[i][k]||"")}</span></div>`).join("")}</div>
-    <div class="blk ev-b evx"><h4>${ic("book")}${t("evidence")} · <span lang="ar">الدليل</span></h4>${L.ev.map(([x,r])=>`<div class="ev" lang="ar"><p>${words(x,o.hideEv?(lv||4):0,o.sp)}</p><cite>${esc(r)}</cite></div>`).join("")}</div>
-    <div class="blk mn-b"><h4>${ic("bulb")}${t("meaning")} · <span lang="ar">المعنى</span></h4><div class="mn" lang="ar">${L.m.map(x=>`<p>${words(x,lv,o.sp)}</p>`).join("")}</div>${LANG==="en"?`<div class="mn-en" lang="en"><span class="trl">${t("trl")}</span>${MEAN_EN[i].map(x=>`<p>${esc(x)}</p>`).join("")}</div>`:""}</div>
+    <div class="blk ev-b evx"><h4>${ic("book")}${t("evidence")}${LANG==="ar"?"":` · <span lang="ar">الدليل</span>`}</h4>${L.ev.map(([x,r])=>`<div class="ev" lang="ar"><p>${words(x,o.hideEv?(lv||4):0,o.sp)}</p><cite>${esc(r)}</cite></div>`).join("")}</div>
+    <div class="blk mn-b"><h4>${ic("bulb")}${t("meaning")}${LANG==="ar"?"":` · <span lang="ar">المعنى</span>`}</h4><div class="mn" lang="ar">${L.m.map(x=>`<p>${words(x,lv,o.sp)}</p>`).join("")}</div>${LANG==="en"?`<div class="mn-en" lang="en"><span class="trl">${t("trl")}</span>${MEAN_EN[i].map(x=>`<p>${esc(x)}</p>`).join("")}</div>`:""}</div>
     ${o.foot||""}</article>`;
 }
 
@@ -1328,7 +1328,7 @@ function finish(box,score,max,extra=""){
 }
 const gHead=(l,r)=>`<div class="ghead"><button class="btn sm" id="gq">${t("back")}</button><span>${l}</span><span class="sc">${r}</span></div><div class="row evrow">${evSw()}</div>`;
 const bindBack=()=>$("#gq").onclick=()=>{Game.stop();Game.set=null;render()};
-const dlx=i=>`<div class="dlx evx" lang="ar"><span class="lb">${t("evidence")} · الدليل</span>${DATA[i].ev.map(([x,r])=>`<p>${esc(x)}</p><cite>${esc(r)}</cite>`).join("")}</div>`;
+const dlx=i=>`<div class="dlx evx" lang="ar"><span class="lb">${t("evidence")}${LANG==="ar"?"":" · الدليل"}</span>${DATA[i].ev.map(([x,r])=>`<p>${esc(x)}</p><cite>${esc(r)}</cite>`).join("")}</div>`;
 const shortM=i=>{const w=meaningOf(i).split(/\s+/);return w.slice(0,8).join(" ")+(w.length>8?" …":"")};
 const PLAY={
  flash(box,pool){const order=shuffle([...pool]);let n=0,known=0;
