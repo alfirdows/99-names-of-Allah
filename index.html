@@ -1062,10 +1062,11 @@ const MIS={all(){return LS.get("mis."+PID,[])},save(a){LS.set("mis."+PID,a.slice
     return h},
   /* Play your own recording from a few seconds before the mistake. */
   audio:null,async play(id,btn){if(this.audio){this.audio.pause();const was=this.audio._id;this.audio=null;$$(".misc .pl.on").forEach(x=>x.classList.remove("on"));if(was===id)return}
-    const m=this.all().find(x=>x.id===id);if(!m)return;const recs=(await DB.all()).filter(r=>r.pid===PID&&r.lesson===m.i&&r.date<=m.t+1000&&r.date+r.dur*1000+4000>=m.t);
+    const m=this.all().find(x=>x.id===id);if(!m)return;/* A recording is saved when it stops: r.date is its end, so it covers r.date-dur … r.date. */
+    const st=r=>r.date-(r.dur||0)*1000,recs=(await DB.all()).filter(r=>r.pid===PID&&st(r)-1500<=m.t&&r.date+1500>=m.t);
     const r=recs.sort((a,b)=>b.date-a.date)[0];if(!r){toast(t("noRecHere"));return}
     const a=new Audio(URL.createObjectURL(r.blob));a._id=id;this.audio=a;btn.classList.add("on");
-    const off=Math.max(0,(m.t-r.date)/1000-4);a.addEventListener("loadedmetadata",()=>{try{a.currentTime=Math.min(off,Math.max(0,(a.duration||off)-1))}catch(e){}},{once:true});
+    const off=Math.max(0,(m.t-st(r))/1000-4);a.addEventListener("loadedmetadata",()=>{try{a.currentTime=Math.min(off,Math.max(0,(a.duration||off)-1))}catch(e){}},{once:true});
     a.onended=()=>{btn.classList.remove("on");this.audio=null};a.play().catch(()=>{btn.classList.remove("on");this.audio=null});
     setTimeout(()=>{if(this.audio===a){a.pause();btn.classList.remove("on");this.audio=null}},9000)},
   openSheet(){$("#shT").textContent=t("mistakes");$("#shX").textContent=t("closeL");const body=$("#shB"),draw=()=>{body.innerHTML=`<div class="selbar"></div>${this.sessionsHTML()}<button class="btn sm binlink" id="binM" hidden></button>`;this.bind(body,draw);pickable(body,draw);BIN.link($("#binM"),draw)};draw();$("#misSheet").hidden=false},
