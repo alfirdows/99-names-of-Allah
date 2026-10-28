@@ -1390,10 +1390,10 @@ function bindRun(){const b=$("#runB");if(b)b.onclick=()=>{if(VIEW==="practice"){
 /* a short run over the names of the chosen set, in the book's order, name by name */
 /* each goal is 8 names of the chosen set, in order; the next goal goes on from there */
 const runRound=(pool,n)=>{const all=NAMES_FLAT.filter(x=>pool.includes(x.i)),k=all.length?(8*n)%all.length:0;let part=all.slice(k,k+9);if(part.length<3)part=all.slice(0,9);
- return{words:part.map(x=>({w:x.n})),decoys:[...new Set(NAMES_FLAT.map(x=>x.n))]}};
+ return{words:part.map(x=>({w:x.n})),decoys:[...new Set(NAMES_FLAT.map(x=>x.n))],title:part[part.length-1].n}};
 function playRun(pool){if(!window.LanternRun){toast("…");return}
  const S={get:(k,d)=>LS.get(k+"."+PID+(k==="lrGoalN"||k==="lrStars"?"."+Game.set:""),d),set:(k,v)=>LS.set(k+"."+PID+(k==="lrGoalN"||k==="lrStars"?"."+Game.set:""),v)};
- LanternRun.play({lang:LANG,nameFont:'"Name",serif',textFont:'"Book Naskh",serif',store:S,round:n=>runRound(pool,n||0),text:{doneAll:t("runDone")},
+ LanternRun.play({lang:LANG,siteName:LANG==="ar"?"أسماء الله الحسنى":"The Most Beautiful Names of Allah",url:location.origin+location.pathname,shared:{get:(k,d)=>LS.get(k,d),set:(k,v)=>LS.set(k,v)},player:{id:PID,name:(PROFILES.find(p=>p.id===PID)||{}).name||""},nameFont:'"Name",serif',textFont:'"Book Naskh",serif',store:S,round:n=>runRound(pool,n||0),text:{doneAll:t("runDone")},
   wallet:{get:()=>ST.coins||0,add:n=>{ST.coins=Math.max(0,(ST.coins||0)+n);saveST()}},
   onEnd:r=>{const k=Game.set;ST.best.run=ST.best.run||{};if(ST.best.run[k]==null||r.score>ST.best.run[k])ST.best.run[k]=r.score;if(r.right){ST.xp+=r.right*2;touch()}saveST();renderTop()},
   onClose:()=>{Game.set=null;render()}})}
