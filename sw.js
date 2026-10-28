@@ -1,6 +1,6 @@
 /* Offline support: pages are fetched fresh when online (so updates reach everyone), and saved for offline use. */
-const CACHE="asma-v41";
-const CORE=["./","index.html","manifest.webmanifest","icon-180.png","icon-192.png","icon-512.png","fonts/Amiri-Bold.woff","fonts/ScheherazadeNew-Regular.woff","fonts/ScheherazadeNew-Bold.woff","fonts/IBMPlexSansArabic-Regular.woff","fonts/IBMPlexSansArabic-SemiBold.woff","fonts/IBMPlexSansArabic-Bold.woff"];
+const CACHE="asma-v42";
+const CORE=["./","index.html","run.js","manifest.webmanifest","icon-180.png","icon-192.png","icon-512.png","fonts/Amiri-Bold.woff","fonts/ScheherazadeNew-Regular.woff","fonts/ScheherazadeNew-Bold.woff","fonts/IBMPlexSansArabic-Regular.woff","fonts/IBMPlexSansArabic-SemiBold.woff","fonts/IBMPlexSansArabic-Bold.woff"];
 /* Listen audio (one file per lesson) is saved too, so it works offline; a failed audio file never blocks the update. */
 const AUDIO=Array.from({length:70},(_,i)=>`audio/${String(i+1).padStart(2,"0")}.mp3`);
 const NAMES_N=[1,1,2,2,2,2,1,4,2,1,2,1,1,1,1,1,2,3,2,2,1,1,1,1,1,3,1,1,1,1,1,1,1,4,1,1,2,2,2,1,1,1,1,1,1,1,1,2,2,1,3,1,1,1,1,2,1,1,1,2,1,1,1,2,1,1,2,1,1,1];
