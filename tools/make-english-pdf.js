@@ -30,7 +30,7 @@ h4{margin:8px 0 2px;font-size:9.5pt;color:#2f6b45}
 </style></head><body>
 <div class="cover"><h1>The Most Beautiful Names of Allah</h1><p class="sub">The text of «متن الأسماء» (evidence and meaning), with an English translation of each meaning, and the meaning of each name quoted from al-Sa'di, <i>Tafsir Asma' Allah al-Husna</i>.</p>
 <div class="warn"><b>Please note:</b> every English text in this file is an AI translation and has not been checked by a scholar. Please check it with your teacher. The Arabic text is the original. The evidence (Qur'an and hadith) is given in Arabic only.</div>
-<p class="sub" style="margin-top:10mm">fastaqim.github.io/99-names-of-Allah</p></div>`;
+<p class="sub" style="margin-top:10mm">alfirdows.github.io/99-names-of-Allah</p></div>`;
 d.D.forEach((L,i)=>{
  h+=`<div class="ls"><div class="no">Lesson ${i+1}</div><div class="nm">${L.names.map((n,k)=>`<div><b>${esc(n)}</b><span>${esc(d.G[i][k]||'')}</span></div>`).join('')}</div>${LBL}
  <h4>Evidence · الدليل</h4>${L.ev.map(([x,r])=>`<p class="ar">${esc(x)}</p><div class="ref">${esc(r)}</div>`).join('')}
