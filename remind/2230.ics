@@ -1,0 +1,23 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//fastaqim//asma daily reminder//AR
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:asma-daily-2230@fastaqim.github.io
+DTSTAMP:20261028T000000Z
+DTSTART:20261028T223000
+DURATION:PT15M
+RRULE:FREQ=DAILY
+SUMMARY:حان وقت وردك · Time for your daily portion
+DESCRIPTION:أسماء الله الحسنى · The Most Beautiful Names of
+  Allah\nhttps://fastaqim.github.io/99-names-of-Allah/#memorize
+URL:https://fastaqim.github.io/99-names-of-Allah/#memorize
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:حان وقت وردك · Time for your daily portion
+TRIGGER:PT0M
+END:VALARM
+END:VEVENT
+END:VCALENDAR

@@ -18,6 +18,7 @@
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="preload" href="fonts/ScheherazadeNew-Regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="fonts/IBMPlexSansArabic-Regular.woff" as="font" type="font/woff" crossorigin>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"أسماء الله الحسنى · The Most Beautiful Names of Allah","url":"https://fastaqim.github.io/99-names-of-Allah/","inLanguage":["ar","en"],"about":{"@type":"Thing","name":"أسماء الله الحسنى","alternateName":["Asma ul Husna","99 Names of Allah","Al-Asma al-Husna"]}}</script>
+<script>try{var th=JSON.parse(localStorage.getItem("asma1.theme"));if(th==="light"||th==="dark")document.documentElement.dataset.theme=th}catch(e){}</script>
 <style>/* Layout: same family as the Tuhfat al-Atfal site. White pages, one soft green accent, a manuscript frame for the hero
    and for each lesson. Amiri for the names, Scheherazade (book Naskh) for evidence and meaning, IBM Plex Sans Arabic for the interface. */
 @font-face{font-family:"Name";src:url(fonts/Amiri-Bold.woff) format("woff");font-weight:400 900;font-display:swap}
@@ -244,6 +245,7 @@ html[lang="ar"] .names .gl{display:none}
 .w.miss{color:#c0392b;background:#fbe3e0;border-radius:6px}
 html[data-theme=dark] .w.miss{color:#ff9b8f;background:#3a1f1c}
 @media (prefers-color-scheme:dark){html:not([data-theme=light]) .w.miss{color:#ff9b8f;background:#3a1f1c}}
+html[data-theme=dark] .w.miss{color:#ff9b8f;background:#3a1f1c}
 .livebar{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
 .btn.live{font-size:1.05rem;padding:12px 26px;border-radius:999px}
 .btn.live.on{background:#c0392b;border-color:#c0392b;color:#fff;animation:pulse 1.6s ease-in-out infinite}
@@ -266,6 +268,7 @@ html[data-theme=dark] .w.miss{color:#ff9b8f;background:#3a1f1c}
 .mline .tx .g{color:var(--acc);font-weight:700}.mline .tx .r{color:#c0392b;font-weight:700}
 html[data-theme=dark] .mline .tx .r{color:#ff9b8f}
 @media (prefers-color-scheme:dark){html:not([data-theme=light]) .mline .tx .r{color:#ff9b8f}}
+html[data-theme=dark] .mline .tx .r{color:#ff9b8f}
 .mline.one{grid-template-columns:1fr}
 .mday{font-weight:700;color:var(--muted);margin:10px 0 0;font-size:.9rem}
 .ordsw{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
@@ -487,6 +490,23 @@ footer{border-top:1px solid var(--line);background:var(--band)}
 footer .wrap{padding-block:36px;display:grid;gap:10px;justify-items:center;text-align:center;font-size:.9rem;color:var(--muted)}
 footer a{color:var(--acc);font-weight:600}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* weekly summary + reminder */
+a.stat{color:inherit;text-decoration:none}
+.wkp{display:grid;gap:12px}
+.wkseg{flex:none}.wkseg button{min-height:34px;font-size:.82rem}
+.wkdays{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.wkdays span{display:grid;justify-items:center;gap:4px}
+.wkdays i{width:34px;height:34px;border-radius:50%;background:var(--empty);display:grid;place-items:center;color:var(--acc-ink)}
+.wkdays i svg{width:18px;height:18px}
+.wkdays .on i{background:var(--acc)}
+.wkdays .now i{outline:2px solid var(--gold);outline-offset:2px}
+.wkdays small{font-size:.72rem;color:var(--muted)}
+.wkgoal{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;font-size:.9rem}
+.wkgoal>span:first-child{display:inline-flex;gap:6px;align-items:center;color:var(--muted)}
+.wkgoal .prog{grid-column:auto;margin:0;height:8px}
+.rmask{display:inline-flex;gap:6px;align-items:center;color:var(--muted);text-decoration:none;justify-self:start}
+.rmon{background:var(--ok-soft);border-radius:12px;padding:12px;display:grid;gap:8px;justify-items:start}
+#rmT{min-height:40px;border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:4px 10px}
 </style>
 </head>
 <body>
@@ -724,6 +744,7 @@ function applySettings(){
   document.documentElement.classList.toggle("noev",!LS.get("showEv",true));
   document.documentElement.lang=LANG;document.documentElement.dir=LANG==="ar"?"rtl":"ltr";
   const th=LS.get("theme","system");if(th==="system")document.documentElement.removeAttribute("data-theme");else document.documentElement.dataset.theme=th;
+  try{$('meta[name="theme-color"]').content=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||"#ffffff"}catch(e){}
   document.documentElement.style.setProperty("--fs",LS.get("fs",1));
 }
 let toastT;function toast(s){const el=$("#toast");el.textContent=s;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,Math.max(1600,s.length*55))}
@@ -755,6 +776,8 @@ const ICON={
  arrows:'<path d="M4 12h16M14 6l6 6-6 6"/>',
  x:'<path d="M6 6l12 12M18 6 6 18"/>',
  dots:'<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>',
+ bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
+ goal:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".6" fill="currentColor"/>',
  undo:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/>',
  rev:'<path d="M8 4h8l3 3v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="m8.5 12 2.2 2.2L15.5 9.5M8.5 18h7"/>'
 };
@@ -810,14 +833,14 @@ V.home=el=>{
     <div class="cta"><a class="btn pri" href="#memorize">${ic("memorize")}${t("startMem")}</a><a class="btn out" href="#names">${ic("names")}${t("read")}</a></div>
     <ul class="facts"><li><b>${N(DATA.length)}</b> ${t("fLessons")}</li><li><b>${N(TOTAL)}</b> ${t("fNames")}</li><li><b>${N(SETS)}</b> ${t("fSets")}</li><li><b>${t("fEv")}</b></li></ul>
   </div></div></section>
-  <section class="sec"><div class="wrap narrow stack">${whoHTML()}${planHTML()}<div class="panel">
+  <section class="sec"><div class="wrap narrow stack">${whoHTML()}${lastWeekHTML()}${planHTML()}<div class="panel">
     <div class="row" style="justify-content:space-between"><h3>${t("yourProg")}</h3><a class="btn out sm" href="#progress">${t("progress")}</a></div>
     <div class="stats">
-      <div class="stat hue3">${ic("cal")}<b>${N(d)} / ${N(3)}</b><span>${t("goal")}</span></div>
+      <a class="stat hue3" href="#progress">${ic("goal")}<b>${N(Math.min(WK.sum(0).u,goalN()))} / ${N(goalN())}</b><span>${t("wkGoal")}</span></a>
       <div class="stat hue5">${ic("fire")}<b>${N(streak())}</b><span>${t("streak")}</span></div>
       <div class="stat hue1">${ic("check")}<b>${N(mem)} / ${N(TOTAL)}</b><span>${t("namesMem")}</span></div>
     </div>
-    <p class="note">${esc(t("goalTxt"))}</p>
+    <p class="note">${esc(goalLine())}</p>
     <div class="row"><button class="btn pri" id="cont">${ic("play")}${t("continue")}: ${t("lessonN")} ${N(LS.get("cur."+PID,0)+1)} · <span lang="ar" style="font-family:var(--name);font-size:1.1rem">${esc(nm(LS.get("cur."+PID,0)))}</span></button></div>
   </div></div></section>
   <section class="sec"><div class="wrap">
@@ -832,7 +855,7 @@ V.home=el=>{
     <ul class="refs" lang="ar" dir="rtl"><li>تفسير أسماء الله الحسنى، عبد الرحمن بن ناصر السعدي (ت ١٣٧٦هـ)</li><li>فقه الأسماء الحسنى، الشيخ عبد الرزاق بن عبد المحسن البدر، الطبعة الأولى ١٤٢٩هـ</li><li>شروحات الشيخ ابن عثيمين رحمه الله</li><li>مختصر ولله الأسماء الحسنى، عبد العزيز ناصر الجليل</li></ul>
   </div></section>`;
   $("#cont").onclick=()=>{Mem.open(LS.get("cur."+PID,0))};
-  bindWho();
+  bindWho();bindWeek(el);
 };
 
 function avPicker(p){return`<div class="avpick" data-for="${p.id}">
@@ -1076,13 +1099,13 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
       <button id="rbPause" aria-label="${this.paused?t("resume"):t("pause")}">${this.paused?"▶":"❚❚"}</button>
       <button class="stop" id="rbStop">■ <span class="lbl">${t("liveStop")}</span></button>`;
     $("#rbHide").onclick=()=>{LS.set("hideRead",!hw);render()};$("#rbMis").onclick=()=>MV.open(MIS.all().filter(m=>m.sid===this.sid),0,{after:()=>this.bar()});$("#rbStop").onclick=()=>{this.stopLive()};$("#rbPause").onclick=()=>{if(this.paused)this.resume();else this.pause();this.bar()}},
-  nextRead(){const i=this.li,p=P(i);if(p.s==="new")p.s="learning";touch(i);saveST();
+  nextRead(){const i=this.li,p=P(i);if(p.s==="new")p.s="learning";touch(i);saveST();WK.add(i);
     const nx=this.root()&&this.root().nextElementSibling;
     if(!nx||!nx.dataset.i){this.stopLive();toast(t("readDone"));return}
     setTimeout(()=>{if(!this.live||this.mode!=="read")return;this.li=+nx.dataset.i;LS.set("cur."+PID,this.li);this.recLesson(this.li);this.hook();this.bar()},500)},
   /* One full recitation = one repetition. When the target is reached, the lesson is memorized and the next one opens. */
   finish(){this.lock=true;this.pend=[];if(this.mode==="read")return this.nextRead();const i=LS.get("cur."+PID,0),p=P(i),target=LS.get("target",5);
-    p.reps++;if(p.s==="new")p.s="learning";touch(i);saveST();addXP(2);
+    p.reps++;if(p.s==="new")p.s="learning";touch(i);saveST();WK.add(i);addXP(2);
     if(p.reps>=target&&p.s!=="memorized"){p.s="memorized";p.rev=false;saveST();addXP(10);toast(t("memNext"))}
     /* Like Tarteel: as soon as a lesson is finished, the next one opens and listening carries on. */
     const list=this.q().list,pos=list.indexOf(i),nx=list[pos+1];
@@ -1349,7 +1372,7 @@ const BIN={H:864e5,
       else if(x.kind==="misall"){const key="mis."+x.data.pid,a=LS.get(key,[]),ids=new Set(a.map(m=>m.id));LS.set(key,[...a,...x.data.list.filter(m=>!ids.has(m.id))].sort((p,q)=>q.t-p.t))}
       else if(x.kind==="learner"){if(!PROFILES.find(p=>p.id===x.data.p.id)){PROFILES.push(x.data.p);LS.set("profiles",PROFILES)}for(const [k,v] of Object.entries(x.data.ls))try{localStorage.setItem(k,v)}catch(e){}
         for(const r of await DB.raw())if(r.pid===x.data.p.id&&r.gone===x.t){delete r.gone;await DB.put(r)}}
-      else if(x.kind==="progress"){LS.set("p."+x.data.pid,x.data.st);LS.set("cur."+x.data.pid,x.data.cur||0);if(x.data.pid===PID)loadST()}
+      else if(x.kind==="progress"){LS.set("p."+x.data.pid,x.data.st);LS.set("cur."+x.data.pid,x.data.cur||0);if(x.data.wk)LS.set("wk."+x.data.pid,x.data.wk);if(x.data.pid===PID)loadST()}
       this.keep(this.items().filter(y=>y.id!==id))}},
   /* The popup after every delete. */
   pop(keys,n,after){if(!keys||!keys.length)return;let el=$("#binpop");if(el)el.remove();el=document.createElement("div");el.id="binpop";el.className="binpop";el.setAttribute("role","alert");
@@ -1406,18 +1429,91 @@ V.progress=el=>{
     <div class="panel"><div class="row" style="gap:24px"><div class="ring" style="--p:${pct}"><div><b>${N(pct)}٪</b><small>${N(mem)} / ${N(TOTAL)}</small></div></div>
       <div class="stats" style="flex:1;min-width:240px"><div class="stat hue6">${ic("bolt")}<b>${N(ST.xp)}</b><span>${t("xp")} · ${t("level")} ${N(levelOf(ST.xp))}</span></div><div class="stat hue5">${ic("fire")}<b>${N(streak())}</b><span>${t("streak")}</span></div><div class="stat hue1">${ic("check")}<b>${N(lm)} / ${N(DATA.length)}</b><span>${t("lessonsMem")}</span></div></div></div>
       <div><h3 style="margin-bottom:6px" class="hue3">${ic("cal")}${t("last14")}</h3><div class="days">${days}</div></div></div>
+    <div id="wkBox">${weekHTML(0)}</div>
     ${weakHTML()}
     <div class="panel"><h3 class="hue2">${ic("progress")}${t("bySet")}</h3>${Array.from({length:SETS},(_,k)=>{const r=setRange(k),d=r.filter(i=>status(i)==="memorized").length;return`<div style="display:grid;gap:4px"><div class="row" style="justify-content:space-between"><span>${setLabel(k)} <span class="note" lang="ar">${esc(setSpan(k))}</span></span><span class="note">${N(d)} / ${N(r.length)}</span></div><div class="prog ${hue(k)}"><i style="width:${d/r.length*100}%"></i></div></div>`}).join("")}</div>
     <div class="panel"><h3 class="hue6">${ic("list")}${t("revList")}</h3>${rev.length?`<ul class="misses">${rev.map(i=>`<li><span class="nm" lang="ar">${esc(nm(i))}</span><button class="btn out sm" data-st="${i}">${t("study")} · ${N(i+1)}</button></li>`).join("")}</ul>`:`<p class="note">${t("revEmpty")}</p>`}</div>
     <div class="panel"><div class="row" style="justify-content:space-between"><h3 class="hue5">${ic("memorize")}${t("myRecs")}</h3><button class="btn sm" id="delAll" hidden>${t("delAll")}</button></div><div id="recWrap"><div class="selbar"></div><div class="recs" id="allRecs"></div></div><button class="btn sm binlink" id="binL" hidden></button></div>
   </div></section>`;
-  $$("[data-st]").forEach(b=>b.onclick=()=>Mem.open(+b.dataset.st));
+  $$("[data-st]").forEach(b=>b.onclick=()=>Mem.open(+b.dataset.st));bindWeek(el);
   const fill=async()=>{const box=$("#allRecs");if(!box)return;const all=(await DB.all()).filter(r=>r.pid===PID).sort((a,b)=>b.date-a.date);
     box.innerHTML=all.length?all.map(recItem).join(""):`<p class="note">${t("noRecs")}</p>`;$("#delAll").hidden=!all.length;bindRecs(box,fill);pickable($("#recWrap"),fill);BIN.link($("#binL"),fill)};
   fill();
   $("#delAll").onclick=async e=>{const b=e.currentTarget;if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent=t("sure");return}
     const keys=await BIN.many((await DB.all()).filter(r=>r.pid===PID).map(r=>"rec:"+r.id));b.classList.remove("armed");b.textContent=t("delAll");fill();BIN.pop(keys,keys.length,fill)};
 };
+
+/* ---------- weekly goal, weekly summary, daily reminder ---------- */
+/* A week starts on Sunday. Each learner keeps a small log per week (lessons recited); days studied and slips come from the existing logs. */
+Object.assign(TX,{
+  wkGoal:["Weekly goal","هدف الأسبوع"],
+  wkGoalD:["How much you want to recite each week. A lesson counts once you recite it.","كم تريد أن تسمّع في الأسبوع. يُحسب الدرس حين تسمّعه."],
+  gSet1:["One set","مجموعة واحدة"],gSet2:["Two sets","مجموعتان"],gDay:["A lesson a day","درس كل يوم"],gCustom:["My own number","عدد أختاره"],
+  wkSum:["Weekly summary","ملخص الأسبوع"],wkThis:["This week","هذا الأسبوع"],wkLast:["Last week","الأسبوع الماضي"],
+  wkUnits:["lessons recited","درسًا سمّعته"],wkDays:["days you studied","أيام درست فيها"],wkSlips:["slips","زلّات"],
+  wkMet:["Weekly goal reached, may Allah bless you.","تحقق هدف الأسبوع، بارك الله فيك."],
+  wkLeft:["{n} lessons left to reach this week's goal.","بقي {n} من الدروس لتبلغ هدف الأسبوع."],
+  wkMissed:["The goal wasn't reached that week. A new week is a new start.","لم يتحقق الهدف في ذلك الأسبوع. وكل أسبوع بداية جديدة."],
+  wkUp:["{n} more than the week before.","أكثر من الأسبوع الذي قبله بـ {n}."],
+  wkNone:["Nothing recited this week yet. One lesson is a good start.","لم تسمّع شيئًا هذا الأسبوع بعد. درس واحد بداية طيبة."],
+  wkLastH:["Your last week","أسبوعك الماضي"],wkHide:["Hide","إخفاء"],
+  wkHit:["You reached this week's goal! May Allah bless you.","بلغت هدف الأسبوع! بارك الله فيك."],
+  goalLine:["Goal: {g} each week. Recite a lesson and it counts.","الهدف: {g} في الأسبوع. كل درس تسمّعه يُحسب."],
+  gLessons:["{n} lessons","{n} دروس"],
+  rmH:["Daily reminder","تذكير يومي"],
+  rmD:["Off unless you add it. Your phone's Calendar reminds you once a day at the time you choose. Nothing is sent to this site and there is no sign-up.","لا يعمل إلا إذا أضفته. يذكّرك تقويم هاتفك مرة كل يوم في الوقت الذي تختاره. لا يُرسل شيء إلى الموقع ولا يلزم أي تسجيل."],
+  rmTime:["Time","الوقت"],rmAdd:["Add to my Calendar","أضفه إلى التقويم"],
+  rmHow:["On iPhone a screen opens: tap Add (or Add All).","في الآيفون تظهر شاشة: اضغط «إضافة» أو «إضافة الكل»."],
+  rmSet:["You added a reminder for {t} on this phone.","أضفت تذكيرًا الساعة {t} على هذا الهاتف."],
+  rmStop:["To stop it: open Calendar, tap the reminder, tap Delete Event, then Delete All Future Events.","لإيقافه: افتح التقويم، واضغط على التذكير، ثم «حذف الحدث» ثم «حذف كل الأحداث المستقبلية»."],
+  rmChange:["To change the time, delete the old one first, then add a new one.","لتغيير الوقت احذف القديم أولًا ثم أضف جديدًا."],
+  rmForget:["I removed it","حذفته"],
+  rmAsk:["Would a gentle daily reminder help?","هل يفيدك تذكير يومي لطيف؟"]
+});
+const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const dOf=k=>{const [y,m,d]=k.split("-").map(Number);return new Date(y,m-1,d)};
+const wkStart=(back=0)=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-d.getDay()-7*back);return ymd(d)};
+function goalN(){const g=LS.get("goal","set1");if(g==="day")return 7;if(g==="custom")return Math.max(1,LS.get("goalN",7));
+  let k=dailyPlan().k;if(k<0)k=SETS-1;let n=setRange(k).length;if(g==="set2")n+=k+1<SETS?setRange(k+1).length:0;return n}
+function goalLine(){const g=LS.get("goal","set1");return t("goalLine",{g:g==="set1"?t("gSet1"):g==="set2"?t("gSet2"):g==="day"?t("gDay"):t("gLessons",{n:goalN()})})}
+const WK={all(){return LS.get("wk."+PID,{})},
+  add(i){const a=this.all(),k=wkStart(),w=a[k]||(a[k]={u:[],r:0}),had=w.u.length>=goalN();w.r++;if(!w.u.includes(i))w.u.push(i);
+    const ks=Object.keys(a).sort();while(ks.length>26)delete a[ks.shift()];LS.set("wk."+PID,a);
+    if(!had&&w.u.length>=goalN())setTimeout(()=>toast(t("wkHit")),1600)},
+  sum(back){const k=wkStart(back),w=this.all()[k]||{u:[],r:0},a=dOf(k),z=new Date(a);z.setDate(z.getDate()+7);
+    const days=[...Array(7).keys()].map(n=>{const d=new Date(a);d.setDate(d.getDate()+n);return{k:ymd(d),on:!!ST.days[ymd(d)],d}});
+    const slips=MIS.all().filter(m=>m.t>=+a&&m.t<+z).length;
+    return{k,days,n:days.filter(x=>x.on).length,u:w.u.length,r:w.r,slips}}};
+function weekHTML(back){const s=WK.sum(back),p=WK.sum(back+1),g=goalN(),td=today();
+  const wd=d=>d.toLocaleDateString(LANG==="ar"?"ar":"en",{weekday:"short"});
+  const msg=s.u>=g?t("wkMet"):back===0?(s.u?t("wkLeft",{n:g-s.u}):t("wkNone")):t("wkMissed");
+  return`<div class="panel wkp"><div class="row" style="justify-content:space-between"><h3 class="hue2">${ic("cal")}${t("wkSum")}</h3>
+    <div class="seg wkseg"><button data-wk="0" class="${back===0?"on":""}">${t("wkThis")}</button><button data-wk="1" class="${back===1?"on":""}">${t("wkLast")}</button></div></div>
+    <div class="wkdays">${s.days.map(x=>`<span class="${x.on?"on":""} ${x.k===td?"now":""}" title="${x.k}"><i>${x.on?ic("check"):""}</i><small>${esc(wd(x.d))}</small></span>`).join("")}</div>
+    <div class="stats"><div class="stat hue1">${ic("names")}<b>${N(s.u)}</b><span>${t("wkUnits")}</span></div><div class="stat hue3">${ic("cal")}<b>${N(s.n)} / ${N(7)}</b><span>${t("wkDays")}</span></div><div class="stat hue5">${ic("rev")}<b>${N(s.slips)}</b><span>${t("wkSlips")}</span></div></div>
+    <div class="wkgoal"><span>${ic("goal")}${t("wkGoal")}</span><span class="prog"><i style="width:${Math.min(100,s.u/g*100)}%"></i></span><b>${N(Math.min(s.u,g))} / ${N(g)}</b></div>
+    <p class="note ${s.u>=g?"okn":""}">${esc(msg)}${s.u>p.u&&p.u>0?" "+esc(t("wkUp",{n:s.u-p.u})):""}</p></div>`}
+/* Home: last week's summary once, at the start of a new week, only if something was done. */
+function lastWeekHTML(){if(LS.get("wkSeen."+PID,"")===wkStart())return"";const s=WK.sum(1);if(!s.u&&!s.n)return"";const g=goalN();
+  return`<div class="panel wkp lastwk"><div class="row" style="justify-content:space-between"><h3 class="hue2">${ic("cal")}${t("wkLastH")}</h3><button class="btn sm" id="wkHide">${t("wkHide")}</button></div>
+    <div class="stats"><div class="stat hue1">${ic("names")}<b>${N(s.u)}</b><span>${t("wkUnits")}</span></div><div class="stat hue3">${ic("cal")}<b>${N(s.n)} / ${N(7)}</b><span>${t("wkDays")}</span></div><div class="stat hue6">${ic("goal")}<b>${s.u>=g?"✓":N(s.u)+" / "+N(g)}</b><span>${t("wkGoal")}</span></div></div>
+    ${LS.get("remind",null)?"":`<a class="note rmask" href="#settings" data-goremind>${ic("bell")}${t("rmAsk")}</a>`}</div>`}
+function bindWeek(el){$$("[data-wk]",el).forEach(b=>b.onclick=()=>{$("#wkBox").innerHTML=weekHTML(+b.dataset.wk);bindWeek(el)});
+  const h=$("#wkHide",el);if(h)h.onclick=()=>{LS.set("wkSeen."+PID,wkStart());h.closest(".lastwk").remove()};
+  $$("[data-goremind]",el).forEach(a=>a.onclick=()=>LS.set("goRemind",true))}
+/* Daily reminder: an event that repeats every day, added to the phone's own Calendar from a small file (remind/HHMM.ics).
+   Nothing is stored anywhere but this phone, and there is no server. */
+const RM_TIMES=[...Array(48).keys()].map(n=>String(n>>1).padStart(2,"0")+(n&1?"30":"00"));
+const rmLabel=hm=>new Date(2000,0,1,+hm.slice(0,2),+hm.slice(2)).toLocaleTimeString(LANG==="ar"?"ar":"en",{hour:"numeric",minute:"2-digit"});
+function remindHTML(){const on=LS.get("remind",null),pick=on||LS.get("remindT","2000");
+  return`<div class="panel" id="remind"><h3 class="hue6">${ic("bell")}${t("rmH")}</h3><p class="note">${t("rmD")}</p>
+    <div class="row"><label for="rmT"><b>${t("rmTime")}</b></label><select id="rmT">${RM_TIMES.map(x=>`<option value="${x}" ${x===pick?"selected":""}>${esc(rmLabel(x))}</option>`).join("")}</select>
+    <a class="btn pri sm" id="rmAdd" href="remind/${pick}.ics">${ic("bell")}${t("rmAdd")}</a></div><p class="note">${t("rmHow")}</p>
+    ${on?`<div class="rmon"><p class="note okn">${esc(t("rmSet",{t:rmLabel(on)}))}</p><p class="note">${t("rmStop")} ${t("rmChange")}</p><button class="btn sm" id="rmOff">${t("rmForget")}</button></div>`:""}</div>`}
+function bindRemind(el){const s=$("#rmT",el);if(!s)return;
+  s.onchange=()=>{LS.set("remindT",s.value);$("#rmAdd").href=`remind/${s.value}.ics`};
+  $("#rmAdd").onclick=()=>{LS.set("remind",s.value);setTimeout(render,1500)};
+  const off=$("#rmOff",el);if(off)off.onclick=()=>{LS.set("remind",null);render()}}
 
 /* ---------- settings ---------- */
 V.settings=el=>{
@@ -1428,8 +1524,10 @@ V.settings=el=>{
       <div class="setrow"><b>${t("theme")}</b><div class="seg">${["system","light","dark"].map(x=>`<button data-th="${x}" class="${th===x?"on":""}">${t(x)}</button>`).join("")}</div></div>
       <div class="setrow"><label for="fs"><b>${t("size")}</b></label><input id="fs" type="range" min="0.85" max="1.45" step="0.05" value="${LS.get("fs",1)}" style="accent-color:var(--acc)"></div>
       <div class="setrow"><div><b>${t("showEv")}</b><div class="note">${t("showEvD")}</div></div><label class="tog"><input type="checkbox" id="sEv" ${LS.get("showEv",true)?"checked":""}></label></div>
+      <div class="setrow"><div><b>${t("wkGoal")}</b><div class="note">${t("wkGoalD")}</div></div><div class="chips">${[["set1","gSet1"],["set2","gSet2"],["day","gDay"],["custom","gCustom"]].map(([v,k])=>`<button class="chip ${LS.get("goal","set1")===v?"on":""}" data-goal="${v}">${t(k)}</button>`).join("")}${LS.get("goal","set1")==="custom"?`<input id="goalN" type="number" min="1" max="70" inputmode="numeric" value="${goalN()}" aria-label="${esc(t("wkGoal"))}" style="width:80px">`:""}</div></div>
       <div class="setrow"><b>${t("target")}</b><div class="chips">${[3,5,7,10,20].map(n=>`<button class="chip ${LS.get("target",5)===n?"on":""}" data-tg="${n}">${N(n)}</button>`).join("")}</div></div>
     </div>
+    ${remindHTML()}
     <div class="panel"><h3 class="hue4">${ic("users")}${t("learners")}</h3><p class="note">${t("learnersD")}</p>
       ${PROFILES.map(p=>`<div class="learner"><button class="avb" data-av="${p.id}" aria-expanded="${AvOpen===p.id}" title="${esc(t("pickIcon"))}">${avatar(p,40)}<span class="avedit">${ic("edit")}</span></button><input data-pn="${p.id}" value="${esc(p.name)}" placeholder="${esc(t("name"))}" aria-label="${esc(t("name"))}">
         ${p.id===PID?`<span class="pill memorized">${t("current")}</span>`:`<button class="btn sm" data-use="${p.id}">${t("use")}</button><button class="btn sm warn" data-del="${p.id}">${t("del")}</button>`}</div>${AvOpen===p.id?avPicker(p):""}`).join("")}
@@ -1462,15 +1560,18 @@ V.settings=el=>{
   $("#sEv").onchange=e=>setEv(e.target.checked);
   $("#fs").oninput=e=>{LS.set("fs",+e.target.value);applySettings()};
   $$("[data-tg]").forEach(b=>b.onclick=()=>{LS.set("target",+b.dataset.tg);render()});
+  $$("[data-goal]").forEach(b=>b.onclick=()=>{LS.set("goal",b.dataset.goal);render()});
+  if($("#goalN"))$("#goalN").onchange=e=>{LS.set("goalN",Math.max(1,Math.min(70,+e.target.value||7)));render()};
+  bindRemind(el);if(location.hash==="#settings"&&LS.get("goRemind",false)){LS.set("goRemind",false);setTimeout(()=>{const r=$("#remind");if(r)r.scrollIntoView({block:"center",behavior:"smooth"})},60)}
   bindAv(el);
   $$("[data-pn]").forEach(inp=>inp.onchange=()=>{PROFILES.find(p=>p.id===inp.dataset.pn).name=inp.value.trim().slice(0,24);LS.set("profiles",PROFILES);render()});
   $$("[data-use]").forEach(b=>b.onclick=()=>{PID=b.dataset.use;LS.set("pid",PID);loadST();Mem.stopLive();Mem.run=false;Q.qs=null;render()});
-  $$("[data-del]").forEach(b=>b.onclick=async()=>{const id=b.dataset.del,p=PROFILES.find(x=>x.id===id),ls={};for(const k of ["asma1.p."+id,"asma1.mis."+id,"asma1.cur."+id,"asma1.mq."+id]){const v=localStorage.getItem(k);if(v!=null)ls[k]=v}
+  $$("[data-del]").forEach(b=>b.onclick=async()=>{const id=b.dataset.del,p=PROFILES.find(x=>x.id===id),ls={};for(const k of ["asma1.p."+id,"asma1.mis."+id,"asma1.cur."+id,"asma1.mq."+id,"asma1.wk."+id,"asma1.wkSeen."+id]){const v=localStorage.getItem(k);if(v!=null)ls[k]=v}
     const bid=BIN.add("learner",{p,ls}),t0=BIN.items().find(x=>x.id===bid).t;PROFILES=PROFILES.filter(p=>p.id!==id);LS.set("profiles",PROFILES);try{Object.keys(ls).forEach(k=>localStorage.removeItem(k))}catch(e){}
     for(const r of await DB.all())if(r.pid===id){r.gone=t0;await DB.put(r)}render();BIN.pop(["bin:"+bid],1)});
   $("#addL").onclick=()=>{const id="p"+Date.now().toString(36);PROFILES.push({id,name:"",color:PROFILES.length});AvOpen=id;LS.set("profiles",PROFILES);PID=id;LS.set("pid",PID);loadST();Mem.stopLive();Mem.run=false;render()};
   $("#rst").onclick=()=>{$("#cf").innerHTML=`<div class="confirm"><p class="note" style="color:var(--ink)">${t("resetQ")}</p><div class="row"><button class="btn warn" id="y">${t("yes")}</button><button class="btn sm" id="n">${t("cancel")}</button></div></div>`;
-    $("#y").onclick=()=>{const bid=BIN.add("progress",{pid:PID,st:ST,cur:LS.get("cur."+PID,0)});ST={p:{},xp:0,days:{},best:{}};saveST();LS.set("cur."+PID,0);render();BIN.pop(["bin:"+bid],1)};$("#n").onclick=()=>$("#cf").innerHTML=""};
+    $("#y").onclick=()=>{const bid=BIN.add("progress",{pid:PID,st:ST,cur:LS.get("cur."+PID,0),wk:LS.get("wk."+PID,{})});LS.set("wk."+PID,{});ST={p:{},xp:0,days:{},best:{}};saveST();LS.set("cur."+PID,0);render();BIN.pop(["bin:"+bid],1)};$("#n").onclick=()=>$("#cf").innerHTML=""};
 };
 
 applySettings();render();
