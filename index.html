@@ -707,6 +707,7 @@ const TX={
  sources:["Sources cited in the book","مراجع الكتاب"],
  namesHead:["The names, lesson by lesson","الأسماء درسًا درسًا"],namesSub:["Tap a set, or search by name or meaning.","اختر مجموعة، أو ابحث باسم أو معنى."],
  all:["All","الكل"],set:["Set","المجموعة"],search:["Search names or meanings","ابحث في الأسماء والمعاني"],noMatch:["No lesson matches that search.","لا يوجد درس يطابق البحث."],
+ pdfAsk:["Which PDF would you like?","أي ملف تريد؟"],pdfEn:["English translation (AI translation · please check with your teacher)","الترجمة الإنجليزية (ترجمة آلية · راجعها مع معلمك)"],pdfAr:["Original Arabic","الأصل العربي"],
  wmHint:["Tap a name to see its meaning from the scholars' books","اضغط على الاسم لترى معناه من كتب العلماء"],wmH:["Meaning of each name","معاني الأسماء"],wmSrc:["al-Sa'di, Tafsir Asma' Allah al-Husna (in Arabic)","السعدي، تفسير أسماء الله الحسنى"],wmP:["p.","ص"],wmNone:["Not added yet: we only add a meaning when we find it in the scholars' books.","لم يُضف بعد: لا نضيف معنى إلا إذا وجدناه في كتب العلماء."],
  evidence:["Evidence","الدليل"],meaning:["Meaning","المعنى"],memThis:["Memorize this","احفظ هذا الدرس"],
  st_new:["New","جديد"],st_learning:["Learning","قيد الحفظ"],st_memorized:["Memorized","محفوظ"],st_review:["Review","للمراجعة"],
@@ -897,7 +898,7 @@ function renderTop(){
   const pf=PROFILES.find(p=>p.id===PID);
   $("#pfBtn").innerHTML=`${avatar(pf)}<span class="lbl">${esc(pf.name||t("learner"))}</span>`;
   $$("#langSw button").forEach(b=>{const on=b.dataset.lg===LANG;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)});$("#setBtn").setAttribute("aria-label",t("settings"));
-  $("#foot").innerHTML=`<div class="row note" style="justify-content:center"><span>${t("since")}</span><a href="matn-al-asma.pdf" download="متن-الأسماء.pdf">${t("pdfB")}</a></div><p class="note" style="max-width:640px">${esc(t("footNote"))}</p><a href="https://fastaqim.github.io/tuhfa-/">${esc(t("sibling"))}</a>`;
+  $("#foot").innerHTML=`<div class="row note" style="justify-content:center"><span>${t("since")}</span><a href="matn-al-asma.pdf" download="متن-الأسماء.pdf" data-pdfask>${t("pdfB")}</a></div><p class="note" style="max-width:640px">${esc(t("footNote"))}</p><a href="https://fastaqim.github.io/tuhfa-/">${esc(t("sibling"))}</a>`;
 }
 $$("#langSw button").forEach(b=>b.onclick=()=>{if(LANG===b.dataset.lg)return;LANG=b.dataset.lg;LS.set("lang",LANG);applySettings();render();toast(LANG==="ar"?"تم التبديل إلى العربية":"Switched to English")});
 $("#xpChip").onclick=()=>location.hash="#progress";
@@ -949,7 +950,7 @@ V.home=el=>{
     </div></div></section>
   <section class="sec"><div class="wrap narrow"><div class="head"><h2>${t("about")}</h2></div>
     <div class="prose"><p>${esc(t("aboutP"))}</p></div>
-    <div class="panel pdfp hue6"><div><b>${ic("book")}${t("pdfB")}</b><p class="note">${t("pdfD")}</p></div><a class="btn pri" href="matn-al-asma.pdf" download="متن-الأسماء.pdf">${ic("save")}${t("pdfB")}</a></div>
+    <div class="panel pdfp hue6"><div><b>${ic("book")}${t("pdfB")}</b><p class="note">${t("pdfD")}</p></div><a class="btn pri" href="matn-al-asma.pdf" download="متن-الأسماء.pdf" data-pdfask>${ic("save")}${t("pdfB")}</a></div>
     <h3 style="margin:8px 0">${t("sources")}</h3>
     <ul class="refs" lang="ar" dir="rtl"><li>تفسير أسماء الله الحسنى، عبد الرحمن بن ناصر السعدي (ت ١٣٧٦هـ)</li><li>فقه الأسماء الحسنى، الشيخ عبد الرزاق بن عبد المحسن البدر، الطبعة الأولى ١٤٢٩هـ</li><li>شروحات الشيخ ابن عثيمين رحمه الله</li><li>مختصر ولله الأسماء الحسنى، عبد العزيز ناصر الجليل</li></ul>
   </div></section>`;
@@ -1008,6 +1009,11 @@ function wmSheet(i,k){const L=DATA[i],qs=WM[i]||[],has=new Set(qs.flatMap(q=>q[0
   $("#shB").innerHTML=`<div class="wml">${qs.map(([ks,q,a,b])=>`<div class="wmq ${ks.includes(k)?"on":""}"><div class="wmn" lang="ar">${ks.map(x=>esc(L.names[x])).join(" · ")}</div><blockquote lang="ar">«${esc(q)}»</blockquote>${LANG==="en"&&WM_EN[q]?`<p class="wmen" lang="en"><span class="trl">${t("trl")}</span>${esc(WM_EN[q])}</p>`:""}<cite dir="${LANG==="ar"?"rtl":"ltr"}">${esc(t("wmSrc"))}${LANG==="ar"?"، ":", "}${pg(a,b)}</cite></div>`).join("")}
     ${L.names.filter((_,x)=>!has.has(x)).map(n=>`<div class="wmq none"><div class="wmn" lang="ar">${esc(n)}</div><p class="note">${t("wmNone")}</p></div>`).join("")}</div>`;
   $("#misSheet").hidden=false;const on=$("#shB .wmq.on");if(on)on.scrollIntoView({block:"nearest"})}
+/* English site: Download asks which PDF (English AI translation or the original Arabic) */
+document.addEventListener("click",e=>{const a=e.target.closest("[data-pdfask]");if(!a||LANG!=="en")return;e.preventDefault();
+  $("#shT").textContent=t("pdfAsk");$("#shX").textContent=t("closeL");
+  $("#shB").innerHTML=`<div class="stack"><a class="btn pri" href="names-english.pdf" download="Names-of-Allah-English.pdf">${ic("save")}${t("pdfEn")}</a><a class="btn out" href="matn-al-asma.pdf" download="متن-الأسماء.pdf">${ic("save")}${t("pdfAr")}</a></div>`;
+  $("#misSheet").hidden=false;$$("#shB a").forEach(x=>x.addEventListener("click",()=>setTimeout(()=>MIS.closeSheet(),300)))});
 document.addEventListener("click",e=>{const n=e.target.closest("[data-wm]");if(!n||n.closest(".names.hid"))return;const [i,k]=n.dataset.wm.split(":").map(Number);wmSheet(i,k)});
 document.addEventListener("keydown",e=>{if(e.key!=="Enter")return;const n=e.target.closest&&e.target.closest("[data-wm]");if(n)n.click()});
 /* Tap the speaker by a name to hear just that name (audio/n/LL-K.mp3; lesson 3 is one file for both names). */
