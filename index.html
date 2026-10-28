@@ -617,7 +617,7 @@ const TX={
  st_new:["New","جديد"],st_learning:["Learning","قيد الحفظ"],st_memorized:["Memorized","محفوظ"],st_review:["Review","للمراجعة"],
  memHead:["Recite from memory","سمّع من حفظك"],memSub:["Stuck? Tap the highlighted word to show it.","توقفت؟ اضغط على الكلمة المظللة لتظهر."],
  chooseSet:["Choose a set","اختر مجموعة"],lessons:["lessons","دروس"],
- lv0:["Read","اقرأ"],lv1:["Hide some","أخفِ بعضها"],lv2:["Hide most","أخفِ أكثرها"],lv3:["First letters","أوائل الحروف"],lv4:["Recite","سمّع"],
+ lv0:["Words shown","الكلمات ظاهرة"],lv1:["Hide some","أخفِ بعضها"],lv2:["Hide most","أخفِ أكثرها"],lv3:["First letters","أوائل الحروف"],lv4:["Words hidden","الكلمات مخفية"],
  trl:["English translation of the meaning · please review with a teacher","ترجمة المعنى بالإنجليزية"],
  pdfB:["Download the book (PDF)","حمّل الكتاب (PDF)"],pdfD:["The original book متن الأسماء, free to download, print and share.","الكتاب الأصلي «متن الأسماء»، مجاني للتحميل والطباعة والنشر."],
  hideEv:["Hide the evidence (tap to reveal)","أخفِ الدليل (اضغط لإظهاره)"],showEv:["Show the evidence (daleel)","إظهار الدليل"],showEvD:["Memorizing the daleel is optional. Turn this off to see only the names and their meanings.","حفظ الدليل اختياري. أطفئ هذا الخيار لترى الأسماء ومعانيها فقط."],evOnT:["The daleel is now shown","تم إظهار الدليل"],evOffT:["The daleel is now hidden","تم إخفاء الدليل"],evOn:["Daleel shown","الدليل ظاهر"],evOff:["Daleel hidden","الدليل مخفي"],hideNm:["Hide the name","أخفِ الاسم"],
@@ -677,6 +677,7 @@ const TX={
  binOpen:["Recently deleted","المحذوفات"],undoL:["Undo","تراجع"],binBack:["Brought back","تم الاسترجاع"],restoreL:["Bring back","استرجع"],restoreAll:["Bring back all","استرجع الكل"],
  binD:["Deleted things wait here for 24 hours, then they are removed for good.","تبقى المحذوفات هنا ٢٤ ساعة، ثم تُحذف نهائيًا."],binEmpty:["Nothing deleted in the last 24 hours.","لا شيء محذوف في آخر ٢٤ ساعة."],binLeft:["{h} h left","باقٍ {h} ساعة"],
  selectL:["Select","تحديد"],selAll:["All","الكل"],nSel:["{n} selected","المحدد: {n}"],delL:["Delete","احذف"],
+ nowMem:["Now once more, from memory","والآن مرة أخرى من حفظك"],repMem:["From memory ✓ {a} of {b}","من الحفظ ✓ {a} من {b}"],repRead:["Read through. Hide the words to count it as memorized.","قراءة. أخفِ الكلمات لتُحسب حفظًا."],hideAll:["Hide words","أخفِ الكلمات"],showAllW:["Show words","أظهر الكلمات"],
  retGo:["Back to where you were","ارجع إلى حيث كنت"],retDone:["Back where you were","رجعتَ إلى موضعك"],oneByOne:["One by one","واحدًا واحدًا"],hideL:["Hide","إخفاء"],
  moreL:["More","المزيد"],levelL:["Hiding","الإخفاء"],optL:["Tools","أدوات"],thisLesson:["This lesson","هذا الدرس"],colorsL:["Colours","الألوان"],startL:["Start","ابدأ"],tapWordHint:["Tap a hidden word to peek at it.","اضغط على كلمة مخفية لتراها."],
  pNew:["New lesson","الدرس الجديد"],pNewD:["Your next lesson","درسك التالي"],pNear:["Recent review","المراجعة القريبة"],pNearD:["What you learned this week","ما حفظته هذا الأسبوع"],
@@ -854,7 +855,7 @@ V.home=el=>{
     <h3 style="margin:8px 0">${t("sources")}</h3>
     <ul class="refs" lang="ar" dir="rtl"><li>تفسير أسماء الله الحسنى، عبد الرحمن بن ناصر السعدي (ت ١٣٧٦هـ)</li><li>فقه الأسماء الحسنى، الشيخ عبد الرزاق بن عبد المحسن البدر، الطبعة الأولى ١٤٢٩هـ</li><li>شروحات الشيخ ابن عثيمين رحمه الله</li><li>مختصر ولله الأسماء الحسنى، عبد العزيز ناصر الجليل</li></ul>
   </div></section>`;
-  $("#cont").onclick=()=>{Mem.open(LS.get("cur."+PID,0))};
+  $("#cont").onclick=()=>{Mem.go(LS.get("cur."+PID,0))};
   bindWho();bindWeek(el);
 };
 
@@ -926,7 +927,7 @@ function weakHTML(){const c=weakCounts(),mx=Math.max(0,...Object.values(c)),lv=n
   return`<div class="panel"><h3>${ic("bolt")}${t("weakH")}</h3><p class="note">${mx?t("weakD"):t("weakNone")}</p>
     <div class="weak">${DATA.map((_,i)=>`<button class="wk l${lv(c[i]||0)}" data-weak="${i}" title="${esc(nm(i))}${c[i]?" · "+c[i]:""}">${N(i+1)}</button>`).join("")}</div>
     ${mx?`<button class="btn pri sm" data-weakgo>${ic("mic")}${t("weakGo")}</button>`:""}</div>`}
-document.addEventListener("click",e=>{const b=e.target.closest("[data-weak]");if(b){Mem.mode="mem";Mem.open(+b.dataset.weak);return}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-weak]");if(b){Mem.go(+b.dataset.weak);return}
   if(e.target.closest("[data-weakgo]")){const c=weakCounts(),list=Object.keys(c).map(Number).sort((a,b)=>c[b]-c[a]).slice(0,5).sort((a,b)=>a-b);if(!list.length)return;
     LS.set("mq."+PID,{k:-2,rnd:false,list});Mem.stopLive();Mem.mode="mem";if(Mem.startLive())Mem.open(list[0])}});
 
@@ -945,7 +946,7 @@ V.names=el=>{
     if(q)idx=idx.filter(i=>norm(DATA[i].names.join(" ")+" "+DATA[i].m.join(" ")).includes(q)||(GLOSS[i].join(" ")+" "+MEAN_EN[i].join(" ")).toLowerCase().includes(NamesQ.trim().toLowerCase()));
     const rd=Mem.live&&Mem.mode==="read",hw=rd&&LS.get("hideRead",false);
     $("#list").innerHTML=idx.length?idx.map(i=>lessonHTML(i,{sp:rd,lv:hw?4:0,hideEv:hw,hideNames:hw,foot:`<div class="lfoot"><button class="btn out sm" data-mem="${i}">${ic("memorize")}${t("memThis")}</button><button class="btn pri sm" data-live="${i}">${ic("mic")}${t("recite")}</button></div>`})).join(""):`<p class="note">${t("noMatch")}</p>`;
-    $$("[data-mem]").forEach(b=>b.onclick=()=>Mem.open(+b.dataset.mem));
+    $$("[data-mem]").forEach(b=>b.onclick=()=>Mem.go(+b.dataset.mem));
     $$("[data-live]").forEach(b=>b.onclick=()=>Mem.startRead(+b.dataset.live));
     if(rd){Mem.hook();Mem.recLesson(Mem.li);Mem.bar();if(Mem.scrollTo){Mem.scrollTo=false;const r=Mem.root();if(r)r.scrollIntoView({block:"start"})}}
   };
@@ -1021,6 +1022,8 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     if(go){NamesSet=-1;NamesQ="";if(location.hash!=="#names"){location.hash="#names";return}}render()},
   q(){const q=LS.get("mq."+PID,null);return q&&Array.isArray(q.list)&&q.list.length?q:{k:-1,rnd:false,list:DATA.map((_,i)=>i)}},
   setQ(k,rnd){const list=k<0?DATA.map((_,i)=>i):setRange(k);LS.set("mq."+PID,{k,rnd,list:rnd?shuffle(list):list});return this.q()},
+  /* Opening a lesson from a list starts listening straight away: one way to memorize, no mode to choose. */
+  go(i){this.stopLive();this.mode="mem";this.autoLv(i);if(SR)this.startLive();this.open(i)},
   open(i){if(!this.q().list.includes(i))this.setQ(setOf(i),false);LS.set("cur."+PID,i);this.run=true;if(location.hash!=="#memorize"){this.opening=true;location.hash="#memorize"}else{render();scrollTo(0,0)}},
   startLive(){if(!SR){toast(t("noSR"));return false}
     if(!this.L){this.L=new Listener(ws=>this.heard(ws),st=>{if(st==="denied"){this.stopLive();toast(t("noMic"));if(VIEW==="memorize")render()}});this.L.onPeek=w=>this.peek(w);this.L.onRevise=()=>{this.pend=[]}}
@@ -1105,12 +1108,21 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     setTimeout(()=>{if(!this.live||this.mode!=="read")return;this.li=+nx.dataset.i;LS.set("cur."+PID,this.li);this.recLesson(this.li);this.hook();this.bar()},500)},
   /* One full recitation = one repetition. When the target is reached, the lesson is memorized and the next one opens. */
   finish(){this.lock=true;this.pend=[];if(this.mode==="read")return this.nextRead();const i=LS.get("cur."+PID,0),p=P(i),target=LS.get("target",5);
-    p.reps++;if(p.s==="new")p.s="learning";touch(i);saveST();WK.add(i);addXP(2);
-    if(p.reps>=target&&p.s!=="memorized"){p.s="memorized";p.rev=false;saveST();addXP(10);toast(t("memNext"))}
+    /* Only words said while hidden count as memorized. A recitation counts toward "memorized" when most of it was from memory;
+       reading it with the words shown (or peeking a lot) counts as reading. */
+    const W=this.W,fromMem=W.length?W.filter(x=>this.mk[x.id]==="wm").length/W.length:0;
+    if(p.s==="new")p.s="learning";touch(i);WK.add(i);
+    if(fromMem>=.8){p.reps++;addXP(2);if(p.reps>=target&&p.s!=="memorized"){p.s="memorized";p.rev=false;addXP(10);toast(t("memNext"))}else toast(t("repMem",{a:p.reps,b:target}))}
+    else if(!LS.get("lv",0)&&this.live){saveST();
+      /* Read it once with the words shown, then the same lesson again with the words hidden, from memory. */
+      LS.set("lv",LS.get("lvHide",4)||4);toast(t("nowMem"));setTimeout(()=>{if(this.live&&VIEW==="memorize"){render();scrollTo(0,0)}},600);return}
+    else toast(t("repRead"));saveST();
     /* Like Tarteel: as soon as a lesson is finished, the next one opens and listening carries on. */
     const list=this.q().list,pos=list.indexOf(i),nx=list[pos+1];
     if(nx==null){this.stopLive();toast(t("setDone"));setTimeout(()=>{Mem.run=false;render()},900);return}
-    setTimeout(()=>{if(this.live&&VIEW==="memorize"){LS.set("cur."+PID,nx);render();scrollTo(0,0)}},450)}};
+    setTimeout(()=>{if(this.live&&VIEW==="memorize"){LS.set("cur."+PID,nx);this.autoLv(nx);render();scrollTo(0,0)}},450)},
+  /* A new lesson starts with the words shown (read it first); a lesson you have recited from memory before starts hidden. */
+  autoLv(i){const p=P(i);LS.set("lv",p.reps>0||status(i)==="memorized"?(LS.get("lvHide",4)||4):0)}};
 V.mistakes=el=>{
   el.innerHTML=`<section class="sec"><div class="wrap narrow stack"><div class="head"><h2>${t("mistakes")}</h2><p>${t("misSub")}</p></div><div id="mAll"></div>
     <div class="row" id="mFoot"><a class="btn out" href="#memorize">${ic("memorize")}${t("memorize")}</a><button class="btn warn" id="mClr">${ic("trash")}${t("clearMis")}</button></div><div id="mcf"></div></div></section>`;
@@ -1126,8 +1138,8 @@ V.memorize=el=>{
         return`<button class="setc ${hue(k)}" data-k="${k}"><span class="n">${N(k+1)}</span><span class="t">${setLabel(k)}</span><span class="r">${N(r[0]+1)}–${N(r[r.length-1]+1)}</span><span class="s" lang="ar">${esc(setSpan(k))}</span><span class="prog"><i style="width:${done/r.length*100}%"></i></span></button>`}).join("")}</div>
       <div class="row"><a class="btn out" href="#mistakes">${ic("history")}${t("pastMis")}</a><button class="btn pri" id="cont">${ic("play")}${t("continue")}: ${t("lessonN")} ${N(LS.get("cur."+PID,0)+1)}</button></div></div></div></section>`;
     let rnd=Mem.q().rnd;$$("[data-rnd]").forEach(b=>b.onclick=()=>{rnd=b.dataset.rnd==="1";$$("[data-rnd]").forEach(x=>x.classList.toggle("on",x===b))});
-    $$(".setc").forEach(b=>b.onclick=()=>{const r=Mem.setQ(+b.dataset.k,rnd).list;Mem.open(r.find(i=>status(i)!=="memorized")??r[0])});
-    $("#cont").onclick=()=>Mem.open(LS.get("cur."+PID,0));
+    $$(".setc").forEach(b=>b.onclick=()=>{const r=Mem.setQ(+b.dataset.k,rnd).list;Mem.go(r.find(i=>status(i)!=="memorized")??r[0])});
+    $("#cont").onclick=()=>Mem.go(LS.get("cur."+PID,0));
     return;
   }
   const i=LS.get("cur."+PID,0), p=P(i), lv=LS.get("lv",0), target=LS.get("target",5);
@@ -1147,18 +1159,18 @@ V.memorize=el=>{
     ${lessonHTML(i,{framed:true,lv,hideEv,hideNames:hideNm,sp:live})}
   </div></section>
   <div class="mdock" id="mdock"><div class="in">
-    <button class="dk" type="button" id="lvBtn">${ic(lv?"eyeoff":"eye")}<span>${t("lv"+lv)}</span></button>
+    <button class="dk" type="button" id="lvBtn" aria-pressed="${!!lv}">${ic(lv?"eye":"eyeoff")}<span>${lv?t("showAllW"):t("hideAll")}</span></button>
     <div class="mw"><button class="mic ${live&&!Mem.paused?"on":""}" type="button" id="live" aria-label="${live?(Mem.paused?t("resume"):t("pause")):t("live")}">${live?(Mem.paused?ic("play2"):'<svg class="i" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>'):ic("mic")}</button><small>${live?(Mem.paused?t("resume"):t("pause")):t("startL")}</small></div>
     <button class="dk" type="button" id="mvOpen">${ic("rev")}<span>${t("misBtn")}</span><b class="cnt" ${nMis?"":"hidden"}>${N(nMis)}</b></button>
     ${live?`<button class="dk stop" type="button" id="liveStop" aria-label="${t("liveStop")}"><svg class="i" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span>${t("liveStop")}</span></button>`:""}
   </div></div>`;
   document.body.classList.add("mdocked");
-  const go=n=>{LS.set("cur."+PID,n);render();scrollTo(0,0)};
+  const go=n=>{LS.set("cur."+PID,n);Mem.autoLv(n);render();scrollTo(0,0)};
   $("#sets").onclick=()=>{Mem.stopLive();Mem.run=false;render()};
   $("#prev").onclick=()=>pos>0&&go(r[pos-1]);$("#next").onclick=()=>pos<r.length-1&&go(r[pos+1]);
   $("#live").onclick=()=>{if(Mem.live){if(Mem.paused)Mem.resume();else Mem.pause()}else{Mem.mode="mem";Mem.startLive()}render()};
   if($("#liveStop"))$("#liveStop").onclick=()=>{Mem.stopLive();render()};
-  $("#lvBtn").onclick=()=>{LS.set("lv",(lv+1)%5);render();toast(t("levelL")+": "+t("lv"+((lv+1)%5)))};
+  $("#lvBtn").onclick=()=>{const n=lv?0:(LS.get("lvHide",4)||4);if(lv)LS.set("lvHide",lv);LS.set("lv",n);render();toast(t("lv"+n))};
   $("#mvOpen").onclick=()=>MV.open(MIS.all().filter(m=>m.i===i),0);
   const markCur=()=>{$$(".w.cur").forEach(w=>w.classList.remove("cur"));const f=$(".w[data-h]");if(f)f.classList.add("cur")};
   const reveal=w=>{w.classList.remove("h","fl","cur");w.removeAttribute("data-h");markCur()};
