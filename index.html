@@ -214,6 +214,8 @@ h3{margin:0;font-size:1.02rem;font-weight:700}
 .setc.on{border-color:var(--acc);background:var(--acc-soft)}
 
 /* lesson card */
+.lesson.playing{outline:3px solid var(--acc);outline-offset:2px;scroll-margin-top:calc(var(--toph,64px) + 76px)}
+.plbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.plbar.on{position:sticky;top:calc(var(--toph,64px) + env(safe-area-inset-top,0px));z-index:5;background:var(--bg);padding:8px 0;box-shadow:0 6px 10px -8px rgba(0,0,0,.25)}.plbar .chip{display:inline-flex;align-items:center;gap:6px}
 .lesson{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:30px clamp(20px,5vw,44px);display:grid;gap:24px}
 .lesson.framed{border:1.5px solid var(--acc);outline:1px solid var(--acc);outline-offset:4px;border-radius:2px;box-shadow:none;margin:6px}
 .lhead{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.84rem;color:var(--muted)}
@@ -756,6 +758,8 @@ const TX={
  dayN:["Day","اليوم"],restDay:["Rest","راحة"],pRest:["Friday and Saturday are rest days in your schedule. Review only today.","الجمعة والسبت يوما راحة في جدولك. اليوم للمراجعة فقط."],
  toRev:["to review","للمراجعة"],lessonsL:["Lessons","الدروس"],noMic:["The microphone is not available. Allow microphone access for this site and try again.","الميكروفون غير متاح. اسمح للموقع باستخدام الميكروفون ثم حاول مرة أخرى."],
  saveFile:["Save to device","احفظ على الجهاز"],sure:["Tap again to delete","اضغط مرة أخرى للحذف"],delAll:["Delete all my recordings","احذف كل تسجيلاتي"],deleted:["Deleted","تم الحذف"],
+ listenSet:["Listen","استمع"],yourTurn:["Your turn","دورك"],loopSet:["Loop set","كرّر المجموعة"],sayIt:["Your turn… say it","دورك… قلها"],
+ voiceCr:["Listen uses a computer voice made with the free Chatterbox model (MIT license), in a reading style learned from the ClArTTS recordings by MBZUAI (CC BY 4.0).","الاستماع بصوت حاسوبي صُنع بنموذج Chatterbox المجاني (رخصة MIT)، بأسلوب قراءة مأخوذ من تسجيلات ClArTTS من جامعة محمد بن زايد (CC BY 4.0)."],
  storage:["Your data","بياناتك"],
  storageD:["Everything here is free, with no limits and no expiry. Progress and recordings are saved on this device and stay until you delete them. To move them to another device, or to be safe if the browser data is cleared, save a backup file.","كل شيء هنا مجاني بلا حدود ولا مدة. يُحفظ التقدّم والتسجيلات على هذا الجهاز ويبقى حتى تحذفه. لنقلها إلى جهاز آخر، أو للاحتياط إن مُسحت بيانات المتصفح، احفظ نسخة احتياطية."],
  persistOn:["This browser has agreed to keep the data permanently.","وافق المتصفح على الاحتفاظ بالبيانات بشكل دائم."],
@@ -890,7 +894,7 @@ function render(){
 $("#fab").onclick=()=>{let i=LS.get("cur."+PID,0);
   if(VIEW==="names"){const c=$$(".lesson[data-i]").find(e=>e.getBoundingClientRect().bottom>140);if(c)i=+c.dataset.i;Mem.startRead(i,false)}
   else Mem.startRead(i,true)};
-addEventListener("hashchange",()=>{const was=VIEW;if(!Mem.opening&&location.hash!=="#"+was){Game.id=null;Game.set=null;Mem.run=false}if(location.hash!==(Mem.mode==="read"?"#names":"#memorize"))Mem.stopLive();Mem.opening=false;render();scrollTo(0,0)});
+addEventListener("hashchange",()=>{const was=VIEW;Player.stop();if(!Mem.opening&&location.hash!=="#"+was){Game.id=null;Game.set=null;Mem.run=false}if(location.hash!==(Mem.mode==="read"?"#names":"#memorize"))Mem.stopLive();Mem.opening=false;render();scrollTo(0,0)});
 
 /* ---------- home ---------- */
 V.home=el=>{
@@ -1010,19 +1014,23 @@ V.names=el=>{
     <div class="stack"><input class="search" id="q" type="search" placeholder="${esc(t("search"))}" value="${esc(NamesQ)}" aria-label="${esc(t("search"))}">
     <div class="chips" id="setChips"><button class="chip ${NamesSet<0?"on":""}" data-k="-1">${t("all")}</button>${Array.from({length:SETS},(_,k)=>`<button class="chip ${NamesSet===k?"on":""}" data-k="${k}">${setLabel(k)}</button>`).join("")}</div>
     <div class="row">${evSw()}</div>
+    <div class="plbar" id="plbar"><button class="btn pri sm" id="plSet">${ic(Player.on?"x":"sound")}<span>${t(Player.on?"stop":"listenSet")}</span></button><button class="chip ${LS.get("plTurn",false)?"on":""}" id="plTurn" aria-pressed="${LS.get("plTurn",false)}">${t("yourTurn")}</button><button class="chip ${LS.get("plLoop",false)?"on":""}" id="plLoop" aria-pressed="${LS.get("plLoop",false)}">${t("loopSet")}</button></div>
     <div class="list" id="list"></div></div></div></section>`;
   const draw=()=>{
     const q=norm(NamesQ.trim());
     let idx=NamesSet<0?DATA.map((_,i)=>i):setRange(NamesSet);
     if(q)idx=idx.filter(i=>norm(DATA[i].names.join(" ")+" "+DATA[i].m.join(" ")).includes(q)||(GLOSS[i].join(" ")+" "+MEAN_EN[i].join(" ")).toLowerCase().includes(NamesQ.trim().toLowerCase()));
     const rd=Mem.live&&Mem.mode==="read",hw=rd&&LS.get("hideRead",false);
+    NamesIdx=idx;$("#plbar").hidden=rd||!idx.length;if(rd)Player.stop();
     $("#list").innerHTML=idx.length?idx.map(i=>lessonHTML(i,{sp:rd,lv:hw?4:0,hideEv:hw,hideNames:hw,foot:`<div class="lfoot"><button class="btn out sm" data-mem="${i}">${ic("memorize")}${t("memThis")}</button><button class="btn pri sm" data-live="${i}">${ic("mic")}${t("recite")}</button></div>`})).join(""):`<p class="note">${t("noMatch")}</p>`;
     $$("[data-mem]").forEach(b=>b.onclick=()=>Mem.go(+b.dataset.mem));
     $$("[data-live]").forEach(b=>b.onclick=()=>Mem.startRead(+b.dataset.live));
     if(rd){Mem.hook();Mem.recLesson(Mem.li);Mem.bar();if(Mem.scrollTo){Mem.scrollTo=false;const r=Mem.root();if(r)r.scrollIntoView({block:"start"})}}
   };
-  $("#q").oninput=e=>{NamesQ=e.target.value;draw()};
-  $$("#setChips .chip").forEach(b=>b.onclick=()=>{NamesSet=+b.dataset.k;$$("#setChips .chip").forEach(x=>x.classList.toggle("on",x===b));draw()});
+  $("#q").oninput=e=>{NamesQ=e.target.value;Player.stop();draw()};
+  $("#plSet").onclick=()=>Player.on?Player.stop():Player.start(NamesIdx);
+  $$("#plTurn,#plLoop").forEach(b=>b.onclick=()=>{const k=b.id==="plTurn"?"plTurn":"plLoop",v=!LS.get(k,false);LS.set(k,v);b.classList.toggle("on",v);b.setAttribute("aria-pressed",v)});
+  $$("#setChips .chip").forEach(b=>b.onclick=()=>{Player.stop();NamesSet=+b.dataset.k;$$("#setChips .chip").forEach(x=>x.classList.toggle("on",x===b));draw()});
   draw();
 };
 
@@ -1267,7 +1275,7 @@ V.memorize=el=>{
     $$("[data-lv]",B).forEach(b=>b.onclick=()=>{LS.set("lv",+b.dataset.lv);close();render()});
     $("#oNm").onclick=()=>{LS.set("hideNm",!hideNm);close();render()};
     if($("#oNw")){$("#oNw").onclick=()=>{const c=$(".w.cur")||$(".w[data-h]");if(c)reveal(c)};$("#oSa").onclick=()=>{$$(".w[data-h]").forEach(reveal);close()}}
-    if($("#listen"))$("#listen").onclick=()=>speak(AUDIO[i]);
+    if($("#listen"))$("#listen").onclick=()=>{Player.stop();speak(AUDIO[i])};
     $("#tap").onclick=()=>{p.reps++;if(p.s==="new")p.s="learning";touch(i);if(p.reps===target&&lv<4)LS.set("lv",lv+1);saveST();addXP(2);close();render()};
     $("#rr").onclick=()=>{p.reps=0;saveST();close();render()};
     $("#mm").onclick=()=>{close();const was=p.s==="memorized"&&!p.rev;p.s="memorized";p.rev=false;touch(i);saveST();if(!was)addXP(10);LS.set("lv",0);
@@ -1288,16 +1296,34 @@ addEventListener("keydown",e=>{if(VIEW!=="memorize"||!Mem.run||e.target.matches(
   if(e.key===" "&&$("#nw")){e.preventDefault();$("#nw").click()}});
 
 /* ---------- speech ---------- */
-/* Listen plays real human recordings only (no computer voice). AUDIO maps a lesson index to a file in audio/; lessons without one show no Listen button. */
-const AUDIO={};
+/* Listen plays pre-made audio of each lesson's names, read from the fully vowelled text (audio/01.mp3 … 70.mp3). No in-browser computer voice. */
+const AUDIO=Object.fromEntries(DATA.map((_,i)=>[i,`audio/${String(i+1).padStart(2,"0")}.mp3`]));
 let speaking=null;
 function stopSpeech(){if(speaking){try{speaking.pause()}catch(e){}speaking=null}}
 function speak(src){
   const b=$("#listen");
   if(speaking){stopSpeech();$("span",b).textContent=t("listen");return}
-  const a=new Audio(src);a.onended=a.onerror=()=>{speaking=null;const bb=$("#listen");if(bb)$("span",bb).textContent=t("listen")};
-  speaking=a;$("span",b).textContent=t("stop");a.play().catch(()=>{speaking=null});
+  const a=new Audio(),done=()=>{if(speaking===a)speaking=null;const bb=$("#listen");if(bb)$("span",bb).textContent=t("listen")};a.onended=a.onerror=done;
+  speaking=a;$("span",b).textContent=t("stop");
+  /* load as a whole file (works offline from the cache; iPhone audio range requests do not) */
+  fetch(src).then(r=>r.ok?r.blob():Promise.reject()).then(bl=>{if(speaking!==a)return;a.src=URL.createObjectURL(bl);return a.play()}).catch(done);
 }
+
+/* Set player (Names page): plays each shown lesson in turn. "Your turn" pauses after each one about as long as it took,
+   so the learner can say it back; "Loop set" starts the set again at the end. */
+let NamesIdx=[];
+const Player={on:false,a:null,timer:null,
+  start(list){if(!list.length)return;stopSpeech();this.list=list.slice();this.pos=0;this.on=true;this.ui();this.next()},
+  stop(){this.on=false;clearTimeout(this.timer);if(this.a){try{this.a.pause()}catch(e){}this.a=null}$$(".lesson.playing").forEach(x=>x.classList.remove("playing"));this.ui()},
+  ui(lbl){const b=$("#plSet");if(!b)return;$("#plbar").classList.toggle("on",this.on);b.innerHTML=`${ic(this.on?"x":"sound")}<span>${lbl||t(this.on?"stop":"listenSet")}</span>`},
+  next(){if(!this.on)return;if(!$("#plSet"))return this.stop();
+    if(this.pos>=this.list.length){if(LS.get("plLoop",false))this.pos=0;else return this.stop()}
+    const i=this.list[this.pos++];$$(".lesson.playing").forEach(x=>x.classList.remove("playing"));
+    const card=$(`.lesson[data-i="${i}"]`);if(card){card.classList.add("playing");card.scrollIntoView({block:"start",behavior:"smooth"})}
+    const a=new Audio();this.a=a;this.ui();
+    a.onended=()=>{if(this.a!==a)return;const gap=LS.get("plTurn",false)?Math.min(12,(a.duration||2)+0.6)*1000:700;if(gap>700)this.ui(t("sayIt"));this.timer=setTimeout(()=>this.next(),gap)};
+    a.onerror=()=>{if(this.a===a)this.timer=setTimeout(()=>this.next(),300)};
+    fetch(AUDIO[i]).then(r=>r.ok?r.blob():Promise.reject()).then(bl=>{if(this.a!==a)return;a.src=URL.createObjectURL(bl);return a.play()}).catch(()=>{if(this.a===a)this.stop()})}};
 
 /* ---------- practice ---------- */
 const GAMES=[["flash","cards"],["pair","pair"],["quick","bolt"],["build","build"],["order","order"]];
@@ -1622,6 +1648,7 @@ V.settings=el=>{
       <div class="row"><button class="btn out sm" id="persist" hidden>${t("persistBtn")}</button><button class="btn pri sm" id="bk">${ic("save")}${t("backup")}</button><button class="btn out sm" id="rsBtn">${ic("upload")}${t("restore")}</button><input type="file" id="rsFile" accept="application/json,.json" hidden><button class="btn out sm" id="binS">${ic("trash")}${t("binTitle")}</button></div><div id="rcf"></div></div>
     ${LS.get("owner",false)?`<div class="panel"><h3 class="hue4">${ic("progress")}${t("ownV")}</h3><p class="note">${t("ownVD")}</p><div class="stats" id="ownv"><p class="note">…</p></div><div class="row"><button class="btn out sm" id="ownR">${ic("refresh")}${t("ownR")}</button><button class="btn sm" id="ownH">${t("ownH")}</button></div></div>`:""}
     <div class="panel"><div class="row"><button class="btn warn" id="rst">${t("resetP")}</button></div><div id="cf"></div></div>
+    <p class="note">${t("voiceCr")} <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a></p>
   </div></section>`;
   const showP=async()=>{const on=await persisted();const el=$("#pst");if(!el)return;el.textContent=on?t("persistOn"):t("persistOff")+" "+t("persistWhat");$("#persist").hidden=on};showP();
   if($("#ownv")){const load=async()=>{const box=$("#ownv");box.innerHTML=`<p class="note">…</p>`;

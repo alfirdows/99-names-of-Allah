@@ -1,7 +1,9 @@
 /* Offline support: pages are fetched fresh when online (so updates reach everyone), and saved for offline use. */
-const CACHE="asma-v34";
+const CACHE="asma-v35";
 const CORE=["./","index.html","manifest.webmanifest","icon-180.png","icon-192.png","icon-512.png","fonts/Amiri-Bold.woff","fonts/ScheherazadeNew-Regular.woff","fonts/ScheherazadeNew-Bold.woff","fonts/IBMPlexSansArabic-Regular.woff","fonts/IBMPlexSansArabic-SemiBold.woff","fonts/IBMPlexSansArabic-Bold.woff"];
-self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
+/* Listen audio (one file per lesson) is saved too, so it works offline; a failed audio file never blocks the update. */
+const AUDIO=Array.from({length:70},(_,i)=>`audio/${String(i+1).padStart(2,"0")}.mp3`);
+self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE).then(()=>Promise.all(AUDIO.map(u=>c.add(u).catch(()=>{}))))).then(()=>self.skipWaiting()))});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener("fetch",e=>{const req=e.request;if(req.method!=="GET")return;const url=new URL(req.url);
  /* Calendar reminder files open straight in the phone's Calendar; never cache them as the page. */
