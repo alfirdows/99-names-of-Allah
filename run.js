@@ -2,6 +2,7 @@
    The site gives questions and a place to keep coins; everything stays on the device. */
 (function(){
 "use strict";
+/* To add a language: copy the "en" block below, give it the language code (e.g. fr, ur), and translate the words. */
 const TX={
  ar:{title:"سباق الفانوس",sub:"اجرِ، اجمع الدنانير، وادخل من باب الجواب الصحيح",start:"ابدأ",shop:"المتجر",close:"إغلاق",again:"العب مرة أخرى",
   coins:"دنانير",best:"أفضل نتيجة",hint:"اسحب يمينًا أو يسارًا لتغيّر الطريق، ولأعلى لتقفز. أو المس جانب الشاشة.",go:"انطلق!",
@@ -74,7 +75,9 @@ const SFX={ctx:null,on:true,
  lane(){this.tone(520,.05,"sine",.04)}};
 
 function play(o){
- const L=TX[o.lang==="ar"?"ar":"en"],AR=o.lang==="ar",S=o.store;
+ /* any language: words come from TX (add a new language there, or pass o.text); missing words fall back to English */
+ const base=TX[o.lang]||{},L=Object.assign({},TX.en,base,o.text||{});L.colors=Object.assign({},TX.en.colors,base.colors||{},(o.text||{}).colors||{});
+ const AR=o.rtl!=null?o.rtl:["ar","ur","fa","ps","he","ku","sd","ug"].includes(String(o.lang).split("-")[0]),S=o.store;
  SFX.on=S.get("lrSound",true);
  if(!document.getElementById("lr-css")){const st=document.createElement("style");st.id="lr-css";st.textContent=CSS;document.head.appendChild(st)}
  const ov=document.createElement("div");ov.className="lr-ov";ov.dir=AR?"rtl":"ltr";ov.style.setProperty("--lr-name",o.nameFont||"serif");ov.style.setProperty("--lr-text",o.textFont||"serif");
