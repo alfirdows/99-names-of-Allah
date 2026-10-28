@@ -413,6 +413,25 @@ body:not(.mdocked):not(.reading) .mv{bottom:calc(14px + env(safe-area-inset-bott
 .mv .mvf button{border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:700;font-size:.85rem;border-radius:999px;padding:7px 12px;display:inline-flex;align-items:center;gap:4px;cursor:pointer}
 .mv .mvf button:disabled{opacity:.35}.mv .mvf button .i{width:16px;height:16px}
 .mv .mvf .dots{flex:1;display:flex;justify-content:center;gap:5px;flex-wrap:wrap}.mv .mvf .dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}.mv .mvf .dots i.on{background:var(--gold);width:16px;border-radius:4px}
+
+/* recently deleted popup, list, and select-to-delete */
+.binpop{position:fixed;left:50%;transform:translateX(-50%);top:calc(12px + env(safe-area-inset-top,0px));z-index:120;width:min(460px,calc(100vw - 20px));background:var(--ink);color:var(--bg);border-radius:18px;padding:12px 12px 10px;box-shadow:0 14px 34px rgba(0,0,0,.3);display:grid;gap:10px;animation:drop .22s ease-out}
+@keyframes drop{from{transform:translate(-50%,-14px);opacity:.3}}
+.binpop .bt{display:flex;gap:10px;align-items:flex-start}.binpop .bt .i{width:22px;height:22px;flex:none;margin-top:2px}.binpop .bt b{display:block}.binpop .bt span{font-size:.86rem;opacity:.85}
+.binpop .bb{display:flex;gap:8px;align-items:center}.binpop button{border:0;border-radius:999px;font:inherit;font-weight:700;font-size:.86rem;padding:7px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.binpop .u{background:var(--bg);color:var(--ink)}.binpop .o{background:transparent;color:var(--bg);border:1px solid color-mix(in srgb,var(--bg) 40%,transparent)}.binpop .x{margin-inline-start:auto;background:transparent;color:var(--bg);padding:6px}.binpop .i{width:17px;height:17px}
+.binl{display:grid;gap:8px}.binit{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--surface)}.binit>div{flex:1;min-width:0}
+.binit b{display:flex;align-items:center;gap:6px}.binit b .i{width:17px;height:17px;flex:none}.binit .note{font-size:.82rem;overflow:hidden;text-overflow:ellipsis}
+.binlink{margin-top:10px;display:inline-flex;align-items:center;gap:6px}.binlink[hidden]{display:none}.binlink .i{width:16px;height:16px}
+.picking .selbar{position:sticky;top:calc(var(--toph,64px) + env(safe-area-inset-top,0px));z-index:5;background:var(--bg);padding:8px 0;box-shadow:0 6px 10px -8px rgba(0,0,0,.25)}
+#misSheet .picking .selbar,.sheet .picking .selbar{top:0}
+.selbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 10px}.selbar[hidden]{display:none}
+.selbar button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;font:inherit;font-weight:700;font-size:.82rem;padding:6px 12px;display:inline-flex;align-items:center;gap:5px;cursor:pointer}.selbar .i{width:15px;height:15px}
+.selbar .n{font-weight:700;font-size:.85rem;margin-inline-end:auto}.selbar .del{background:#c0392b;border-color:#c0392b;color:#fff}.selbar .del:disabled{opacity:.4}
+.picking [data-pick]{position:relative;padding-inline-start:46px!important;cursor:pointer}.picking [data-pick] *{pointer-events:none}
+.picking [data-pick]::before{content:"";position:absolute;inset-inline-start:12px;top:50%;width:22px;height:22px;margin-top:-11px;border-radius:50%;border:2px solid var(--line);background:var(--surface)}
+.picking [data-pick].picked{border-color:#c0392b}.picking [data-pick].picked::before{border-color:#c0392b;background:#c0392b;box-shadow:inset 0 0 0 4px var(--surface)}
+.picking .sess:not([open])>.mis{display:none}
 /* mistakes sheet (slides up from the bottom) */
 .sheet{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.38);display:flex;align-items:flex-end;justify-content:center}
 .sheet[hidden]{display:none}
@@ -634,6 +653,10 @@ const TX={
  closeL:["Close","إغلاق"],readDone:["You reached the end. Well done!","وصلت إلى النهاية. أحسنت!"],listenL:["Listening","أستمع"],
  pause:["Pause","إيقاف مؤقت"],resume:["Continue","متابعة"],paused:["Paused. Tap ▶ to carry on from where you stopped.","متوقف مؤقتًا. اضغط ▶ لتكمل من حيث توقفت."],following:["Following you from here","أتابعك من هنا"],
  reciteMis:["Recite your mistakes","سمّع أخطاءك"],reciteMisD:["Goes through only the lessons you slipped in.","يمرّ على الدروس التي أخطأت فيها فقط."],misSet:["Your mistakes","أخطاؤك"],planH:["Today's plan","ورد اليوم"],planD:["The classic way of hifz: a new portion, a recent review and an older review. Each one starts hands-free.","على طريقة الحفظ المعروفة: درس جديد، ومراجعة قريبة، ومراجعة بعيدة. كل واحد يبدأ بالتسميع مباشرة."],
+ binTitle:["Recently deleted","المحذوفات مؤخرًا"],binDel:["Deleted","تم الحذف"],binNDel:["{n} deleted","حُذف {n}"],binKeep:["You can bring it back within 24 hours from Recently deleted.","يمكنك استرجاعه خلال ٢٤ ساعة من «المحذوفات مؤخرًا»."],
+ binOpen:["Recently deleted","المحذوفات"],undoL:["Undo","تراجع"],binBack:["Brought back","تم الاسترجاع"],restoreL:["Bring back","استرجع"],restoreAll:["Bring back all","استرجع الكل"],
+ binD:["Deleted things wait here for 24 hours, then they are removed for good.","تبقى المحذوفات هنا ٢٤ ساعة، ثم تُحذف نهائيًا."],binEmpty:["Nothing deleted in the last 24 hours.","لا شيء محذوف في آخر ٢٤ ساعة."],binLeft:["{h} h left","باقٍ {h} ساعة"],
+ selectL:["Select","تحديد"],selAll:["All","الكل"],nSel:["{n} selected","المحدد: {n}"],delL:["Delete","احذف"],
  retGo:["Back to where you were","ارجع إلى حيث كنت"],retDone:["Back where you were","رجعتَ إلى موضعك"],oneByOne:["One by one","واحدًا واحدًا"],hideL:["Hide","إخفاء"],
  moreL:["More","المزيد"],levelL:["Hiding","الإخفاء"],optL:["Tools","أدوات"],thisLesson:["This lesson","هذا الدرس"],colorsL:["Colours","الألوان"],startL:["Start","ابدأ"],tapWordHint:["Tap a hidden word to peek at it.","اضغط على كلمة مخفية لتراها."],
  pNew:["New lesson","الدرس الجديد"],pNewD:["Your next lesson","درسك التالي"],pNear:["Recent review","المراجعة القريبة"],pNearD:["What you learned this week","ما حفظته هذا الأسبوع"],
@@ -916,11 +939,11 @@ const MIS={all(){return LS.get("mis."+PID,[])},save(a){LS.set("mis."+PID,a.slice
   title(m){return t(m.type==="wrong"?"misWrong":m.type==="missed"?"misMissed":"misExtra")},
   line(m,k,cl){return m.ctx.filter(x=>x[k]!=null).map(x=>x.b?`<span class="${cl}">${esc(x[k])}</span>`:esc(x[k])).join(" ")},
   card(m){const both=m.type==="wrong";
-    return`<div class="misc" data-mid="${m.id}"><div class="mh"><button class="tag" data-mopen="${m.i}" title="${esc(t("practiceL"))}">${t("lessonN")} ${N(m.i+1)}</button><span class="mt">${this.title(m)}</span>
+    return`<div class="misc" data-mid="${m.id}" data-pick="mis:${m.id}"><div class="mh"><button class="tag" data-mopen="${m.i}" title="${esc(t("practiceL"))}">${t("lessonN")} ${N(m.i+1)}</button><span class="mt">${this.title(m)}</span>
       <button class="pl" data-mplay="${m.id}" aria-label="${esc(t("playMine"))}" title="${esc(t("playMine"))}">${ic("play2")}</button><button class="del" data-mdel="${m.id}" aria-label="${esc(t("misDel"))}" title="${esc(t("misDel"))}">${ic("trash")}</button></div>
       ${both?`<div class="mline"><small>${t("expected")}</small><span class="tx" lang="ar">${this.line(m,"e","g")}</span><small>${t("recitedL")}</small><span class="tx" lang="ar">${this.line(m,"s","r")}</span></div>`
         :`<div class="mline one"><span class="tx" lang="ar">${m.type==="missed"?this.line(m,"e","r"):this.line(m,"s","r")}</span></div>`}</div>`},
-  bind(root,redraw){$$("[data-mdel]",root).forEach(b=>b.onclick=()=>{this.del(b.dataset.mdel);toast(t("misDone"));redraw()});
+  bind(root,redraw){$$("[data-mdel]",root).forEach(b=>b.onclick=()=>{const k=BIN.mis(b.dataset.mdel);redraw();BIN.pop([k],1,redraw)});
     $$("[data-mopen]",root).forEach(b=>b.onclick=()=>{this.closeSheet();Mem.stopLive();Mem.open(+b.dataset.mopen)});
     $$("[data-mplay]",root).forEach(b=>b.onclick=()=>this.play(b.dataset.mplay,b));
     $$("[data-mrec]",root).forEach(b=>b.onclick=()=>this.reciteAll())},
@@ -942,7 +965,7 @@ const MIS={all(){return LS.get("mis."+PID,[])},save(a){LS.set("mis."+PID,a.slice
     const off=Math.max(0,(m.t-r.date)/1000-4);a.addEventListener("loadedmetadata",()=>{try{a.currentTime=Math.min(off,Math.max(0,(a.duration||off)-1))}catch(e){}},{once:true});
     a.onended=()=>{btn.classList.remove("on");this.audio=null};a.play().catch(()=>{btn.classList.remove("on");this.audio=null});
     setTimeout(()=>{if(this.audio===a){a.pause();btn.classList.remove("on");this.audio=null}},9000)},
-  openSheet(){$("#shT").textContent=t("mistakes");$("#shX").textContent=t("closeL");const body=$("#shB"),draw=()=>{body.innerHTML=this.sessionsHTML();this.bind(body,draw)};draw();$("#misSheet").hidden=false},
+  openSheet(){$("#shT").textContent=t("mistakes");$("#shX").textContent=t("closeL");const body=$("#shB"),draw=()=>{body.innerHTML=`<div class="selbar"></div>${this.sessionsHTML()}<button class="btn sm binlink" id="binM" hidden></button>`;this.bind(body,draw);pickable(body,draw);BIN.link($("#binM"),draw)};draw();$("#misSheet").hidden=false},
   closeSheet(){$("#misSheet").hidden=true;if(this.audio){this.audio.pause();this.audio=null}}};
 /* Mistakes, one at a time (our own design): a small card above the bottom bar shows one slip with what was expected and
    what was heard. Next / Previous move through them, "Show all" lists them, × hides the card. */
@@ -957,7 +980,7 @@ const MV={list:[],i:0,all:false,h:{},
       <div class="mvb">${(this.all?this.list:[this.list[this.i]]).map(m=>MIS.card(m)).join("")}</div>
       ${!this.all&&n>1?`<div class="mvf"><button type="button" data-v="prev" ${this.i?"":"disabled"}>${ic(bw)}${t("prev")}</button><span class="dots">${n<=12?this.list.map((_,k)=>`<i class="${k===this.i?"on":""}"></i>`).join(""):""}</span><button type="button" data-v="next" ${this.i<n-1?"":"disabled"}>${t("next")}${ic(fw)}</button></div>`:""}`},
   click(e){const v=e.target.closest("[data-v]");if(v){const k=v.dataset.v;if(k==="x")this.close();else{if(k==="all")this.all=!this.all;if(k==="next")this.i++;if(k==="prev")this.i--;this.draw()}return}
-    const d=e.target.closest("[data-mdel]");if(d){const m=this.list.find(x=>x.id===d.dataset.mdel);this.list=this.list.filter(x=>x!==m);MIS.del(m.id);toast(t("misDone"));this.draw();this.h.after&&this.h.after();Mem.dockUI();return}
+    const d=e.target.closest("[data-mdel]");if(d){const m=this.list.find(x=>x.id===d.dataset.mdel);this.list=this.list.filter(x=>x!==m);const key=BIN.mis(m.id);this.draw();this.h.after&&this.h.after();Mem.dockUI();BIN.pop([key],1,()=>{this.h.after&&this.h.after();Mem.dockUI()});return}
     const p=e.target.closest("[data-mplay]");if(p){MIS.play(p.dataset.mplay,p);return}
     const o=e.target.closest("[data-mopen]");if(o){const li=+o.dataset.mopen;this.close();if(!(VIEW==="memorize"&&Mem.run&&LS.get("cur."+PID,0)===li)){Mem.stopLive();Mem.open(li)}}}};
 $("#shX").onclick=()=>MIS.closeSheet();$("#misSheet").onclick=e=>{if(e.target.id==="misSheet")MIS.closeSheet()};
@@ -1068,10 +1091,10 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
 V.mistakes=el=>{
   el.innerHTML=`<section class="sec"><div class="wrap narrow stack"><div class="head"><h2>${t("mistakes")}</h2><p>${t("misSub")}</p></div><div id="mAll"></div>
     <div class="row" id="mFoot"><a class="btn out" href="#memorize">${ic("memorize")}${t("memorize")}</a><button class="btn warn" id="mClr">${ic("trash")}${t("clearMis")}</button></div><div id="mcf"></div></div></section>`;
-  const draw=()=>{$("#mClr").hidden=!MIS.all().length;$("#mAll").innerHTML=MIS.sessionsHTML();MIS.bind($("#mAll"),draw)};
+  const draw=()=>{$("#mClr").hidden=!MIS.all().length;$("#mAll").innerHTML=`<div class="selbar"></div>${MIS.sessionsHTML()}<button class="btn sm binlink" id="binM" hidden></button>`;MIS.bind($("#mAll"),draw);pickable($("#mAll"),draw);BIN.link($("#binM"),draw)};
   draw();
   $("#mClr").onclick=()=>{$("#mcf").innerHTML=`<div class="confirm"><p class="note" style="color:var(--ink)">${t("clearMisQ")}</p><div class="row"><button class="btn warn" id="y">${t("yes")}</button><button class="btn" id="n">${t("cancel")}</button></div></div>`;
-    $("#y").onclick=()=>{MIS.save([]);$("#mcf").innerHTML="";draw()};$("#n").onclick=()=>$("#mcf").innerHTML=""}};
+    $("#y").onclick=()=>{const list=MIS.all();MIS.save([]);$("#mcf").innerHTML="";draw();if(list.length)BIN.pop(["bin:"+BIN.add("misall",{pid:PID,list})],list.length,draw)};$("#n").onclick=()=>$("#mcf").innerHTML=""}};
 V.memorize=el=>{
   if(!Mem.run){
     el.innerHTML=`<section class="sec"><div class="wrap narrow">
@@ -1129,7 +1152,7 @@ V.memorize=el=>{
       <div class="og"><h4>${t("thisLesson")}</h4><div class="row"><span class="note" style="flex:1">${t("reps")} · ${N(p.reps)}/${N(target)}</span><button class="chip" id="tap">${ic("star")}${t("recited")}</button><button class="chip" id="rr">${ic("refresh")}${t("reset")}</button></div>
         <div class="row"><button class="btn pri sm" id="mm">${ic("check")}${t("markMem")}</button><button class="btn warn sm" id="rv">${p.rev?t("unRev"):t("needRev")}</button></div></div>
       <div class="og"><h4>${t("colorsL")}</h4><span class="legend"><span><i class="k-mem"></i>${t("kMem")}</span><span><i class="k-rd"></i>${t("kRd")}</span><span><i class="k-miss"></i>${t("kMiss")}</span></span></div>
-      <div class="og"><div class="row" style="justify-content:space-between"><h4>${t("myRec")}</h4><button class="btn sm ${Rec.mr?"recon":"out"}" id="recBtn">${Rec.mr?"■ "+t("recStop"):"● "+t("rec")}</button></div><div class="recs" id="recList"></div></div>
+      <div class="og"><div class="row" style="justify-content:space-between"><h4>${t("myRec")}</h4><button class="btn sm ${Rec.mr?"recon":"out"}" id="recBtn">${Rec.mr?"■ "+t("recStop"):"● "+t("rec")}</button></div><div id="recWrap2"><div class="selbar"></div><div class="recs" id="recList"></div></div></div>
       <a class="btn out" href="#mistakes" style="width:100%">${ic("history")}${t("pastMis")}</a></div>`;
     $("#misSheet").hidden=false;const close=()=>MIS.closeSheet();
     $$("[data-lv]",B).forEach(b=>b.onclick=()=>{LS.set("lv",+b.dataset.lv);close();render()});
@@ -1142,7 +1165,7 @@ V.memorize=el=>{
       const nx=r.slice(pos+1).find(x=>status(x)!=="memorized");if(nx!=null)go(nx);else{toast(t("setDone"));Mem.stopLive();Mem.run=false;render()}};
     $("#rv").onclick=()=>{p.rev=!p.rev;if(p.s==="new")p.s="learning";touch(i);saveST();close();render()};
     const fillRecs=async()=>{const box=$("#recList");if(!box)return;const all=(await DB.all()).filter(r=>r.pid===PID&&r.lesson===i).sort((a,b)=>b.date-a.date);
-      box.innerHTML=all.length?all.map(recItem).join(""):`<p class="note">${t("noRecs")}</p>`;bindRecs(box,fillRecs)};
+      box.innerHTML=all.length?all.map(recItem).join(""):`<p class="note">${t("noRecs")}</p>`;bindRecs(box,fillRecs);pickable($("#recWrap2"),fillRecs)};
     fillRecs();$("#recList").refresh=fillRecs;
     $("#recBtn").onclick=async()=>{const b=$("#recBtn");
       if(Rec.mr){await Rec.stop();clearInterval(Rec.tick);const b2=$("#recBtn");if(b2){b2.className="btn sm out";b2.textContent="● "+t("rec")}fillRecs();return}
@@ -1282,7 +1305,7 @@ V.quiz=el=>{
 /* ---------- recordings: kept on this device until the learner deletes them (no expiry) ---------- */
 const DB={db:null,open(){if(this.db)return Promise.resolve(this.db);return new Promise((res,rej)=>{try{const r=indexedDB.open("asma-recs",1);r.onupgradeneeded=()=>r.result.createObjectStore("recs",{keyPath:"id"});r.onsuccess=()=>{this.db=r.result;res(this.db)};r.onerror=()=>rej(r.error)}catch(e){rej(e)}})},
  async tx(mode,fn){const db=await this.open();return new Promise((res,rej)=>{const x=db.transaction("recs",mode);const r=fn(x.objectStore("recs"));x.oncomplete=()=>res(r&&r.result);x.onerror=()=>rej(x.error)})},
- put(o){return this.tx("readwrite",s=>s.put(o)).catch(()=>{})},all(){return this.tx("readonly",s=>s.getAll()).then(a=>a||[]).catch(()=>[])},del(id){return this.tx("readwrite",s=>s.delete(id)).catch(()=>{})}};
+ put(o){return this.tx("readwrite",s=>s.put(o)).catch(()=>{})},raw(){return this.tx("readonly",s=>s.getAll()).then(a=>a||[]).catch(()=>[])},all(){return this.raw().then(a=>a.filter(r=>!r.gone))},del(id){return this.tx("readwrite",s=>s.delete(id)).catch(()=>{})}};
 async function persisted(){try{return !!(navigator.storage&&navigator.storage.persisted&&await navigator.storage.persisted())}catch(e){return false}}
 async function keepForever(){try{if(navigator.storage&&navigator.storage.persist)return(await navigator.storage.persisted())||(await navigator.storage.persist())}catch(e){}return false}
 const fmtT=s=>{s=Math.max(0,Math.round(s));return N(Math.floor(s/60))+":"+N(String(s%60).padStart(2,"0"))};
@@ -1298,13 +1321,70 @@ const extOf=type=>/mp4|aac|m4a/.test(type)?"m4a":/ogg/.test(type)?"ogg":/mpeg/.t
 async function saveBlob(blob,name){
   try{const f=new File([blob],name,{type:blob.type});if(navigator.canShare&&navigator.canShare({files:[f]})&&/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){await navigator.share({files:[f],title:name});return}}catch(e){if(e&&e.name==="AbortError")return}
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000)}
-function recItem(r){return`<div class="rec"><div><b>${t("lessonN")} ${N(r.lesson+1)} · <span lang="ar" class="nmi">${esc(nm(r.lesson))}</span></b><div class="note">${fmtD(r.date)} · ${fmtT(r.dur||0)}</div></div>
+function recItem(r){return`<div class="rec" data-pick="rec:${r.id}"><div><b>${t("lessonN")} ${N(r.lesson+1)} · <span lang="ar" class="nmi">${esc(nm(r.lesson))}</span></b><div class="note">${fmtD(r.date)} · ${fmtT(r.dur||0)}</div></div>
   <div class="row"><button class="btn out sm" data-dl="${r.id}">${ic("save")}${t("saveFile")}</button><button class="btn sm" data-rdel="${r.id}">${ic("trash")}${t("del")}</button></div><audio controls preload="metadata" data-src="${r.id}"></audio></div>`}
 async function bindRecs(root,after){const all=await DB.all();const by={};all.forEach(r=>by[r.id]=r);
   $$("audio[data-src]",root).forEach(a=>{const r=by[a.dataset.src];if(r)try{a.src=URL.createObjectURL(r.blob)}catch(e){}});
   $$("[data-dl]",root).forEach(b=>b.onclick=()=>{const r=by[b.dataset.dl];if(r)saveBlob(r.blob,`asma-${r.lesson+1}-${new Date(r.date).toISOString().slice(0,10)}.${extOf(r.type)}`)});
   $$("[data-rdel]",root).forEach(b=>b.onclick=async()=>{if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent=t("sure");setTimeout(()=>{if(b.isConnected){b.classList.remove("armed");b.textContent=t("del")}},4000);return}
-    await DB.del(b.dataset.rdel);toast(t("deleted"));after&&after()})}
+    const k=await BIN.rec(b.dataset.rdel);after&&after();BIN.pop([k],1,after)})}
+
+/* ---------- recently deleted (24 hours) ----------
+   Nothing is gone straight away. A deleted recording stays in the database marked "gone"; other things (mistakes,
+   a learner, erased progress) are kept in a list. Each can be put back for 24 hours, then it is removed for good.
+   Every delete shows a popup with Undo and a way to the Recently deleted list. */
+const BIN={H:864e5,
+  items(){return LS.get("bin",[]).filter(x=>Date.now()-x.t<this.H)},
+  keep(a){LS.set("bin",a.filter(x=>Date.now()-x.t<this.H))},
+  add(kind,data){const x={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),t:Date.now(),kind,data};this.keep([x,...this.items()]);return x.id},
+  async purge(){this.keep(this.items());for(const r of await DB.raw())if(r.gone&&Date.now()-r.gone>=this.H)await DB.del(r.id)},
+  /* Deleting. Each returns a key that undo() understands. */
+  async rec(id,t0){const r=(await DB.raw()).find(x=>x.id===id);if(!r)return null;r.gone=t0||Date.now();await DB.put(r);return"rec:"+id},
+  mis(id){const m=MIS.all().find(x=>x.id===id);if(!m)return null;MIS.save(MIS.all().filter(x=>x.id!==id));return"bin:"+this.add("mis",{pid:PID,m})},
+  async many(keys){const out=[],t0=Date.now();for(const k of keys){const [kind,id]=k.split(":");const u=kind==="rec"?await this.rec(id,t0):this.mis(id);if(u)out.push(u)}return out},
+  async undo(keys){const bin=this.items();for(const k of keys){const [kind,id]=k.split(":");
+      if(kind==="rec"){const r=(await DB.raw()).find(x=>x.id===id);if(r){delete r.gone;await DB.put(r)}continue}
+      const x=bin.find(y=>y.id===id);if(!x)continue;
+      if(x.kind==="mis"){const key="mis."+x.data.pid,a=LS.get(key,[]);if(!a.find(m=>m.id===x.data.m.id))a.push(x.data.m);a.sort((p,q)=>q.t-p.t);LS.set(key,a)}
+      else if(x.kind==="misall"){const key="mis."+x.data.pid,a=LS.get(key,[]),ids=new Set(a.map(m=>m.id));LS.set(key,[...a,...x.data.list.filter(m=>!ids.has(m.id))].sort((p,q)=>q.t-p.t))}
+      else if(x.kind==="learner"){if(!PROFILES.find(p=>p.id===x.data.p.id)){PROFILES.push(x.data.p);LS.set("profiles",PROFILES)}for(const [k,v] of Object.entries(x.data.ls))try{localStorage.setItem(k,v)}catch(e){}
+        for(const r of await DB.raw())if(r.pid===x.data.p.id&&r.gone===x.t){delete r.gone;await DB.put(r)}}
+      else if(x.kind==="progress"){LS.set("p."+x.data.pid,x.data.st);LS.set("cur."+x.data.pid,x.data.cur||0);if(x.data.pid===PID)loadST()}
+      this.keep(this.items().filter(y=>y.id!==id))}},
+  /* The popup after every delete. */
+  pop(keys,n,after){if(!keys||!keys.length)return;let el=$("#binpop");if(el)el.remove();el=document.createElement("div");el.id="binpop";el.className="binpop";el.setAttribute("role","alert");
+    el.innerHTML=`<div class="bt">${ic("trash")}<div><b>${n>1?t("binNDel",{n}):t("binDel")}</b><span>${t("binKeep")}</span></div></div><div class="bb"><button type="button" class="u">${ic("undo")}${t("undoL")}</button><button type="button" class="o">${t("binOpen")}</button><button type="button" class="x" aria-label="${esc(t("closeL"))}">${ic("x")}</button></div>`;
+    document.body.appendChild(el);const go=()=>{clearTimeout(this.pt);el.remove()};this.pt=setTimeout(go,8000);
+    $(".u",el).onclick=async()=>{go();await this.undo(keys);toast(t("binBack"));after?after():render()};$(".o",el).onclick=()=>{go();this.sheet(after)};$(".x",el).onclick=go},
+  /* The Recently deleted list. */
+  async sheet(after){await this.purge();const recs=(await DB.raw()).filter(r=>r.gone).sort((a,b)=>b.gone-a.gone),bin=this.items();
+    const left=t0=>{const h=Math.max(1,Math.ceil((t0+this.H-Date.now())/36e5));return t("binLeft",{h})};
+    const row=(key,title,sub,t0)=>`<div class="binit"><div><b>${title}</b><div class="note">${sub} · ${left(t0)}</div></div><button class="btn out sm" data-undo="${key}">${ic("undo")}${t("restoreL")}</button></div>`;
+    const prof=id=>{const p=PROFILES.find(x=>x.id===id);return p&&p.name?esc(p.name):t("learner")};
+    const rows=[...recs.map(r=>({t:r.gone,h:row("rec:"+r.id,`${ic("mic")}${t("lessonN")} ${N(r.lesson+1)} · <span lang="ar">${esc(nm(r.lesson))}</span>`,`${t("myRecs")} · ${fmtD(r.date)} · ${fmtT(r.dur||0)}`,r.gone)})),
+      ...bin.map(x=>({t:x.t,h:row("bin:"+x.id,x.kind==="mis"?`${ic("rev")}${MIS.title(x.data.m)} · ${t("lessonN")} ${N(x.data.m.i+1)}`:x.kind==="misall"?`${ic("rev")}${t("clearMis")} (${N(x.data.list.length)})`:x.kind==="learner"?`${ic("users")}${x.data.p.name?esc(x.data.p.name):t("learner")}`:`${ic("progress")}${t("resetP")}`,
+        x.kind==="mis"?`<span lang="ar">${MIS.line(x.data.m,x.data.m.type==="extra"?"s":"e","r")}</span>`:x.kind==="learner"?t("learners"):prof(x.data.pid),x.t)}))].sort((a,b)=>b.t-a.t);
+    $("#shT").textContent=t("binTitle");$("#shX").textContent=t("closeL");const B=$("#shB");
+    B.innerHTML=`<p class="note" style="margin:0 0 10px">${t("binD")}</p>${rows.length?`<button class="btn pri sm" id="undoAll" style="margin-bottom:10px">${ic("undo")}${t("restoreAll")} (${N(rows.length)})</button><div class="binl">${rows.map(r=>r.h).join("")}</div>`:`<p class="note">${t("binEmpty")}</p>`}`;
+    $("#misSheet").hidden=false;const redo=()=>{(after||render)();this.sheet(after)};
+    $$("[data-undo]",B).forEach(b=>b.onclick=async()=>{await this.undo([b.dataset.undo]);toast(t("binBack"));redo()});
+    if($("#undoAll"))$("#undoAll").onclick=async()=>{await this.undo($$("[data-undo]",B).map(b=>b.dataset.undo));toast(t("binBack"));redo()}},
+  count:async function(){return (await DB.raw()).filter(r=>r.gone&&Date.now()-r.gone<this.H).length+this.items().length},
+  /* A small "Recently deleted (n)" button for any list. */
+  async link(el,after){if(!el)return;const n=await this.count();el.hidden=!n;el.innerHTML=`${ic("trash")}${t("binTitle")} · ${N(n)}`;el.onclick=()=>this.sheet(after)}};
+/* Select several to delete: "Select" adds a tick to each item; one button then deletes them all (they go to Recently deleted). */
+function pickable(wrap,redraw){if(!wrap)return;const bar=$(".selbar",wrap);if(!bar)return;const P=wrap._pk||(wrap._pk={on:false,sel:new Set()});P.sel.clear();P.on=false;
+  const paint=()=>{wrap.classList.toggle("picking",P.on);$$("[data-pick]",wrap).forEach(x=>x.classList.toggle("picked",P.sel.has(x.dataset.pick)));const n=P.sel.size;
+    bar.hidden=!$("[data-pick]",wrap);
+    bar.innerHTML=P.on?`<span class="n">${t("nSel",{n})}</span><button type="button" data-s="all">${t("selAll")}</button><button type="button" data-s="del" class="del" ${n?"":"disabled"}>${ic("trash")}${t("delL")}${n?" ("+N(n)+")":""}</button><button type="button" data-s="x">${t("cancel")}</button>`
+      :`<button type="button" data-s="on">${ic("check")}${t("selectL")}</button>`};
+  bar.onclick=async e=>{const b=e.target.closest("[data-s]");if(!b)return;const k=b.dataset.s;
+    if(k==="on")P.on=true;else if(k==="x"){P.on=false;P.sel.clear()}else if(k==="all")$$("[data-pick]",wrap).forEach(x=>P.sel.add(x.dataset.pick));
+    else if(k==="del"){const keys=await BIN.many([...P.sel]);P.sel.clear();P.on=false;paint();redraw();BIN.pop(keys,keys.length,redraw);return}paint()};
+  if(!wrap._pkL){wrap._pkL=1;wrap.addEventListener("click",e=>{const P=wrap._pk;if(!P.on||e.target.closest(".selbar"))return;const it=e.target.closest("[data-pick]");if(!it)return;e.preventDefault();e.stopPropagation();
+    const k=it.dataset.pick;P.sel.has(k)?P.sel.delete(k):P.sel.add(k);it.classList.toggle("picked",P.sel.has(k));const n=$(".selbar .n",wrap),d=$(".selbar .del",wrap);if(n)n.textContent=t("nSel",{n:P.sel.size});if(d){d.disabled=!P.sel.size;d.innerHTML=`${ic("trash")}${t("delL")}${P.sel.size?" ("+N(P.sel.size)+")":""}`}},true)}
+  paint()}
+BIN.purge();
 
 /* ---------- backup file (progress + recordings), no account needed ---------- */
 const b64=blob=>new Promise(res=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(",")[1]||"");r.onerror=()=>res("");r.readAsDataURL(blob)});
@@ -1329,14 +1409,14 @@ V.progress=el=>{
     ${weakHTML()}
     <div class="panel"><h3 class="hue2">${ic("progress")}${t("bySet")}</h3>${Array.from({length:SETS},(_,k)=>{const r=setRange(k),d=r.filter(i=>status(i)==="memorized").length;return`<div style="display:grid;gap:4px"><div class="row" style="justify-content:space-between"><span>${setLabel(k)} <span class="note" lang="ar">${esc(setSpan(k))}</span></span><span class="note">${N(d)} / ${N(r.length)}</span></div><div class="prog ${hue(k)}"><i style="width:${d/r.length*100}%"></i></div></div>`}).join("")}</div>
     <div class="panel"><h3 class="hue6">${ic("list")}${t("revList")}</h3>${rev.length?`<ul class="misses">${rev.map(i=>`<li><span class="nm" lang="ar">${esc(nm(i))}</span><button class="btn out sm" data-st="${i}">${t("study")} · ${N(i+1)}</button></li>`).join("")}</ul>`:`<p class="note">${t("revEmpty")}</p>`}</div>
-    <div class="panel"><div class="row" style="justify-content:space-between"><h3 class="hue5">${ic("memorize")}${t("myRecs")}</h3><button class="btn sm" id="delAll" hidden>${t("delAll")}</button></div><div class="recs" id="allRecs"></div></div>
+    <div class="panel"><div class="row" style="justify-content:space-between"><h3 class="hue5">${ic("memorize")}${t("myRecs")}</h3><button class="btn sm" id="delAll" hidden>${t("delAll")}</button></div><div id="recWrap"><div class="selbar"></div><div class="recs" id="allRecs"></div></div><button class="btn sm binlink" id="binL" hidden></button></div>
   </div></section>`;
   $$("[data-st]").forEach(b=>b.onclick=()=>Mem.open(+b.dataset.st));
   const fill=async()=>{const box=$("#allRecs");if(!box)return;const all=(await DB.all()).filter(r=>r.pid===PID).sort((a,b)=>b.date-a.date);
-    box.innerHTML=all.length?all.map(recItem).join(""):`<p class="note">${t("noRecs")}</p>`;$("#delAll").hidden=!all.length;bindRecs(box,fill)};
+    box.innerHTML=all.length?all.map(recItem).join(""):`<p class="note">${t("noRecs")}</p>`;$("#delAll").hidden=!all.length;bindRecs(box,fill);pickable($("#recWrap"),fill);BIN.link($("#binL"),fill)};
   fill();
   $("#delAll").onclick=async e=>{const b=e.currentTarget;if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent=t("sure");return}
-    for(const r of (await DB.all()).filter(r=>r.pid===PID))await DB.del(r.id);toast(t("deleted"));b.classList.remove("armed");b.textContent=t("delAll");fill()};
+    const keys=await BIN.many((await DB.all()).filter(r=>r.pid===PID).map(r=>"rec:"+r.id));b.classList.remove("armed");b.textContent=t("delAll");fill();BIN.pop(keys,keys.length,fill)};
 };
 
 /* ---------- settings ---------- */
@@ -1355,7 +1435,7 @@ V.settings=el=>{
         ${p.id===PID?`<span class="pill memorized">${t("current")}</span>`:`<button class="btn sm" data-use="${p.id}">${t("use")}</button><button class="btn sm warn" data-del="${p.id}">${t("del")}</button>`}</div>${AvOpen===p.id?avPicker(p):""}`).join("")}
       <div class="row"><button class="btn out sm" id="addL">${t("addLearner")}</button></div></div>
     <div class="panel"><h3 class="hue3">${ic("shield")}${t("storage")}</h3><p class="note">${t("storageD")}</p><p class="note" id="pst"></p>
-      <div class="row"><button class="btn out sm" id="persist" hidden>${t("persistBtn")}</button><button class="btn pri sm" id="bk">${ic("save")}${t("backup")}</button><button class="btn out sm" id="rsBtn">${ic("upload")}${t("restore")}</button><input type="file" id="rsFile" accept="application/json,.json" hidden></div><div id="rcf"></div></div>
+      <div class="row"><button class="btn out sm" id="persist" hidden>${t("persistBtn")}</button><button class="btn pri sm" id="bk">${ic("save")}${t("backup")}</button><button class="btn out sm" id="rsBtn">${ic("upload")}${t("restore")}</button><input type="file" id="rsFile" accept="application/json,.json" hidden><button class="btn out sm" id="binS">${ic("trash")}${t("binTitle")}</button></div><div id="rcf"></div></div>
     ${LS.get("owner",false)?`<div class="panel"><h3 class="hue4">${ic("progress")}${t("ownV")}</h3><p class="note">${t("ownVD")}</p><div class="stats" id="ownv"><p class="note">…</p></div><div class="row"><button class="btn out sm" id="ownR">${ic("refresh")}${t("ownR")}</button><button class="btn sm" id="ownH">${t("ownH")}</button></div></div>`:""}
     <div class="panel"><div class="row"><button class="btn warn" id="rst">${t("resetP")}</button></div><div id="cf"></div></div>
   </div></section>`;
@@ -1373,7 +1453,7 @@ V.settings=el=>{
     const el=$("#pst");if(el){el.textContent=msg;el.classList.toggle("okn",!!ok);el.classList.toggle("warnn",!ok)}
     toast(t(ok?"persistYesT":"persistNoT"));if(el)el.scrollIntoView({block:"center",behavior:"smooth"});if(ok)b.hidden=true};
   $("#bk").onclick=async()=>{const b=$("#bk");b.disabled=true;b.textContent=t("working");keepForever();const blob=await makeBackup();await saveBlob(blob,`asma-backup-${today()}.json`);b.disabled=false;b.textContent=t("backup")};
-  $("#rsBtn").onclick=()=>$("#rsFile").click();
+  $("#rsBtn").onclick=()=>$("#rsFile").click();$("#binS").onclick=()=>BIN.sheet();
   $("#rsFile").onchange=e=>{const f=e.target.files[0];if(!f)return;$("#rcf").innerHTML=`<div class="confirm"><p class="note" style="color:var(--ink)">${t("restoreQ")}</p><div class="row"><button class="btn warn" id="ry">${t("restore")}</button><button class="btn sm" id="rn">${t("cancel")}</button></div></div>`;
     $("#rn").onclick=()=>{$("#rcf").innerHTML="";e.target.value=""};
     $("#ry").onclick=async()=>{if(await restoreBackup(f)){toast(t("restored"));setTimeout(()=>location.reload(),600)}else{$("#rcf").innerHTML=`<p class="note" style="color:var(--bad)">${t("badFile")}</p>`}e.target.value=""}};
@@ -1385,10 +1465,12 @@ V.settings=el=>{
   bindAv(el);
   $$("[data-pn]").forEach(inp=>inp.onchange=()=>{PROFILES.find(p=>p.id===inp.dataset.pn).name=inp.value.trim().slice(0,24);LS.set("profiles",PROFILES);render()});
   $$("[data-use]").forEach(b=>b.onclick=()=>{PID=b.dataset.use;LS.set("pid",PID);loadST();Mem.stopLive();Mem.run=false;Q.qs=null;render()});
-  $$("[data-del]").forEach(b=>b.onclick=()=>{const id=b.dataset.del;PROFILES=PROFILES.filter(p=>p.id!==id);LS.set("profiles",PROFILES);try{localStorage.removeItem("asma1.p."+id);localStorage.removeItem("asma1.mis."+id)}catch(e){}DB.all().then(a=>a.filter(r=>r.pid===id).forEach(r=>DB.del(r.id)));render()});
+  $$("[data-del]").forEach(b=>b.onclick=async()=>{const id=b.dataset.del,p=PROFILES.find(x=>x.id===id),ls={};for(const k of ["asma1.p."+id,"asma1.mis."+id,"asma1.cur."+id,"asma1.mq."+id]){const v=localStorage.getItem(k);if(v!=null)ls[k]=v}
+    const bid=BIN.add("learner",{p,ls}),t0=BIN.items().find(x=>x.id===bid).t;PROFILES=PROFILES.filter(p=>p.id!==id);LS.set("profiles",PROFILES);try{Object.keys(ls).forEach(k=>localStorage.removeItem(k))}catch(e){}
+    for(const r of await DB.all())if(r.pid===id){r.gone=t0;await DB.put(r)}render();BIN.pop(["bin:"+bid],1)});
   $("#addL").onclick=()=>{const id="p"+Date.now().toString(36);PROFILES.push({id,name:"",color:PROFILES.length});AvOpen=id;LS.set("profiles",PROFILES);PID=id;LS.set("pid",PID);loadST();Mem.stopLive();Mem.run=false;render()};
   $("#rst").onclick=()=>{$("#cf").innerHTML=`<div class="confirm"><p class="note" style="color:var(--ink)">${t("resetQ")}</p><div class="row"><button class="btn warn" id="y">${t("yes")}</button><button class="btn sm" id="n">${t("cancel")}</button></div></div>`;
-    $("#y").onclick=()=>{ST={p:{},xp:0,days:{},best:{}};saveST();LS.set("cur."+PID,0);toast(t("erased"));render()};$("#n").onclick=()=>$("#cf").innerHTML=""};
+    $("#y").onclick=()=>{const bid=BIN.add("progress",{pid:PID,st:ST,cur:LS.get("cur."+PID,0)});ST={p:{},xp:0,days:{},best:{}};saveST();LS.set("cur."+PID,0);render();BIN.pop(["bin:"+bid],1)};$("#n").onclick=()=>$("#cf").innerHTML=""};
 };
 
 applySettings();render();
