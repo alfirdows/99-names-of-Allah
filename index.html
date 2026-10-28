@@ -214,6 +214,11 @@ h3{margin:0;font-size:1.02rem;font-weight:700}
 .setc.on{border-color:var(--acc);background:var(--acc-soft)}
 
 /* lesson card */
+.nmonly{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.nmo{border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:8px 10px;min-height:56px;font-family:var(--name);font-size:calc(1.35rem*var(--fs));line-height:1.6;color:inherit;scroll-margin-top:calc(var(--toph,64px) + 76px)}
+.nmo small{display:block;font-family:var(--ui,inherit);font-size:.72rem;color:var(--muted)}
+.nmo.playing{border-color:var(--acc);background:var(--acc-soft);outline:2px solid var(--acc)}
+.gapw{display:inline-block;min-width:3.4em;border-bottom:2px dashed var(--acc);color:var(--acc)}.gapw.right{border-bottom-color:var(--ok);color:var(--ok)}
 .lesson.playing{outline:3px solid var(--acc);outline-offset:2px;scroll-margin-top:calc(var(--toph,64px) + 76px)}
 .plbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.plbar.on{position:sticky;top:calc(var(--toph,64px) + env(safe-area-inset-top,0px));z-index:5;background:var(--bg);padding:8px 0;box-shadow:0 6px 10px -8px rgba(0,0,0,.25)}.plbar .chip{display:inline-flex;align-items:center;gap:6px}
 .lesson{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:30px clamp(20px,5vw,44px);display:grid;gap:24px}
@@ -725,9 +730,9 @@ const TX={
  again:["Play again","العب مرة أخرى"],otherGame:["Other games","ألعاب أخرى"],wellDone:["Well done","أحسنت"],
  quizHead:["Test what you memorized","اختبر حفظك"],quizSub:["Wrong answers go to your review list.","الإجابات الخاطئة تُضاف إلى قائمة المراجعة."],
  qLessons:["Lessons","الدروس"],qStarted:["Lessons I started","الدروس التي بدأتها"],qReview:["My review list","قائمة المراجعة"],
- qType:["Question type","نوع السؤال"],qMixed:["Mixed","منوّع"],qM2N:["Meaning → name","المعنى ← الاسم"],qN2M:["Name → meaning","الاسم ← المعنى"],qNext:["What comes next?","ما الذي يليه؟"],
+ qType:["Question type","نوع السؤال"],qMixed:["Mixed","منوّع"],qM2N:["Meaning → name","المعنى ← الاسم"],qN2M:["Name → meaning","الاسم ← المعنى"],qNext:["What comes next?","ما الذي يليه؟"],qFill:["Missing word","الكلمة الناقصة"],
  qLen:["Length","عدد الأسئلة"],questions:["questions","أسئلة"],startQuiz:["Start","ابدأ"],noLessons:["No lessons match yet. Study a few lessons first, or choose All.","لا توجد دروس بعد. ادرس بعض الدروس أولًا أو اختر الكل."],
- askM2N:["Which name has this meaning?","ما الاسم الذي هذا معناه؟"],askN2M:["What does this name mean?","ما معنى هذا الاسم؟"],askNext:["Which lesson comes next in the book?","أي درس يأتي بعده في الكتاب؟"],
+ askM2N:["Which name has this meaning?","ما الاسم الذي هذا معناه؟"],askN2M:["What does this name mean?","ما معنى هذا الاسم؟"],askNext:["Which lesson comes next in the book?","أي درس يأتي بعده في الكتاب؟"],askFill:["Which word is missing from the meaning?","ما الكلمة الناقصة من المعنى؟"],
  correct:["Correct","صحيح"],wrongA:["Not quite. The right answer is highlighted.","ليس تمامًا. الإجابة الصحيحة مظللة."],nextQ:["Next","التالي"],endQ:["End","إنهاء"],
  result:["Result","النتيجة"],r100:["Every answer correct. Mā shāʾ Allāh!","كل الإجابات صحيحة. ما شاء الله!"],r70:["Good work. Go over the ones you missed.","أحسنت. راجع ما أخطأت فيه."],rLow:["Keep going. Study the missed lessons, then try again.","استمر. ادرس الدروس التي أخطأت فيها ثم أعد المحاولة."],
  addedRev:["Added to your review list","أُضيفت إلى قائمة المراجعة"],study:["Study","ادرس"],change:["Change settings","غيّر الإعدادات"],
@@ -772,7 +777,7 @@ const TX={
  dayN:["Day","اليوم"],restDay:["Rest","راحة"],pRest:["Friday and Saturday are rest days in your schedule. Review only today.","الجمعة والسبت يوما راحة في جدولك. اليوم للمراجعة فقط."],
  toRev:["to review","للمراجعة"],lessonsL:["Lessons","الدروس"],noMic:["The microphone is not available. Allow microphone access for this site and try again.","الميكروفون غير متاح. اسمح للموقع باستخدام الميكروفون ثم حاول مرة أخرى."],
  saveFile:["Save to device","احفظ على الجهاز"],sure:["Tap again to delete","اضغط مرة أخرى للحذف"],delAll:["Delete all my recordings","احذف كل تسجيلاتي"],deleted:["Deleted","تم الحذف"],
- listenSet:["Listen","استمع"],yourTurn:["Your turn","دورك"],loopSet:["Loop set","كرّر المجموعة"],sayIt:["Your turn… say it","دورك… قلها"],
+ listenSet:["Listen","استمع"],yourTurn:["Your turn","دورك"],loopSet:["Loop set","كرّر المجموعة"],nmOnly:["Names only","الأسماء فقط"],sayIt:["Your turn… say it","دورك… قلها"],
  voiceCr:["Listen uses a computer voice made with the free Chatterbox model (MIT license), in a reading style learned from the ClArTTS recordings by MBZUAI (CC BY 4.0).","الاستماع بصوت حاسوبي صُنع بنموذج Chatterbox المجاني (رخصة MIT)، بأسلوب قراءة مأخوذ من تسجيلات ClArTTS من جامعة محمد بن زايد (CC BY 4.0)."],
  storage:["Your data","بياناتك"],
  storageD:["Everything here is free, with no limits and no expiry. Progress and recordings are saved on this device and stay until you delete them. To move them to another device, or to be safe if the browser data is cleared, save a backup file.","كل شيء هنا مجاني بلا حدود ولا مدة. يُحفظ التقدّم والتسجيلات على هذا الجهاز ويبقى حتى تحذفه. لنقلها إلى جهاز آخر، أو للاحتياط إن مُسحت بيانات المتصفح، احفظ نسخة احتياطية."],
@@ -1038,7 +1043,7 @@ V.names=el=>{
     <div class="stack"><input class="search" id="q" type="search" placeholder="${esc(t("search"))}" value="${esc(NamesQ)}" aria-label="${esc(t("search"))}">
     <div class="chips" id="setChips"><button class="chip ${NamesSet<0?"on":""}" data-k="-1">${t("all")}</button>${Array.from({length:SETS},(_,k)=>`<button class="chip ${NamesSet===k?"on":""}" data-k="${k}">${setLabel(k)}</button>`).join("")}</div>
     <div class="row">${evSw()}</div>
-    <div class="plbar" id="plbar"><button class="btn pri sm" id="plSet">${ic(Player.on?"x":"sound")}<span>${t(Player.on?"stop":"listenSet")}</span></button><button class="chip ${LS.get("plTurn",false)?"on":""}" id="plTurn" aria-pressed="${LS.get("plTurn",false)}">${t("yourTurn")}</button><button class="chip ${LS.get("plLoop",false)?"on":""}" id="plLoop" aria-pressed="${LS.get("plLoop",false)}">${t("loopSet")}</button></div>
+    <div class="plbar" id="plbar"><button class="btn pri sm" id="plSet">${ic(Player.on?"x":"sound")}<span>${t(Player.on?"stop":"listenSet")}</span></button><button class="chip ${LS.get("plTurn",false)?"on":""}" id="plTurn" aria-pressed="${LS.get("plTurn",false)}">${t("yourTurn")}</button><button class="chip ${LS.get("plLoop",false)?"on":""}" id="plLoop" aria-pressed="${LS.get("plLoop",false)}">${t("loopSet")}</button><button class="chip ${LS.get("plNm",false)?"on":""}" id="plNm" aria-pressed="${LS.get("plNm",false)}">${t("nmOnly")}</button></div>
     <div class="list" id="list"></div></div></div></section>`;
   const draw=()=>{
     const q=norm(NamesQ.trim());
@@ -1046,6 +1051,9 @@ V.names=el=>{
     if(q)idx=idx.filter(i=>norm(DATA[i].names.join(" ")+" "+DATA[i].m.join(" ")).includes(q)||GLOSS[i].join(" ").toLowerCase().includes(NamesQ.trim().toLowerCase()));
     const rd=Mem.live&&Mem.mode==="read",hw=rd&&LS.get("hideRead",false);
     NamesIdx=idx;$("#plbar").hidden=rd||!idx.length;if(rd)Player.stop();
+    /* Names only: just the names, big, to listen to one after another (the Listen audio is the names alone). Tap one to hear it. */
+    if(!rd&&LS.get("plNm",false)){$("#list").innerHTML=idx.length?`<div class="nmonly">${idx.map(i=>`<button class="nmo" data-i="${i}" lang="ar">${esc(nm(i))}<small>${N(i+1)}</small></button>`).join("")}</div>`:`<p class="note">${t("noMatch")}</p>`;
+      $$(".nmo").forEach(b=>b.onclick=()=>Player.start([+b.dataset.i]));return}
     $("#list").innerHTML=idx.length?idx.map(i=>lessonHTML(i,{sp:rd,wm:!rd,lv:hw?4:0,hideEv:hw,hideNames:hw,foot:`<div class="lfoot"><button class="btn out sm" data-mem="${i}">${ic("memorize")}${t("memThis")}</button><button class="btn pri sm" data-live="${i}">${ic("mic")}${t("recite")}</button></div>`})).join(""):`<p class="note">${t("noMatch")}</p>`;
     $$("[data-mem]").forEach(b=>b.onclick=()=>Mem.go(+b.dataset.mem));
     $$("[data-live]").forEach(b=>b.onclick=()=>Mem.startRead(+b.dataset.live));
@@ -1053,7 +1061,7 @@ V.names=el=>{
   };
   $("#q").oninput=e=>{NamesQ=e.target.value;Player.stop();draw()};
   $("#plSet").onclick=()=>Player.on?Player.stop():Player.start(NamesIdx);
-  $$("#plTurn,#plLoop").forEach(b=>b.onclick=()=>{const k=b.id==="plTurn"?"plTurn":"plLoop",v=!LS.get(k,false);LS.set(k,v);b.classList.toggle("on",v);b.setAttribute("aria-pressed",v)});
+  $$("#plTurn,#plLoop,#plNm").forEach(b=>b.onclick=()=>{const k=b.id,v=!LS.get(k,false);LS.set(k,v);b.classList.toggle("on",v);b.setAttribute("aria-pressed",v);if(k==="plNm"){Player.stop();draw()}});
   $$("#setChips .chip").forEach(b=>b.onclick=()=>{Player.stop();NamesSet=+b.dataset.k;$$("#setChips .chip").forEach(x=>x.classList.toggle("on",x===b));draw()});
   draw();
 };
@@ -1339,12 +1347,12 @@ function speak(src){
 let NamesIdx=[];
 const Player={on:false,a:null,timer:null,
   start(list){if(!list.length)return;stopSpeech();this.list=list.slice();this.pos=0;this.on=true;this.ui();this.next()},
-  stop(){this.on=false;clearTimeout(this.timer);if(this.a){try{this.a.pause()}catch(e){}this.a=null}$$(".lesson.playing").forEach(x=>x.classList.remove("playing"));this.ui()},
+  stop(){this.on=false;clearTimeout(this.timer);if(this.a){try{this.a.pause()}catch(e){}this.a=null}$$(".playing").forEach(x=>x.classList.remove("playing"));this.ui()},
   ui(lbl){const b=$("#plSet");if(!b)return;$("#plbar").classList.toggle("on",this.on);b.innerHTML=`${ic(this.on?"x":"sound")}<span>${lbl||t(this.on?"stop":"listenSet")}</span>`},
   next(){if(!this.on)return;if(!$("#plSet"))return this.stop();
     if(this.pos>=this.list.length){if(LS.get("plLoop",false))this.pos=0;else return this.stop()}
-    const i=this.list[this.pos++];$$(".lesson.playing").forEach(x=>x.classList.remove("playing"));
-    const card=$(`.lesson[data-i="${i}"]`);if(card){card.classList.add("playing");card.scrollIntoView({block:"start",behavior:"smooth"})}
+    const i=this.list[this.pos++];$$(".playing").forEach(x=>x.classList.remove("playing"));
+    const card=$(`.lesson[data-i="${i}"],.nmo[data-i="${i}"]`);if(card){card.classList.add("playing");card.scrollIntoView({block:"start",behavior:"smooth"})}
     const a=new Audio();this.a=a;this.ui();
     a.onended=()=>{if(this.a!==a)return;const gap=LS.get("plTurn",false)?Math.min(12,(a.duration||2)+0.6)*1000:700;if(gap>700)this.ui(t("sayIt"));this.timer=setTimeout(()=>this.next(),gap)};
     a.onerror=()=>{if(this.a===a)this.timer=setTimeout(()=>this.next(),300)};
@@ -1425,18 +1433,25 @@ const PLAY={
 /* ---------- quiz ---------- */
 const Q={scope:"all",kind:"mixed",n:10,qs:null,at:0,right:0,miss:[],done:false};
 function qPool(){if(Q.scope==="all")return DATA.map((_,i)=>i);if(Q.scope==="started")return DATA.map((_,i)=>i).filter(i=>status(i)!=="new");if(Q.scope==="review")return DATA.map((_,i)=>i).filter(i=>status(i)==="review");return setRange(+Q.scope.slice(3))}
-function buildQs(){const pool=qPool();if(!pool.length)return[];const order=shuffle([...pool]),kinds=Q.kind==="mixed"?["m2n","n2m","next"]:[Q.kind],qs=[];
+function buildQs(){const pool=qPool();if(!pool.length)return[];const order=shuffle([...pool]),kinds=Q.kind==="mixed"?["m2n","n2m","fill","next"]:[Q.kind],qs=[];
   const others=(i,c)=>{const near=shuffle(c.filter(x=>x!==i)),far=shuffle(DATA.map((_,x)=>x).filter(x=>x!==i&&!near.includes(x)));return[...near,...far]};
   for(let n=0;n<Q.n;n++){const i=order[n%order.length];let k=kinds[n%kinds.length];if(k==="next"&&i===DATA.length-1)k="n2m";if(k==="m2n"&&SELF_NAMING.has(i))k="n2m";
+    if(k==="fill"){const f=fillQ(i);if(f){qs.push(f);continue}k="n2m"}
     if(k==="next"){const a=i+1;qs.push({k,i,a,opts:shuffle([a,...others(a,[a-2,a+1,a+2,i-1].filter(x=>x>=0&&x<DATA.length&&x!==i)).slice(0,3)])})}
     else qs.push({k,i,a:i,opts:shuffle([i,...others(i,pool).filter(x=>!(k==="m2n"&&SELF_NAMING.has(x))).slice(0,3)])})}
   return shuffle(qs)}
+/* Missing word: one word of the book's meaning is hidden; the other choices are words from other names' meanings, so all text is the book's. */
+const qw=w=>w.replace(/[،.؛:«»()]/g,"");
+function fillQ(i){const w=meaningOf(i).split(/\s+/),cand=w.map((_,k)=>k).filter(k=>norm(qw(w[k])).length>=4);if(!cand.length)return null;
+  const b=cand[Math.floor(Math.random()*cand.length)],ans=qw(w[b]),seen=new Set([norm(ans)]),alt=[];
+  for(const x of shuffle(DATA.map((_,j)=>j).filter(j=>j!==i).flatMap(j=>meaningOf(j).split(/\s+/)))){const y=qw(x);if(norm(y).length>=4&&!seen.has(norm(y))){seen.add(norm(y));alt.push(y);if(alt.length===3)break}}
+  const opts=shuffle([ans,...alt]);return{k:"fill",i,b,w,ws:opts,a:opts.indexOf(ans),opts:[0,1,2,3]}}
 V.quiz=el=>{
   const box=`<section class="sec"><div class="wrap narrow"><div class="head"><h2>${t("quizHead")}</h2><p>${t("quizSub")}</p></div><div class="row evrow" style="justify-content:flex-start">${evSw()}</div><div class="panel" id="qb"></div></div></section>`;el.innerHTML=box;const qb=$("#qb");
   if(!Q.qs){
     const scopes=[["all",t("all")],["started",t("qStarted")],["review",t("qReview")],...Array.from({length:SETS},(_,k)=>["set"+k,setLabel(k)])];
     qb.innerHTML=`<div class="stack"><div><h3 style="margin-bottom:8px">${t("qLessons")}</h3><div class="chips">${scopes.map(([v,l])=>`<button class="chip ${Q.scope===v?"on":""}" data-s="${v}">${l}</button>`).join("")}</div></div>
-      <div><h3 style="margin-bottom:8px">${t("qType")}</h3><div class="seg">${[["mixed","qMixed"],["m2n","qM2N"],["n2m","qN2M"],["next","qNext"]].map(([v,l])=>`<button class="${Q.kind===v?"on":""}" data-k="${v}">${t(l)}</button>`).join("")}</div></div>
+      <div><h3 style="margin-bottom:8px">${t("qType")}</h3><div class="seg">${[["mixed","qMixed"],["m2n","qM2N"],["n2m","qN2M"],["fill","qFill"],["next","qNext"]].map(([v,l])=>`<button class="${Q.kind===v?"on":""}" data-k="${v}">${t(l)}</button>`).join("")}</div></div>
       <div><h3 style="margin-bottom:8px">${t("qLen")}</h3><div class="chips">${[5,10,20].map(n=>`<button class="chip ${Q.n===n?"on":""}" data-n="${n}">${N(n)} ${t("questions")}</button>`).join("")}</div></div>
       <div class="row"><button class="btn pri" id="qs">${ic("play")}${t("startQuiz")}</button><span class="note" id="qe"></span></div></div>`;
     $$("[data-s]",qb).forEach(b=>b.onclick=()=>{Q.scope=b.dataset.s;render()});$$("[data-k]",qb).forEach(b=>b.onclick=()=>{Q.kind=b.dataset.k;render()});$$("[data-n]",qb).forEach(b=>b.onclick=()=>{Q.n=+b.dataset.n;render()});
@@ -1454,11 +1469,12 @@ V.quiz=el=>{
   const q=Q.qs[Q.at];let ask,prompt,opt;
   if(q.k==="m2n"){ask=t("askM2N");prompt=`<p>${esc(meaningOf(q.i))}</p>`;opt=i=>`<button class="nmc" data-o="${i}">${esc(nm(i))}</button>`}
   else if(q.k==="n2m"){ask=t("askN2M");prompt=`<div class="nm">${esc(nm(q.i))}</div>`;opt=i=>`<button data-o="${i}">${esc(meaningOf(i))}</button>`}
+  else if(q.k==="fill"){ask=t("askFill");prompt=`<div class="nm">${esc(nm(q.i))}</div><p>${q.w.map((x,k)=>k===q.b?`<span class="gapw" id="gapw">?</span>${esc((x.match(/[،.؛:»)]+$/)||[""])[0])}`:esc(x)).join(" ")}</p>`;opt=k=>`<button data-o="${k}">${esc(q.ws[k])}</button>`}
   else{ask=t("askNext");prompt=`<div class="nm">${esc(nm(q.i))}</div><p style="font-weight:400">… ثُمَّ؟</p>`;opt=i=>`<button class="nmc" data-o="${i}">${esc(nm(i))}</button>`}
   qb.innerHTML=`<div class="ghead"><b>${ask}</b><span class="sc">${N(Q.at+1)} / ${N(Q.qs.length)}</span></div><div class="prompt" lang="ar">${prompt}</div><div class="opts" lang="ar">${q.opts.map(opt).join("")}</div><div id="qdl"></div>
     <div class="row"><button class="btn pri" id="qn" hidden>${t("nextQ")}</button><button class="btn sm" id="qx">${t("endQ")}</button><span class="note" id="qf"></span></div>`;
   $$("[data-o]",qb).forEach(b=>b.onclick=()=>{if(Q.done)return;Q.done=true;const ok=+b.dataset.o===q.a;if(ok)Q.right++;else Q.miss.push(q.k==="next"?q.a:q.i);
-    $$("[data-o]",qb).forEach(x=>{if(+x.dataset.o===q.a)x.classList.add("right")});if(!ok)b.classList.add("wrong");$("#qf").textContent=ok?t("correct"):t("wrongA");$("#qn").hidden=false;$("#qdl").innerHTML=dlx(q.a);$("#qn").focus()});
+    $$("[data-o]",qb).forEach(x=>{if(+x.dataset.o===q.a)x.classList.add("right")});if(!ok)b.classList.add("wrong");$("#qf").textContent=ok?t("correct"):t("wrongA");$("#qn").hidden=false;if(q.k==="fill"){const g=$("#gapw");g.textContent=q.ws[q.a];g.classList.add("right")}$("#qdl").innerHTML=dlx(q.k==="fill"?q.i:q.a);$("#qn").focus()});
   $("#qn").onclick=()=>{Q.at++;Q.done=false;render()};$("#qx").onclick=()=>{Q.qs.length=Q.at+(Q.done?1:0);Q.at=Q.qs.length;render()};
 };
 

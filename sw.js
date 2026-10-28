@@ -1,5 +1,5 @@
 /* Offline support: pages are fetched fresh when online (so updates reach everyone), and saved for offline use. */
-const CACHE="asma-v37";
+const CACHE="asma-v38";
 const CORE=["./","index.html","manifest.webmanifest","icon-180.png","icon-192.png","icon-512.png","fonts/Amiri-Bold.woff","fonts/ScheherazadeNew-Regular.woff","fonts/ScheherazadeNew-Bold.woff","fonts/IBMPlexSansArabic-Regular.woff","fonts/IBMPlexSansArabic-SemiBold.woff","fonts/IBMPlexSansArabic-Bold.woff"];
 /* Listen audio (one file per lesson) is saved too, so it works offline; a failed audio file never blocks the update. */
 const AUDIO=Array.from({length:70},(_,i)=>`audio/${String(i+1).padStart(2,"0")}.mp3`);
