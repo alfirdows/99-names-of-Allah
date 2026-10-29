@@ -709,7 +709,9 @@ const norm=s=>s.replace(/[ً-ٰٟۖ-ۭـ]/g,"").replace(/[أإآٱ]/g,"ا").repl
 const LS={get(k,d){try{const v=localStorage.getItem("asma1."+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("asma1."+k,JSON.stringify(v))}catch(e){}}};
 /* Visitor count: GoatCounter (account "tasnim"). No cookies or personal data; only the owner sees the numbers at https://tasnim.goatcounter.com. Works on any domain; skipped during local testing. */
 const GOAT="tasnim";
-if(GOAT&&!/^(localhost|127\.0\.0\.1|\[::1\]|)$/.test(location.hostname)){const sc=document.createElement("script");sc.async=true;sc.src="https://gc.zgo.at/count.js";sc.dataset.goatcounter=`https://${GOAT}.goatcounter.com/count`;document.head.appendChild(sc)}
+/* Our own automated/test visits (Playwright, headless browsers, bots) never count. */
+const BOT=navigator.webdriver||/headless|playwright|puppeteer|phantom|lighthouse|bot|crawl|spider/i.test(navigator.userAgent);
+if(GOAT&&!BOT&&!/^(localhost|127\.0\.0\.1|\[::1\]|)$/.test(location.hostname)){const sc=document.createElement("script");sc.async=true;sc.src="https://gc.zgo.at/count.js";sc.dataset.goatcounter=`https://${GOAT}.goatcounter.com/count`;document.head.appendChild(sc)}
 
 /* ================= language ================= */
 let LANG=LS.get("lang",null)||((navigator.language||"").slice(0,2)==="ar"?"ar":"en");
