@@ -953,7 +953,7 @@ function render(){
 $("#fab").onclick=()=>{let i=LS.get("cur."+PID,0);
   if(VIEW==="names"){const c=$$(".lesson[data-i]").find(e=>e.getBoundingClientRect().bottom>140);if(c)i=+c.dataset.i;Mem.startRead(i,false)}
   else Mem.startRead(i,true)};
-addEventListener("hashchange",()=>{const was=VIEW;Player.stop();if(!Mem.opening&&location.hash!=="#"+was){Game.id=null;Game.set=null;Mem.run=false}if(location.hash!==(Mem.mode==="read"?"#names":"#memorize"))Mem.stopLive();Mem.opening=false;render();scrollTo(0,0)});
+addEventListener("hashchange",()=>{const was=VIEW;Player.stop();stopSpeech();stopSay();if(!Mem.opening&&location.hash!=="#"+was){Game.id=null;Game.set=null;Mem.run=false}if(location.hash!==(Mem.mode==="read"?"#names":"#memorize"))Mem.stopLive();Mem.opening=false;render();scrollTo(0,0)});
 
 /* ---------- home ---------- */
 V.home=el=>{
@@ -1054,8 +1054,9 @@ document.addEventListener("click",e=>{const n=e.target.closest("[data-wm]");if(!
 document.addEventListener("keydown",e=>{if(e.key!=="Enter")return;const n=e.target.closest&&e.target.closest("[data-wm]");if(n)n.click()});
 /* Tap the speaker by a name to hear just that name (audio/n/LL-K.mp3; lesson 3 is one file for both names). */
 let SayA=null;
+function stopSay(){if(SayA){try{SayA.pause()}catch(e){}SayA=null}$$(".nsay.on").forEach(x=>x.classList.remove("on"))}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-say]");if(!b)return;e.stopPropagation();const [i,k]=b.dataset.say.split(":").map(Number);
-  Player.stop();stopSpeech();if(SayA){SayA.pause();$$(".nsay.on").forEach(x=>x.classList.remove("on"))}
+  const again=b.classList.contains("on");Player.stop();stopSpeech();stopSay();if(again)return;
   const src=i===2?AUDIO[2]:`audio/n/${String(i+1).padStart(2,"0")}-${k+1}.mp3`,a=new Audio();SayA=a;b.classList.add("on");
   a.onended=a.onerror=()=>b.classList.remove("on");
   fetch(src).then(r=>r.ok?r.blob():Promise.reject()).then(bl=>{if(SayA!==a)return;a.src=URL.createObjectURL(bl);return a.play()}).catch(()=>b.classList.remove("on"))});
@@ -1408,6 +1409,7 @@ function stopSpeech(){if(speaking){try{speaking.pause()}catch(e){}speaking=null}
 function speak(src){
   const b=$("#listen");
   if(speaking){stopSpeech();$("span",b).textContent=t("listen");return}
+  Player.stop();stopSay();
   const a=new Audio(),done=()=>{if(speaking===a)speaking=null;const bb=$("#listen");if(bb)$("span",bb).textContent=t("listen")};a.onended=a.onerror=done;
   speaking=a;$("span",b).textContent=t("stop");
   /* load as a whole file (works offline from the cache; iPhone audio range requests do not) */
@@ -1418,7 +1420,7 @@ function speak(src){
    so the learner can say it back; "Loop set" starts the set again at the end. */
 let NamesIdx=[];
 const Player={on:false,a:null,timer:null,
-  start(list){if(!list.length)return;stopSpeech();this.list=list.slice();this.pos=0;this.on=true;this.ui();this.next()},
+  start(list){if(!list.length)return;stopSpeech();stopSay();this.list=list.slice();this.pos=0;this.on=true;this.ui();this.next()},
   stop(){this.on=false;clearTimeout(this.timer);if(this.a){try{this.a.pause()}catch(e){}this.a=null}$$(".playing").forEach(x=>x.classList.remove("playing"));this.ui()},
   ui(lbl){const b=$("#plSet");if(!b)return;$("#plbar").classList.toggle("on",this.on);b.innerHTML=`${ic(this.on?"x":"sound")}<span>${lbl||t(this.on?"stop":"listenSet")}</span>`},
   next(){if(!this.on)return;if(!$("#plSet"))return this.stop();
