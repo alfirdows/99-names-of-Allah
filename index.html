@@ -382,6 +382,7 @@ body.reading .sec{padding-bottom:110px}
 /* ---- calm Memorize screen: slim top bar, lesson, and a small floating bar at the bottom ---- */
 body.mdocked .sec.mfocus{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))}
 body.mdocked #toast,body.reading #toast{bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+body.mdocked.rqon #toast,body.reading #toast{bottom:calc(196px + env(safe-area-inset-bottom,0px))}
 body:has(#mv) .retc{display:none}
 .mfocus .mbar{gap:6px;padding:6px 0 8px}
 .mfocus .mbar .where{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;line-height:1.15}
@@ -392,6 +393,25 @@ body:has(#mv) .retc{display:none}
 .mfocus .mbar .r2 .lv{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:.85rem;color:#c0392b}.mfocus .mbar .r2 .lv i{width:8px;height:8px;border-radius:50%;background:#c0392b;animation:blink 1.4s infinite}
 .mfocus .mbar .r2 .lv.ps{color:var(--muted)}.mfocus .mbar .r2 .lv.ps i{background:var(--muted);animation:none}
 .mfocus .mbar .r2 .evsw{flex:none;font-size:.8rem;padding:4px 10px;min-height:30px;display:inline-flex;align-items:center;gap:5px}.mfocus .mbar .r2 .evsw .i{width:15px;height:15px}
+/* Recite controls (own design): listening = green with a breathing ring, paused = amber "Continue", red round "Stop all".
+   A slim row above them shows what is happening (or "Try again · 2 of 3") with three small helpers. */
+@keyframes rbreath{0%{box-shadow:0 0 0 0 rgba(46,157,91,.55)}100%{box-shadow:0 0 0 15px rgba(46,157,91,0)}}
+.mdock .mic.on,.mdock .mw .mic.on{background:#2e9d5b!important;animation:rbreath 1.6s ease-out infinite!important}
+.mdock .mw .mic.ps{background:#c98a12!important}
+.mfocus .mbar .r2 .lv{color:#2e9d5b!important}.mfocus .mbar .r2 .lv i{background:#2e9d5b!important}.mfocus .mbar .r2 .lv.ps{color:#a8730c!important}.mfocus .mbar .r2 .lv.ps i{background:#c98a12!important}
+.rbar .st i{background:#2e9d5b!important}
+.mdock .dk.stop .i{width:34px;height:34px;padding:8px;border-radius:50%;background:#c0392b;color:#fff;box-sizing:border-box}
+.mdock .rq,.rbar .rq{pointer-events:auto;margin:0 auto 8px;width:max-content;max-width:100%;display:flex;align-items:center;gap:5px 6px;flex-wrap:wrap;justify-content:center;padding:5px 8px 7px;border-radius:20px;background:color-mix(in srgb,var(--surface) 94%,transparent);border:1px solid var(--line);box-shadow:0 6px 18px rgba(0,0,0,.10);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.rbar .rq{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);margin:0}
+.rq .rs{flex-basis:100%;display:flex;justify-content:center;align-items:center;gap:6px;font-size:.78rem;font-weight:700;color:#2e9d5b;padding:1px 8px 0;white-space:nowrap}
+.rq .rs i{width:8px;height:8px;border-radius:50%;background:#2e9d5b;animation:blink 1.4s infinite}
+.rq .rs.ps{color:#a8730c}.rq .rs.ps i{background:#c98a12;animation:none}
+.rq .rs.tr{color:#c0392b}.rq .rs.tr i{background:#c0392b}
+.rq button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:5px 9px;font:inherit;font-size:.74rem;font-weight:700;display:inline-flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap}
+.rq button .i{width:15px;height:15px}
+@keyframes wring{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}40%{transform:translateX(4px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+.w.wring{display:inline-block;animation:wring .45s ease-in-out;outline:2px solid #e8a59d;outline-offset:2px;border-radius:6px}
+body.mdocked.rqon .sec.mfocus{padding-bottom:calc(170px + env(safe-area-inset-bottom,0px))}
 .mdock{position:fixed;left:0;right:0;bottom:0;z-index:60;padding:0 12px calc(10px + env(safe-area-inset-bottom,0px));pointer-events:none}
 .mdock .in{pointer-events:auto;margin:0 auto;width:max-content;max-width:100%;display:flex;align-items:flex-end;gap:6px;padding:8px 10px;border-radius:28px;background:color-mix(in srgb,var(--surface) 94%,transparent);border:1px solid var(--line);box-shadow:0 10px 28px rgba(0,0,0,.14);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .mdock .dk{position:relative;border:0;background:transparent;color:var(--ink);font:inherit;font-size:.72rem;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:56px;padding:6px 4px;border-radius:16px;cursor:pointer}
@@ -650,6 +670,11 @@ const fold=s=>s.replace(/^[وف]?ال/,"").replace(/[صث]/g,"س").replace(/ض/g
 /* Kinder check: the same word as the phone usually mishears it. "again" = you are already trying this word, so a close word is enough. */
 function wnear(h,e,again){if(wmatch(h,e))return true;if(!h||!e)return false;const a=fold(h),b=fold(e);if(!a||!b)return false;if(a===b)return true;if(!again)return false;
  const L=Math.max(a.length,b.length);return L<=2?false:L<=4?lev(a,b)<=1:sim(a,b)>=.6}
+/* A short soft beep (and a buzz where the phone allows it) when a word is not right. Not music: one plain tone. */
+let AC=null;function unlockAudio(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume()}catch(e){}}
+function beep(){try{navigator.vibrate&&navigator.vibrate([60,40,60])}catch(e){}
+  try{unlockAudio();const n=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type="sine";o.frequency.setValueAtTime(520,n);o.frequency.exponentialRampToValueAtTime(330,n+.2);
+    g.gain.setValueAtTime(.0001,n);g.gain.exponentialRampToValueAtTime(.22,n+.02);g.gain.exponentialRampToValueAtTime(.0001,n+.24);o.connect(g).connect(AC.destination);o.start(n);o.stop(n+.26)}catch(e){}}
 class Listener{constructor(onWords,onState){this.onWords=onWords;this.onState=onState;this.active=false;this.done=0}
  start(){if(!SR)return false;this.active=true;this.last=Date.now();this._spin();clearInterval(this.dog);
   /* The iPhone sometimes stops sending words without saying so. If nothing has come for a while, start again quietly. */
@@ -760,7 +785,7 @@ const TX={
  rec:["Record","سجّل"],recStop:["Stop and save","أوقف واحفظ"],myRec:["My recitation","تسميعي"],myRecs:["My recordings","تسجيلاتي"],
  recHint:["Record yourself reciting, then listen back. Recordings stay on this device until you delete them.","سجّل تسميعك ثم استمع إليه. تبقى التسجيلات على هذا الجهاز حتى تحذفها."],
  noRecs:["No recordings yet.","لا توجد تسجيلات بعد."],recSaved:["Recording saved","تم حفظ التسجيل"],
- live:["Start reciting","ابدأ التسميع"],liveStop:["Stop","إيقاف"],liveHint:["Tap Start and recite. The words follow your voice, and it moves on by itself until you tap Stop.","اضغط ابدأ وسمّع. تتبع الكلماتُ صوتك، وينتقل وحده حتى تضغط إيقاف."],
+ live:["Start reciting","ابدأ التسميع"],liveStop:["Stop all","إيقاف الكل"],tryN:["Try again · {a} of {b}","حاول مرة أخرى · {a} من {b}"],pausedS:["Paused","متوقف مؤقتًا"],wBack:["Word back","كلمة للخلف"],wSkip:["Skip word","تخطَّ الكلمة"],wAgain:["Start again","من البداية"],autoPaused:["Paused while you were away. Tap Continue when ready.","توقف مؤقتًا لأنك خرجت. اضغط متابعة عندما تكون مستعدًا."],wrongOn:["Marked wrong, moving on","سُجّلت خطأً، ننتقل إلى ما بعدها"],liveHint:["Tap Start and recite. The words follow your voice, and it moves on by itself until you tap Stop.","اضغط ابدأ وسمّع. تتبع الكلماتُ صوتك، وينتقل وحده حتى تضغط إيقاف."],
  liveOn:["Listening… recite now","أستمع… سمّع الآن"],kMem:["From memory","من الحفظ"],kRd:["Read","قراءة"],kMiss:["Mistake","خطأ"],
  repN:["Repetition {a} of {b}. Again!","التكرار {a} من {b}. مرة أخرى!"],memNext:["Memorized! Next lesson","أحسنت، حفظته! الدرس التالي"],
  noSR:["This browser can't listen. On iPhone use Safari, and turn on Siri or Dictation in Settings.","هذا المتصفح لا يستطيع الاستماع. على الآيفون استخدم سفاري، وفعّل سيري أو الإملاء من الإعدادات."],
@@ -883,6 +908,7 @@ const ICON={
  dots:'<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>',
  bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
  goal:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".6" fill="currentColor"/>',
+ wback:'<path d="M10 8 6 12l4 4"/><path d="M6 12h9a3 3 0 0 1 3 3v2"/><circle cx="18.5" cy="6" r="1.6" fill="currentColor" stroke="none"/>',wskip:'<path d="M4 15a7 7 0 0 1 13-3.5"/><path d="M18 7v5h-5"/><circle cx="6" cy="20" r="1.6" fill="currentColor" stroke="none"/>',wagain:'<path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/>',
  undo:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/>',
  rev:'<path d="M8 4h8l3 3v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="m8.5 12 2.2 2.2L15.5 9.5M8.5 18h7"/>'
 };
@@ -1148,7 +1174,7 @@ document.addEventListener("click",e=>{const a=e.target.closest('a[href="#mistake
 const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"mem",li:0,sid:"",saved:{},mk:[],
   /* Pause keeps your place; Continue carries on from the same word. */
   pause(){if(!this.live||this.paused)return;this.paused=true;if(this.L)this.L.stop();try{Rec.mr&&Rec.mr.state==="recording"&&Rec.mr.pause()}catch(e){}},
-  resume(){if(!this.live||!this.paused)return;this.paused=false;this.pend=[];this.L.start();try{Rec.mr&&Rec.mr.state==="paused"&&Rec.mr.resume()}catch(e){}},
+  resume(){if(!this.live||!this.paused)return;unlockAudio();this.paused=false;this.away=false;this.pend=[];this.L.start();try{Rec.mr&&Rec.mr.state==="paused"&&Rec.mr.resume()}catch(e){}},
   key(){return this.mode+":"+this.lesson()},
   lesson(){return this.mode==="read"?this.li:LS.get("cur."+PID,0)},
   root(){return this.mode==="read"?$(`#list .lesson[data-i="${this.li}"]`):$("#main .lesson")},
@@ -1160,7 +1186,7 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
   /* Opening a lesson from a list starts listening straight away: one way to memorize, no mode to choose. */
   go(i){this.stopLive();this.mode="mem";this.autoLv(i);if(SR)this.startLive();this.open(i)},
   open(i){if(!this.q().list.includes(i))this.setQ(setOf(i),false);LS.set("cur."+PID,i);this.run=true;if(location.hash!=="#memorize"){this.opening=true;location.hash="#memorize"}else{render();scrollTo(0,0)}},
-  startLive(){if(!SR){toast(t("noSR"));return false}
+  startLive(){if(!SR){toast(t("noSR"));return false}unlockAudio();
     if(!this.L){this.L=new Listener(ws=>this.heard(ws),st=>{if(st==="denied"){this.stopLive();toast(t("noMic"));if(VIEW==="memorize")render()}});this.L.onPeek=w=>this.peek(w);this.L.onRevise=()=>{this.pend=[]}}
     this.live=true;this.paused=false;this.sid=Date.now().toString(36);this.L.start();try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(l=>this.wl=l).catch(()=>{})}catch(e){}return true},
   stopLive(){const was=this.live;this.live=false;this.paused=false;this.retUI();if(was&&this.mode==="read"){this.mode="mem";$$(".w.cur").forEach(w=>w.classList.remove("cur"));if(VIEW==="names")setTimeout(render,0)}if(this.L)this.L.stop();if(was&&Rec.mr)Rec.stop().then(()=>{const l=$("#recList");if(l&&l.refresh)l.refresh()});try{this.wl&&this.wl.release()}catch(e){}this.wl=null},
@@ -1178,8 +1204,8 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
   cur(){$$(".w.cur").forEach(w=>w.classList.remove("cur"));const x=this.W[this.at];if(!x)return;x.el.classList.add("cur");
     const r=x.el.getBoundingClientRect();if(r.top<90||r.bottom>innerHeight-90)x.el.scrollIntoView({block:"center",behavior:"smooth"})},
   mark(j,kind){const x=this.W[j];if(!x)return;const el=x.el,hid=el.hasAttribute("data-h")||!!el.closest(".names.hid");
-    const c=kind==="miss"?"miss":hid?"wm":"rd";el.classList.remove("h","fl","cur","wm","rd","miss","pk");el.removeAttribute("data-h");el.classList.add(c);this.mk[x.id]=c},
-  step(n,kind){this.stuck=0;this.trail=[];for(let k=0;k<n;k++){this.mark(this.at,k<n-1||kind==="miss"?kind:"ok");this.at++}
+    x.wh=hid;const c=kind==="miss"?"miss":hid?"wm":"rd";el.classList.remove("h","fl","cur","wm","rd","miss","pk");el.removeAttribute("data-h");el.classList.add(c);this.mk[x.id]=c},
+  step(n,kind){this.stuck=0;this.trail=[];setTimeout(()=>this.tryUI(),0);for(let k=0;k<n;k++){this.mark(this.at,k<n-1||kind==="miss"?kind:"ok");this.at++}
     if(this.ret!=null&&this.retDir>0&&this.at>=this.ret){this.ret=null;this.retUI()}
     const rt=this.root(),nm=rt&&$(".names.hid",rt);if(nm&&!nm.querySelector(".w:not(.wm):not(.rd):not(.miss)"))nm.classList.remove("hid");
     if(this.at>=this.W.length){delete this.saved[this.key()];this.finish()}else{this.saved[this.key()]={cur:this.W[this.at].id,mk:Object.assign({},this.mk)};this.cur()}},
@@ -1206,8 +1232,24 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     if(this.trail.length>=2){const f=this.locate(this.trail);if(f){this.jump(f);continue}}
     /* Not the expected word: hold it until we know whether it replaced a word or was extra. Repeating a word just said is fine. */
     let again=false;for(let b=1;b<=8;b++)if(W[i-b]&&wmatch(h,W[i-b].n)){again=true;break}if(again)continue;
-    this.pend.push(raw);
-    if(this.pend.length>=5){const p=this.pend;this.pend=[];this.log([{k:i,s:p.join(" ")}],[],[],i,1);this.mark(i,"miss");this.at++;this.step(0)}}},
+    /* A wrong word: a beep, the word shakes, and we stay on it. On the third wrong try it is marked wrong and we move on. */
+    this.pend.push(raw);beep();
+    if(this.pend.length>=3){const p=this.pend;this.pend=[];this.log([{k:i,s:p.join(" ")}],[],[],i,1);this.mark(i,"miss");this.at++;this.step(0);toast(t("wrongOn"))}
+    else{const el=W[i].el;el.classList.remove("wring");void el.offsetWidth;el.classList.add("wring");setTimeout(()=>el.classList.remove("wring"),700);this.tryUI()}}},
+  /* The slim row above the buttons: what is happening now, and three helpers (one word back, skip a word, start again). */
+  rqHTML(){return`<div class="rq" id="rq"><span class="rs" id="rqS"></span><button type="button" data-rq="back">${ic("wback")}${t("wBack")}</button><button type="button" data-rq="skip">${ic("wskip")}${t("wSkip")}</button><button type="button" data-rq="again">${ic("wagain")}${t("wAgain")}</button></div>`},
+  rqBind(box){const q=box&&$("#rq",box);if(!q)return;q.onclick=e=>{const b=e.target.closest("[data-rq]");if(!b||!this.live)return;const k=b.dataset.rq;
+      if(k==="back")this.wordBack();else if(k==="skip")this.skip();else this.again2()};this.tryUI()},
+  tryUI(){const s=$("#rqS");if(!s)return;const n=(this.pend||[]).length;s.className="rs"+(n?" tr":this.paused?" ps":"");
+    s.innerHTML=n?`<i></i>${t("tryN",{a:n+1,b:3})}`:`<i></i>${this.paused?t("pausedS"):t("listenL")}`},
+  /* One word back: the last word is open again, as it was (hidden if it was hidden), so you can say it again. */
+  wordBack(){if(this.lock||this.at<=0)return;this.pend=[];this.trail=[];this.at--;const x=this.W[this.at];delete this.mk[x.id];
+    x.el.classList.remove("wm","rd","miss","pk");if(x.wh&&!x.el.closest(".names.hid")){x.el.classList.add("h");x.el.setAttribute("data-h","")}
+    this.saved[this.key()]={cur:x.id,mk:Object.assign({},this.mk)};this.cur();this.tryUI()},
+  /* Skip a word the phone cannot hear: it counts as read (blue), not as a mistake. */
+  skip(){if(this.lock||!this.W[this.at])return;this.pend=[];const x=this.W[this.at];x.el.removeAttribute("data-h");x.el.classList.remove("h","fl");this.step(1,"ok")},
+  /* Start this lesson again from the first word. */
+  again2(){if(this.lock)return;delete this.saved[this.key()];if(this.mode==="read"){this.hook();this.W.forEach(x=>{x.el.classList.remove("wm","rd","miss","pk")});this.cur();this.tryUI()}else{render();scrollTo(0,0)}},
   /* Follow the reader to another place. A long way back or ahead keeps a button to return to where you were. */
   jump(f){const i=this.at,to=f.k+f.len;if(to===i){this.trail=[];return}if(Math.abs(to-i)>10){if(this.ret==null||(to<i&&i>this.ret)){this.ret=i;this.retDir=to<i?1:-1}}
     this.pend=[];for(let x=0;x<f.len;x++)this.mark(f.k+x,"ok");this.at=to;toast(t("following"));this.step(0);this.retUI()},
@@ -1231,11 +1273,11 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
   /* The bar at the bottom of the reading page while listening. */
   bar(){const b=$("#rbar");if(!b)return;const on=this.live&&this.mode==="read"&&VIEW==="names";b.hidden=!on;document.body.classList.toggle("reading",on);if(!on)return;
     const n=MIS.all().filter(m=>m.sid===this.sid).length,hw=LS.get("hideRead",false);
-    b.innerHTML=`<span class="st"><i style="${this.paused?"animation:none;background:var(--muted)":""}"></i><span>${this.paused?t("pause"):t("listenL")} · </span>${t("lessonN")} ${N(this.li+1)}</span>
+    b.innerHTML=`<span class="st"><i style="${this.paused?"animation:none;background:var(--muted)":""}"></i><span>${this.paused?t("pausedS"):t("listenL")} · </span>${t("lessonN")} ${N(this.li+1)}</span>
       <button id="rbHide" class="${hw?"on":""}" aria-pressed="${hw}">${ic(hw?"eyeoff":"eye")}<span class="lbl">${t("hideWords")}</span></button>
       <button id="rbMis">${ic("rev")}<span class="lbl">${t("misBtn")}</span>${n?`<span class="cnt">${N(n)}</span>`:""}</button>
       <button id="rbPause" aria-label="${this.paused?t("resume"):t("pause")}">${this.paused?"▶":"❚❚"}</button>
-      <button class="stop" id="rbStop">■ <span class="lbl">${t("liveStop")}</span></button>`;
+      <button class="stop" id="rbStop">■ <span class="lbl">${t("liveStop")}</span></button>${this.rqHTML()}`;this.rqBind(b);
     $("#rbHide").onclick=()=>{LS.set("hideRead",!hw);render()};$("#rbMis").onclick=()=>MV.open(MIS.all().filter(m=>m.sid===this.sid),0,{after:()=>this.bar()});$("#rbStop").onclick=()=>{this.stopLive()};$("#rbPause").onclick=()=>{if(this.paused)this.resume();else this.pause();this.bar()}},
   nextRead(){const i=this.li,p=P(i);if(p.s==="new")p.s="learning";touch(i);saveST();WK.add(i);
     const nx=this.root()&&this.root().nextElementSibling;
@@ -1258,6 +1300,9 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     setTimeout(()=>{if(this.live&&VIEW==="memorize"){LS.set("cur."+PID,nx);this.autoLv(nx);render();scrollTo(0,0)}},450)},
   /* A new lesson starts with the words shown (read it first); a lesson you have recited from memory before starts hidden. */
   autoLv(i){const p=P(i);LS.set("lv",p.reps>0||status(i)==="memorized"?(LS.get("lvHide",4)||4):0)}};
+/* Leaving the website (another app, locked screen) pauses reciting; your place is kept until you tap Continue. */
+document.addEventListener("visibilitychange",()=>{if(document.hidden){if(Mem.live&&!Mem.paused){Mem.pause();Mem.away=true;if(Mem.mode==="read")Mem.bar();else if(VIEW==="memorize")render()}}
+  else if(Mem.away&&Mem.live&&Mem.paused)toast(t("autoPaused"))});
 V.mistakes=el=>{
   el.innerHTML=`<section class="sec"><div class="wrap narrow stack"><div class="head"><h2>${t("mistakes")}</h2><p>${t("misSub")}</p></div><div id="mAll"></div>
     <div class="row" id="mFoot"><a class="btn out" href="#memorize">${ic("memorize")}${t("memorize")}</a><button class="btn warn" id="mClr">${ic("trash")}${t("clearMis")}</button></div><div id="mcf"></div></div></section>`;
@@ -1289,18 +1334,18 @@ V.memorize=el=>{
         <button class="where" id="sets" title="${esc(scope)}"><b>${t("lessonN")} ${N(pos+1)} <small>${t("of")} ${N(r.length)}</small></b><span class="rp" aria-label="${t("reps")} ${p.reps}/${target}">${Array.from({length:target},(_,n)=>`<i class="${n<p.reps?"on":""}"></i>`).join("")}</span></button>
         <button class="ib" id="next" ${pos===r.length-1?"disabled":""} aria-label="${t("next")}">${ic(LANG==="ar"?"prev":"next")}</button>
         <button class="ib" id="more" aria-label="${t("optL")}">${ic("dots")}</button></div>
-      <div class="r2">${live?`<span class="lv ${Mem.paused?"ps":""}"><i></i>${Mem.paused?t("pause"):t("listenL")}</span>`:`<span class="note">${t("tapWordHint")}</span>`}<span class="sp"></span>${evSw()}</div>
+      <div class="r2">${live?`<span class="lv ${Mem.paused?"ps":""}"><i></i>${Mem.paused?t("pausedS"):t("listenL")}</span>`:`<span class="note">${t("tapWordHint")}</span>`}<span class="sp"></span>${evSw()}</div>
     </div>
     ${lessonHTML(i,{framed:true,lv,hideEv,hideNames:hideNm,sp:live})}
   </div></section>
-  <div class="mdock" id="mdock"><div class="in">
+  <div class="mdock" id="mdock">${live?Mem.rqHTML():""}<div class="in">
     <button class="dk" type="button" id="lvBtn" aria-pressed="${!!lv}">${ic(lv?"eye":"eyeoff")}<span>${lv?t("showAllW"):t("hideAll")}</span></button>
     ${lv?`<button class="dk" type="button" id="pkBtn">${ic("peek")}<span>${t("peekB")}</span></button>`:""}
-    <div class="mw"><button class="mic ${live&&!Mem.paused?"on":""}" type="button" id="live" aria-label="${live?(Mem.paused?t("resume"):t("pause")):t("live")}">${live?(Mem.paused?ic("play2"):'<svg class="i" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>'):ic("mic")}</button><small>${live?(Mem.paused?t("resume"):t("pause")):t("startL")}</small></div>
+    <div class="mw"><button class="mic ${live&&!Mem.paused?"on":live?"ps":""}" type="button" id="live" aria-label="${live?(Mem.paused?t("resume"):t("pause")):t("live")}">${live?(Mem.paused?ic("play2"):'<svg class="i" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>'):ic("mic")}</button><small>${live?(Mem.paused?t("resume"):t("pause")):t("startL")}</small></div>
     <button class="dk" type="button" id="mvOpen">${ic("rev")}<span>${t("misBtn")}</span><b class="cnt" ${nMis?"":"hidden"}>${N(nMis)}</b></button>
     ${live?`<button class="dk stop" type="button" id="liveStop" aria-label="${t("liveStop")}"><svg class="i" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span>${t("liveStop")}</span></button>`:""}
   </div></div>`;
-  document.body.classList.add("mdocked");
+  document.body.classList.add("mdocked");document.body.classList.toggle("rqon",live);Mem.rqBind($("#mdock"));
   const go=n=>{LS.set("cur."+PID,n);Mem.autoLv(n);render();scrollTo(0,0)};
   $("#sets").onclick=()=>{Mem.stopLive();Mem.run=false;render()};
   $("#prev").onclick=()=>pos>0&&go(r[pos-1]);$("#next").onclick=()=>pos<r.length-1&&go(r[pos+1]);
