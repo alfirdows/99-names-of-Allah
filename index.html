@@ -668,7 +668,7 @@ main{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 <div class="rbar" id="rbar" hidden></div>
 <div class="sheet" id="misSheet" hidden><div class="sh-in" role="dialog" aria-modal="true"><div class="grab"></div><div class="sh-h"><h3 id="shT"></h3><button class="btn sm" id="shX"></button></div><div id="shB"></div></div></div>
 <div class="toast" id="toast" hidden role="status"></div>
-<script src="run.js?v=5" defer></script>
+<script src="run.js?v=6" defer></script>
 <script>
 /* One audio at a time (same on every site): whenever any sound starts (lesson audio, a word, a recording, English),
    every other sound stops first, and each player is told so it can reset its buttons. */
@@ -793,9 +793,9 @@ const TX={
  reps:["Repetitions","التكرار"],repsHint:["Read it aloud, then tap.","اقرأ بصوت مسموع ثم اضغط."],recited:["I recited it","قرأته"],reset:["Reset","إعادة"],
  markMem:["Memorized, next","حفظته، التالي"],needRev:["Needs review","يحتاج مراجعة"],unRev:["Remove from review","أزل من المراجعة"],
  prev:["Previous","السابق"],next:["Next","التالي"],backSets:["All sets","كل المجموعات"],of:["of","من"],
- setDone:["Set complete. Try a game or a quiz on this set.","أتممت المجموعة. جرّب لعبة أو اختبارًا عليها."],
+ setDone:["Set complete. Try a game or a quiz on this set.","اكتملت المجموعة. جرّب لعبة أو اختبارًا عليها."],
  prHead:["Practice","التدريب"],
- g_run:["Race of the Memorizers","سباق الحُفّاظ"],g_runD:["A running game: pick up the names in order, one by one.","لعبة جري: التقط الأسماء بالترتيب، اسمًا اسمًا."],runGo:["Play","العب"],runDone:["You finished the set!","أكملت المجموعة!"],prSub:["Pick a game, then a set.","اختر لعبة، ثم مجموعة."],
+ g_run:["Race of the Memorizers","سباق الحُفّاظ"],g_runD:["A running game: pick up the names in order, one by one.","لعبة جري: التقط الأسماء بالترتيب، اسمًا اسمًا."],runGo:["Play","العب"],runDone:["You finished the set!","اكتملت المجموعة!"],prSub:["Pick a game, then a set.","اختر لعبة، ثم مجموعة."],
  g_flash:["Flash cards","البطاقات"],g_flashD:["See the name, remember its meaning, then flip.","انظر إلى الاسم وتذكّر معناه، ثم اقلب البطاقة."],
  g_pair:["Find the pair","طابق الزوج"],g_pairD:["Flip cards to match each name with its meaning.","اقلب البطاقات لتطابق كل اسم مع معناه."],
  g_quick:["Quick choice","الاختيار السريع"],g_quickD:["60 seconds. Pick the name for each meaning. Build a streak.","٦٠ ثانية. اختر الاسم لكل معنى، واجمع سلسلة صحيحة."],
@@ -804,14 +804,14 @@ const TX={
  best:["Best","الأفضل"],pickSet:["Which set?","أي مجموعة؟"],allSets:["All sets","كل المجموعات"],back:["Back","رجوع"],
  tapFlip:["Tap the card to flip it","اضغط البطاقة لقلبها"],knew:["I knew it","عرفته"],notYet:["Not yet","لم أعرفه"],
  moves:["Moves","المحاولات"],score:["Score","النقاط"],streakW:["Streak","السلسلة"],mistakes:["Mistakes","الأخطاء"],
- again:["Play again","العب مرة أخرى"],otherGame:["Other games","ألعاب أخرى"],wellDone:["Well done","أحسنت"],
+ again:["Play again","العب مرة أخرى"],otherGame:["Other games","ألعاب أخرى"],wellDone:["Well done","ممتاز"],
  quizHead:["Test what you memorized","اختبر حفظك"],quizSub:["Wrong answers go to your review list.","الإجابات الخاطئة تُضاف إلى قائمة المراجعة."],
  qLessons:["Lessons","الدروس"],qStarted:["Lessons I started","الدروس التي بدأتها"],qReview:["My review list","قائمة المراجعة"],
  qType:["Question type","نوع السؤال"],qMixed:["Mixed","منوّع"],qM2N:["Meaning → name","المعنى ← الاسم"],qN2M:["Name → meaning","الاسم ← المعنى"],qNext:["What comes next?","ما الذي يليه؟"],qFill:["Missing word","الكلمة الناقصة"],
  qLen:["Length","عدد الأسئلة"],questions:["questions","أسئلة"],startQuiz:["Start","ابدأ"],noLessons:["No lessons match yet. Study a few lessons first, or choose All.","لا توجد دروس بعد. ادرس بعض الدروس أولًا أو اختر الكل."],
  askM2N:["Which name has this meaning?","ما الاسم الذي هذا معناه؟"],askN2M:["What does this name mean?","ما معنى هذا الاسم؟"],askNext:["Which lesson comes next in the book?","أي درس يأتي بعده في الكتاب؟"],askFill:["Which word is missing from the meaning?","ما الكلمة الناقصة من المعنى؟"],
  correct:["Correct","صحيح"],wrongA:["Not quite. The right answer is highlighted.","ليس تمامًا. الإجابة الصحيحة مظللة."],nextQ:["Next","التالي"],endQ:["End","إنهاء"],
- result:["Result","النتيجة"],r100:["Every answer correct. Mā shāʾ Allāh!","كل الإجابات صحيحة. ما شاء الله!"],r70:["Good work. Go over the ones you missed.","أحسنت. راجع ما أخطأت فيه."],rLow:["Keep going. Study the missed lessons, then try again.","استمر. ادرس الدروس التي أخطأت فيها ثم أعد المحاولة."],
+ result:["Result","النتيجة"],r100:["Every answer correct. Mā shāʾ Allāh!","كل الإجابات صحيحة. ما شاء الله!"],r70:["Good work. Go over the ones you missed.","ممتاز. راجع الأخطاء."],rLow:["Keep going. Study the missed lessons, then try again.","استمر. ادرس الدروس التي أخطأت فيها ثم أعد المحاولة."],
  addedRev:["Added to your review list","أُضيفت إلى قائمة المراجعة"],study:["Study","ادرس"],change:["Change settings","غيّر الإعدادات"],
  pgHead:["Progress","تقدّمي"],xp:["points","نقطة"],lessonsMem:["lessons memorized","درسًا محفوظًا"],revList:["Review list","قائمة المراجعة"],revEmpty:["Nothing to review. Wrong answers and lessons you flag appear here.","لا شيء للمراجعة. تظهر هنا الأخطاء والدروس التي تحددها."],
  last14:["Last 14 days","آخر ١٤ يومًا"],bySet:["By set","حسب المجموعة"],
@@ -827,9 +827,9 @@ const TX={
  rec:["Record","سجّل"],recStop:["Stop and save","أوقف واحفظ"],myRec:["My recitation","تسميعي"],myRecs:["My recordings","تسجيلاتي"],
  recHint:["Record yourself reciting, then listen back. Recordings stay on this device until you delete them.","سجّل تسميعك ثم استمع إليه. تبقى التسجيلات على هذا الجهاز حتى تحذفها."],
  noRecs:["No recordings yet.","لا توجد تسجيلات بعد."],recSaved:["Recording saved","تم حفظ التسجيل"],
- live:["Start reciting","ابدأ التسميع"],liveStop:["Stop all","إيقاف الكل"],tryN:["Try again · {a} of {b}","حاول مرة أخرى · {a} من {b}"],pausedS:["Paused","متوقف مؤقتًا"],wBack:["Word back","كلمة للخلف"],wSkip:["Skip word","تخطَّ الكلمة"],wAgain:["Start again","من البداية"],autoPaused:["Paused while you were away. Tap Continue when ready.","توقف مؤقتًا لأنك خرجت. اضغط متابعة عندما تكون مستعدًا."],wrongOn:["Marked wrong, moving on","سُجّلت خطأً، ننتقل إلى ما بعدها"],liveHint:["Tap Start and recite. The words follow your voice, and it moves on by itself until you tap Stop.","اضغط ابدأ وسمّع. تتبع الكلماتُ صوتك، وينتقل وحده حتى تضغط إيقاف."],
+ live:["Start reciting","ابدأ التسميع"],liveStop:["Stop all","إيقاف الكل"],tryN:["Try again · {a} of {b}","حاول مرة أخرى · {a} من {b}"],pausedS:["Paused","متوقف مؤقتًا"],wBack:["Word back","كلمة للخلف"],wSkip:["Skip word","تخطَّ الكلمة"],wAgain:["Start again","من البداية"],autoPaused:["Paused while you were away. Tap Continue when ready.","توقف مؤقتًا لأنك خرجت. اضغط متابعة عند الاستعداد."],wrongOn:["Marked wrong, moving on","سُجّلت خطأً، ننتقل إلى ما بعدها"],liveHint:["Tap Start and recite. The words follow your voice, and it moves on by itself until you tap Stop.","اضغط ابدأ وسمّع. تتبع الكلماتُ صوتك، وينتقل وحده حتى تضغط إيقاف."],
  liveOn:["Listening… recite now","أستمع… سمّع الآن"],kMem:["From memory","من الحفظ"],kRd:["Read","قراءة"],kMiss:["Mistake","خطأ"],
- repN:["Repetition {a} of {b}. Again!","التكرار {a} من {b}. مرة أخرى!"],memNext:["Memorized! Next lesson","أحسنت، حفظته! الدرس التالي"],
+ repN:["Repetition {a} of {b}. Again!","التكرار {a} من {b}. مرة أخرى!"],memNext:["Memorized! Next lesson","ممتاز، تمّ حفظه! الدرس التالي"],
  noSR:["This browser can't listen. On iPhone use Safari, and turn on Siri or Dictation in Settings.","هذا المتصفح لا يستطيع الاستماع. على الآيفون استخدم سفاري، وفعّل سيري أو الإملاء من الإعدادات."],
  recite:["Recite","سمّع"],ordIn:["In order","بالترتيب"],ordRnd:["Random","عشوائي"],allLessons:["All names","كل الأسماء"],allL:["All lessons","كل الدروس"],orderH:["Order","الترتيب"],
  misWrong:["Wrong word","خطأ"],misMissed:["Left out","سقط"],misExtra:["Added word","زيادة"],
@@ -838,7 +838,7 @@ const TX={
  noMis:["No mistakes saved yet.","لا توجد أخطاء محفوظة بعد."],clearMis:["Delete all mistakes","احذف كل الأخطاء"],clearMisQ:["Delete all saved mistakes for this learner?","هل تريد حذف كل الأخطاء المحفوظة لهذا المتعلّم؟"],
  misDel:["Delete this mistake (misheard)","احذف هذا الخطأ (سماع خاطئ)"],misDone:["Mistake deleted","حُذف الخطأ"],practiceL:["Practice this lesson","تدرّب على هذا الدرس"],
  hideWords:["Hide words","إخفاء الكلمات"],misBtn:["Review","مراجعة"],playMine:["Play my recitation here","استمع لتسميعك هنا"],noRecHere:["No recording was saved for this one.","لم يُحفظ تسجيل لهذا."],
- closeL:["Close","إغلاق"],readDone:["You reached the end. Well done!","وصلت إلى النهاية. أحسنت!"],listenL:["Listening","أستمع"],
+ closeL:["Close","إغلاق"],readDone:["You reached the end. Well done!","تمّ الوصول إلى النهاية. ممتاز!"],listenL:["Listening","أستمع"],
  pause:["Pause","إيقاف مؤقت"],resume:["Continue","متابعة"],paused:["Paused. Tap ▶ to carry on from where you stopped.","متوقف مؤقتًا. اضغط ▶ لتكمل من حيث توقفت."],following:["Following you from here","أتابعك من هنا"],
  reciteMis:["Recite your mistakes","سمّع أخطاءك"],reciteMisD:["Goes through only the lessons you slipped in.","يمرّ على الدروس التي أخطأت فيها فقط."],misSet:["Your mistakes","أخطاؤك"],planH:["Today's plan","ورد اليوم"],planD:["The classic way of hifz: a new portion, a recent review and an older review. Each one starts hands-free.","على طريقة الحفظ المعروفة: درس جديد، ومراجعة قريبة، ومراجعة بعيدة. كل واحد يبدأ بالتسميع مباشرة."],
  binTitle:["Recently deleted","المحذوفات مؤخرًا"],binDel:["Deleted","تم الحذف"],binNDel:["{n} deleted","حُذف {n}"],binKeep:["You can bring it back within 24 hours from Recently deleted.","يمكنك استرجاعه خلال ٢٤ ساعة من «المحذوفات مؤخرًا»."],
