@@ -678,7 +678,7 @@ main{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 .rq .hrd:empty{display:none}.rq .hrd span{color:var(--ink)}.rq .hrd b{color:#2e9d5b}.rq .hrd.hq{color:#b5650f}
 .rq .hrd button{display:inline!important;width:auto!important;border:0!important;background:none!important;padding:0!important;margin-inline-start:4px;font-size:.78rem;color:#2e6db5!important;text-decoration:underline;min-height:0}
 /* Compact recite row (Tasnim: nothing should cover the verse): one thin line with what the phone hears and three small round helper buttons. */
-.dock .rq,.mdock .rq,.rbar .rq{flex-wrap:nowrap!important;width:min(560px,94vw)!important;max-width:94vw!important;padding:3px 5px!important;gap:5px!important;margin-bottom:6px!important;border-radius:999px!important}
+.dock .rq,.mdock .rq,.rbar .rq{flex-wrap:nowrap!important;width:min(560px,calc(100% - 8px))!important;max-width:calc(100% - 8px)!important;padding:3px 5px!important;gap:5px!important;margin-bottom:6px!important;border-radius:999px!important}
 .rq .rqtop{flex:1 1 auto!important;flex-basis:auto!important;max-width:none!important;justify-content:center;padding:0 6px;overflow:hidden}
 .rq .rqtop .rs{display:none!important}.rq .rqtop .rs.tr{display:flex!important;font-size:.74rem}
 .rq .hrd{font-size:.82rem}
@@ -692,6 +692,7 @@ main{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 .pkw .hintb svg{width:15px!important;height:15px!important;margin:0!important}.pkw .hintb span{display:none!important}
 .dock.calm .pkw .hintb.on,.mdock .pkw .hintb.on,.pkw .hintb.on{background:#fff4d6!important;border-color:#e6b84a!important;color:#b9790c!important}
 .pkw .hintb.on svg{color:#b9790c!important;filter:drop-shadow(0 0 4px rgba(240,180,40,.8))}
+html,body{overflow-x:clip}
 .hhov{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:18px}
 .hhbox{background:var(--surface,#fff);color:var(--ink,#222);border-radius:18px;padding:18px 18px 14px;max-width:420px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.3);font-size:1rem;line-height:1.6}
 .hhbox ol{margin:10px 0 14px;padding-inline-start:22px}.hhbox li{margin:0 0 8px}
