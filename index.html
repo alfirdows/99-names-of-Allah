@@ -677,6 +677,13 @@ main{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 #print{display:none}#certSheet[hidden]{display:none}
 #certSheet input{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:1.05rem;text-align:center;background:var(--surface);color:var(--ink)}
 @media print{@page{size:A4;margin:10mm}body>*:not(#print){display:none!important}#print{display:block;background:#fff}}
+.rq .hrd{flex-basis:100%;text-align:center;font-size:.8rem;font-weight:600;color:var(--muted);padding:4px 10px;margin:2px 0;border-radius:12px;background:color-mix(in srgb,var(--ink) 6%,transparent);max-width:88vw;line-height:1.8;max-height:6.2em;overflow-y:auto;overscroll-behavior:contain}
+.rq .hrd:empty{display:none}.rq .hrd span{color:var(--ink);font-size:1.12rem;font-weight:700}.rq .hrd b{color:#2e9d5b;font-size:1.3rem}.rq .hrd.hq{color:#b5650f;white-space:normal}
+.rq .hrd button{display:inline-flex!important;width:auto!important;flex:none;vertical-align:middle;padding:2px 8px;font-size:.72rem;margin-inline-start:4px}
+.hhov{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:18px}
+.hhbox{background:var(--surface,#fff);color:var(--ink,#222);border-radius:18px;padding:18px 18px 14px;max-width:420px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.3);font-size:1rem;line-height:1.6}
+.hhbox ol{margin:10px 0 14px;padding-inline-start:22px}.hhbox li{margin:0 0 8px}
+.hhok{display:block;margin:0 auto;border:0;border-radius:999px;padding:8px 26px;font:inherit;font-weight:700;background:#2e9d5b;color:#fff;cursor:pointer}
 </style>
 </head>
 <body>
@@ -749,7 +756,7 @@ function beep(){try{navigator.vibrate&&navigator.vibrate([60,40,60])}catch(e){}
   try{unlockAudio();const n=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type="sine";o.frequency.setValueAtTime(520,n);o.frequency.exponentialRampToValueAtTime(330,n+.2);
     g.gain.setValueAtTime(.0001,n);g.gain.exponentialRampToValueAtTime(.22,n+.02);g.gain.exponentialRampToValueAtTime(.0001,n+.24);o.connect(g).connect(AC.destination);o.start(n);o.stop(n+.26)}catch(e){}}
 class Listener{constructor(onWords,onState){this.onWords=onWords;this.onState=onState;this.active=false;this.done=0}
- start(){if(!SR)return false;this.active=true;this.last=Date.now();this._spin();clearInterval(this.dog);
+ start(){if(!SR)return false;this.active=true;this.quiet();this.last=Date.now();this._spin();clearInterval(this.dog);
   /* The iPhone sometimes stops sending words without saying so. If nothing has come for a while, start again quietly. */
   this.dog=setInterval(()=>{if(this.active&&Date.now()-this.last>7000)this.refresh()},1000);return true}
  /* Listen afresh. The phone guesses each word from the words before it, so after one misheard word it can keep hearing
@@ -773,7 +780,7 @@ class Listener{constructor(onWords,onState){this.onWords=onWords;this.onState=on
    /* rev = how many of the words passed on are only the phone rewriting words it already gave (it often fixes the last
       word or two as you go on). Those may still complete the word you are on, but never count as a mistake. */
    const rev=fresh?0:Math.max(0,Math.min(P.length,ws.length)-from);
-   if(ws.length>from)this.onWords(ws.slice(from),rev);
+   this.heard1(ws,tail);if(ws.length>from)this.onWords(ws.slice(from),rev);
    /* The phone's other guesses for the newest word (where it gives them) are tried too. */
    const alts=[];if(tail){const L=e.results[e.results.length-1];for(let a=1;a<(L.length||1);a++){const w=(L[a].transcript||"").split(/\s+/).filter(Boolean);if(w.length)alts.push(w[w.length-1])}}
    clearTimeout(this.ft);if(tail&&this.onPeek&&[tail].concat(alts).some(w=>this.onPeek(w)))this.prev.push(tail);
@@ -784,7 +791,37 @@ class Listener{constructor(onWords,onState){this.onWords=onWords;this.onState=on
   r.onend=()=>{if(this.active&&this.r===r)setTimeout(()=>{if(this.active&&this.r===r)this._spin(1)},0)};
   try{r.start();this.tries=0}catch(e){if(again)return this._retry();this.active=false;clearInterval(this.dog);this.onState("denied")}}
  _retry(){this.tries=(this.tries||0)+1;const r=this.r;setTimeout(()=>{if(this.active&&this.r===r)this._spin(1)},Math.min(2000,300*this.tries))}
- stop(){this.active=false;clearInterval(this.dog);try{this.r&&this.r.stop()}catch(e){}}}
+ stop(){this.active=false;clearInterval(this.dog);clearTimeout(this.qt);try{this.r&&this.r.stop()}catch(e){}}
+ /* If nothing at all is heard in the first 8 seconds, say so and offer help (see hearHelp). */
+ quiet(){this.got=false;this.said0="";this.said1="";clearTimeout(this.qt);this.qt=setTimeout(()=>{if(this.active&&!this.got&&this.onHear)this.onHear(null,true)},8000)}
+ /* Everything heard since the mic was turned on, also across the phone's quiet restarts, so you see the whole thing you said. */
+ heard1(ws,tail){this.got=true;clearTimeout(this.qt);if(this.r!==this.r1){this.r1=this.r;this.said0=(this.said0+" "+this.said1).trim()}
+  this.said1=ws.concat(tail?[tail]:[]).join(" ");if(this.onHear)this.onHear((this.said0+" "+this.said1).trim())}}
+/* What the phone heard, and help when it hears nothing (the same on every site). New languages: add a block to HEAR. */
+const IOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+const HEAR={
+ ar:{heard:"سمعتُ:",quiet:"لا يصلني صوتك بعد",help:"مساعدة",title:"إذا لم يسمعك الهاتف",ok:"حسنًا",steps:[
+  "افتح «الإعدادات» ← «عام» ← «لوحة المفاتيح»، وشغّل «تفعيل الإملاء».",
+  "في Safari اضغط «aA» بجانب العنوان ← «إعدادات موقع الويب» ← «الميكروفون» ← «سماح».",
+  "افتح الموقع من Safari نفسه (لا من أيقونة الشاشة الرئيسية)، ثم اضغط زر الميكروفون."]},
+ en:{heard:"Heard:",quiet:"I can't hear you yet",help:"Help",title:"If the phone does not hear you",ok:"OK",steps:[
+  "Open Settings › General › Keyboard and turn on “Enable Dictation”.",
+  "In Safari tap “aA” next to the address › Website Settings › Microphone › Allow.",
+  "Open the site in Safari itself (not from the Home Screen icon), then tap the mic."]}};
+const HT=()=>HEAR[LANG]||HEAR.en;
+const hesc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+/* The small grey line under "Listening": the last words the phone wrote down, so you can see it is hearing you. */
+function heardLine(el,txt,quiet){if(!el)return;const T=HT();
+ if(quiet){el.className="hrd hq";el.innerHTML=`${hesc(T.quiet)} <button type="button" data-hearhelp>${hesc(T.help)}</button>`;return}
+ if(txt==null){el.className="hrd";el.innerHTML="";return}
+ const a=String(txt).trim().split(/\s+/).filter(Boolean).slice(-80),last=a.pop();el.className="hrd";
+ /* the newest word stands out, so you can follow along word by word */
+ el.innerHTML=last?`${hesc(T.heard)} <span lang="ar" dir="rtl">${hesc(a.join(" "))} <b>${hesc(last)}</b></span>`:"";el.scrollTop=el.scrollHeight}
+function hearHelp(){const T=HT();let o=document.getElementById("hearhelp");if(o)o.remove();o=document.createElement("div");o.id="hearhelp";o.className="hhov";
+ o.innerHTML=`<div class="hhbox" role="dialog" dir="${LANG==="ar"?"rtl":"ltr"}"><b>${hesc(T.title)}</b><ol>${T.steps.map(s=>`<li>${hesc(s)}</li>`).join("")}</ol><button type="button" class="hhok">${hesc(T.ok)}</button></div>`;
+ o.onclick=e=>{if(e.target===o||e.target.closest(".hhok"))o.remove()};document.body.appendChild(o)}
+document.addEventListener("click",e=>{if(e.target.closest("[data-hearhelp]")){e.preventDefault();e.stopPropagation();hearHelp()}},true);
+
 const norm=s=>s.replace(/[ً-ٰٟۖ-ۭـ]/g,"").replace(/[أإآٱ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").toLowerCase();
 const LS={get(k,d){try{const v=localStorage.getItem("asma1."+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("asma1."+k,JSON.stringify(v))}catch(e){}}};
 /* Visitor count: GoatCounter (account "tasnim"). No cookies or personal data; only the owner sees the numbers at https://tasnim.goatcounter.com. Works on any domain; skipped during local testing. */
@@ -1170,7 +1207,7 @@ function planHTML(){const pl=dailyPlan(),td=ST.days[today()]||[];
       ${list.length?`<button class="btn ${ok?"out":"pri"} sm" data-plan="${k}">${ic("mic")}${t("pStart")}</button>`:""}</div>`};
   return`<div class="panel"><h3>${ic("history")}${t("planH")}</h3><p class="note">${t("planD")}</p><div class="plan">${card("new","h1","pNew",pl.k>=0&&!pl.rest?null:"pNewD",pl.new)}${card("near","h2","pNear","pNearD",pl.near)}${card("far","h4","pFar","pFarD",pl.far)}</div></div>`}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-plan]");if(!b)return;const list=dailyPlan()[b.dataset.plan];if(!list||!list.length)return;
-  LS.set("mq."+PID,{k:-3,rnd:false,list,lab:b.dataset.plan});Mem.stopLive();Mem.mode="mem";if(Mem.startLive())Mem.open(list[0])});
+  LS.set("mq."+PID,{k:-3,rnd:false,list,lab:b.dataset.plan});Mem.stopLive();Mem.mode="mem";Mem.open(list[0])});
 
 /* ---------- weak spots map: each lesson shaded by how many slips were recorded there ---------- */
 function weakCounts(){const c={};for(const m of MIS.all())c[m.i]=(c[m.i]||0)+1;return c}
@@ -1180,7 +1217,7 @@ function weakHTML(){const c=weakCounts(),mx=Math.max(0,...Object.values(c)),lv=n
     ${mx?`<button class="btn pri sm" data-weakgo>${ic("mic")}${t("weakGo")}</button>`:""}</div>`}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-weak]");if(b){Mem.go(+b.dataset.weak);return}
   if(e.target.closest("[data-weakgo]")){const c=weakCounts(),list=Object.keys(c).map(Number).sort((a,b)=>c[b]-c[a]).slice(0,5).sort((a,b)=>a-b);if(!list.length)return;
-    LS.set("mq."+PID,{k:-2,rnd:false,list});Mem.stopLive();Mem.mode="mem";if(Mem.startLive())Mem.open(list[0])}});
+    LS.set("mq."+PID,{k:-2,rnd:false,list});Mem.stopLive();Mem.mode="mem";Mem.open(list[0])}});
 
 /* ---------- names (read) ---------- */
 let NamesSet=-1, NamesQ="";
@@ -1231,7 +1268,7 @@ const MIS={all(){return LS.get("mis."+PID,[])},save(a){LS.set("mis."+PID,a.slice
     $$("[data-mrec]",root).forEach(b=>b.onclick=()=>this.reciteAll())},
   /* سمّع أخطاءك: a hands-free session over only the lessons that have mistakes, in book order. */
   reciteAll(){const list=[...new Set(this.all().map(m=>m.i))].sort((a,b)=>a-b);if(!list.length)return;this.closeSheet();
-    LS.set("mq."+PID,{k:-2,rnd:false,list});Mem.stopLive();Mem.mode="mem";if(Mem.startLive())Mem.open(list[0])},
+    LS.set("mq."+PID,{k:-2,rnd:false,list});Mem.stopLive();Mem.mode="mem";Mem.open(list[0])},
   /* Grouped by recitation session (newest first), like a history: time, lessons covered, then each mistake in order. */
   sessionsHTML(){const g=new Map();for(const m of this.all()){const k=m.sid||"d"+fmtD(m.t);if(!g.has(k))g.set(k,[]);g.get(k).push(m)}
     if(!g.size)return`<p class="note">${t("noMis")}</p>`;let n=0,h=`<button class="btn pri" data-mrec style="width:100%;justify-content:center">${ic("mic")}${t("reciteMis")}</button><p class="note" style="text-align:center;margin:4px 0 8px">${t("reciteMisD")}</p>`;
@@ -1281,15 +1318,17 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     if(go){NamesSet=-1;NamesQ="";if(location.hash!=="#names"){location.hash="#names";return}}render()},
   q(){const q=LS.get("mq."+PID,null);return q&&Array.isArray(q.list)&&q.list.length?q:{k:-1,rnd:false,list:DATA.map((_,i)=>i)}},
   setQ(k,rnd){const list=k<0?DATA.map((_,i)=>i):setRange(k);LS.set("mq."+PID,{k,rnd,list:rnd?shuffle(list):list});return this.q()},
-  /* Opening a lesson from a list starts listening straight away: one way to memorize, no mode to choose. */
-  go(i){this.stopLive();this.mode="mem";this.autoLv(i);if(SR)this.startLive();this.open(i)},
+  /* One way to memorize, no mode to choose. */
+  /* Opening a lesson never turns the mic on: listening starts only when you tap the mic (Tasnim asked, 2026-11-01). */
+  go(i){this.stopLive();this.mode="mem";this.autoLv(i);this.open(i)},
   open(i){if(!this.q().list.includes(i))this.setQ(setOf(i),false);LS.set("cur."+PID,i);this.run=true;if(location.hash!=="#memorize"){this.opening=true;location.hash="#memorize"}else{render();scrollTo(0,0)}},
   startLive(){if(!SR){toast(t("noSR"));return false}unlockAudio();
-    if(!this.L){this.L=new Listener((ws,rev)=>this.heard(ws,rev),st=>{if(st==="denied"){this.stopLive();toast(t("noMic"));if(VIEW==="memorize")render()}});this.L.onPeek=w=>this.peek(w);this.L.onRevise=()=>{this.pend=[]}}
+    if(!this.L){this.L=new Listener((ws,rev)=>this.heard(ws,rev),st=>{if(st==="denied"){this.stopLive();toast(t("noMic"));hearHelp();if(VIEW==="memorize")render()}});this.L.onPeek=w=>this.peek(w);this.L.onRevise=()=>{this.pend=[]}}this.L.onHear=(x,q)=>heardLine($("#rqH"),x,q);
     this.live=true;this.paused=false;this.sid=Date.now().toString(36);this.L.start();try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(l=>this.wl=l).catch(()=>{})}catch(e){}return true},
   stopLive(){const was=this.live;this.live=false;this.paused=false;this.retUI();if(was&&this.mode==="read"){this.mode="mem";$$(".w.cur").forEach(w=>w.classList.remove("cur"));if(VIEW==="names")setTimeout(render,0)}if(this.L)this.L.stop();if(was&&Rec.mr)Rec.stop().then(()=>{const l=$("#recList");if(l&&l.refresh)l.refresh()});try{this.wl&&this.wl.release()}catch(e){}this.wl=null},
   /* While reciting hands-free, your voice is also recorded: one recording per lesson, saved to My recitation. */
-  async recLesson(i){if(!this.live||(Rec.mr&&Rec.lesson===i))return;if(Rec.mr)await Rec.stop();if(this.live&&await Rec.start(i)){const b=$("#recBtn");if(b){b.className="btn recon";b.textContent="■ "+t("recStop")}}},
+  /* On iPhone, recording your voice at the same time stops the phone from hearing you, so there it only listens. */
+  async recLesson(i){if(!this.live||(Rec.mr&&Rec.lesson===i)||(IOS&&SR))return;if(Rec.mr)await Rec.stop();if(this.live&&await Rec.start(i)){const b=$("#recBtn");if(b){b.className="btn recon";b.textContent="■ "+t("recStop")}}},
   /* Collect the words to recite, in reading order: names, then the daleel (if shown), then the meaning. */
   hook(){const ev=!document.documentElement.classList.contains("noev"),root=this.root();if(!root){this.W=[];return}
     /* Each word gets a fixed id (section + position) so your place survives showing/hiding the daleel, names or words. */
@@ -1349,10 +1388,10 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     if(this.pend.length>=3){const p=this.pend;this.pend=[];this.log([{k:i,s:p.join(" ")}],[],[],i,1);this.mark(i,"miss");this.at++;this.step(0);toast(t("wrongOn"))}
     else{const el=W[i].el;el.classList.remove("wring");void el.offsetWidth;el.classList.add("wring");setTimeout(()=>el.classList.remove("wring"),700);this.tryUI()}}},
   /* The slim row above the buttons: what is happening now, and three helpers (one word back, skip a word, start again). */
-  rqHTML(){return`<div class="rq" id="rq"><span class="rs" id="rqS"></span><button type="button" data-rq="back">${ic("wback")}${t("wBack")}</button><button type="button" data-rq="skip">${ic("wskip")}${t("wSkip")}</button><button type="button" data-rq="again">${ic("wagain")}${t("wAgain")}</button></div>`},
+  rqHTML(){return`<div class="rq" id="rq"><span class="rs" id="rqS"></span><span class="hrd" id="rqH"></span><button type="button" data-rq="back">${ic("wback")}${t("wBack")}</button><button type="button" data-rq="skip">${ic("wskip")}${t("wSkip")}</button><button type="button" data-rq="again">${ic("wagain")}${t("wAgain")}</button></div>`},
   rqBind(box){const q=box&&$("#rq",box);if(!q)return;q.onclick=e=>{const b=e.target.closest("[data-rq]");if(!b||!this.live)return;const k=b.dataset.rq;
       if(k==="back")this.wordBack();else if(k==="skip")this.skip();else this.again2()};this.tryUI()},
-  tryUI(){const s=$("#rqS");if(!s)return;const n=(this.pend||[]).length;s.className="rs"+(n?" tr":this.paused?" ps":"");
+  tryUI(){const s=$("#rqS");if(!s)return;if(this.paused||!this.live)heardLine($("#rqH"),null);const n=(this.pend||[]).length;s.className="rs"+(n?" tr":this.paused?" ps":"");
     s.innerHTML=n?`<i></i>${t("tryN",{a:n+1,b:3})}`:`<i></i>${this.paused?t("pausedS"):t("listenL")}`},
   /* One word back: the last word is open again, as it was (hidden if it was hidden), so you can say it again. */
   wordBack(){if(this.lock||this.at<=0)return;this.pend=[];this.trail=[];this.at--;const x=this.W[this.at];delete this.mk[x.id];
