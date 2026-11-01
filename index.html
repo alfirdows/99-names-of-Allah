@@ -411,7 +411,7 @@ body:has(#mv) .retc{display:none}
 .rq button .i{width:15px;height:15px}
 @keyframes wring{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}40%{transform:translateX(4px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
 .w.wring{display:inline-block;animation:wring .45s ease-in-out;outline:2px solid #e8a59d;outline-offset:2px;border-radius:6px}
-body.mdocked.rqon .sec.mfocus{padding-bottom:calc(170px + env(safe-area-inset-bottom,0px))}
+body.mdocked.rqon .sec.mfocus{padding-bottom:calc(210px + env(safe-area-inset-bottom,0px))}
 .mdock{position:fixed;left:0;right:0;bottom:0;z-index:60;padding:0 12px calc(10px + env(safe-area-inset-bottom,0px));pointer-events:none}
 .mdock .in{pointer-events:auto;margin:0 auto;width:max-content;max-width:100%;display:flex;align-items:flex-end;gap:6px;padding:8px 10px;border-radius:28px;background:color-mix(in srgb,var(--surface) 94%,transparent);border:1px solid var(--line);box-shadow:0 10px 28px rgba(0,0,0,.14);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .mdock .dk{position:relative;border:0;background:transparent;color:var(--ink);font:inherit;font-size:.72rem;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:56px;padding:6px 4px;border-radius:16px;cursor:pointer}
@@ -672,9 +672,18 @@ main{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 #print{display:none}#certSheet[hidden]{display:none}
 #certSheet input{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:1.05rem;text-align:center;background:var(--surface);color:var(--ink)}
 @media print{@page{size:A4;margin:10mm}body>*:not(#print){display:none!important}#print{display:block;background:#fff}}
-.rq .hrd{flex-basis:100%;text-align:center;font-size:.8rem;font-weight:600;color:var(--muted);padding:4px 10px;margin:2px 0;border-radius:12px;background:color-mix(in srgb,var(--ink) 6%,transparent);max-width:88vw;line-height:1.8;max-height:6.2em;overflow-y:auto;overscroll-behavior:contain}
-.rq .hrd:empty{display:none}.rq .hrd span{color:var(--ink);font-size:1.12rem;font-weight:700}.rq .hrd b{color:#2e9d5b;font-size:1.3rem}.rq .hrd.hq{color:#b5650f;white-space:normal}
-.rq .hrd button{display:inline-flex!important;width:auto!important;flex:none;vertical-align:middle;padding:2px 8px;font-size:.72rem;margin-inline-start:4px}
+.rq .rqtop{flex-basis:100%;display:flex;justify-content:center;align-items:center;gap:8px;min-width:0;max-width:88vw;margin:0 auto}
+.rq .rqtop .rs{flex:none;flex-basis:auto}
+.rq .hrd{flex:0 1 auto;min-width:0;font-size:.8rem;font-weight:600;color:var(--muted);white-space:nowrap;overflow:hidden;line-height:1.5}
+.rq .hrd:empty{display:none}.rq .hrd span{color:var(--ink)}.rq .hrd b{color:#2e9d5b}.rq .hrd.hq{color:#b5650f}
+.rq .hrd button{display:inline!important;width:auto!important;border:0!important;background:none!important;padding:0!important;margin-inline-start:4px;font-size:.78rem;color:#2e6db5!important;text-decoration:underline;min-height:0}
+/* Compact recite row (Tasnim: nothing should cover the verse): one thin line with what the phone hears and three small round helper buttons. */
+.dock .rq,.mdock .rq,.rbar .rq{flex-wrap:nowrap!important;width:min(560px,94vw)!important;max-width:94vw!important;padding:3px 5px!important;gap:5px!important;margin-bottom:6px!important;border-radius:999px!important}
+.rq .rqtop{flex:1 1 auto!important;flex-basis:auto!important;max-width:none!important;justify-content:center;padding:0 6px;overflow:hidden}
+.rq .rqtop .rs{display:none!important}.rq .rqtop .rs.tr{display:flex!important;font-size:.74rem}
+.rq .hrd{font-size:.82rem}
+.rq button[data-rq]{font-size:0!important;width:30px;height:30px;padding:0!important;justify-content:center;flex:none;border-radius:50%!important}
+.rq button[data-rq] svg{width:16px!important;height:16px!important}
 .hhov{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:18px}
 .hhbox{background:var(--surface,#fff);color:var(--ink,#222);border-radius:18px;padding:18px 18px 14px;max-width:420px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.3);font-size:1rem;line-height:1.6}
 .hhbox ol{margin:10px 0 14px;padding-inline-start:22px}.hhbox li{margin:0 0 8px}
@@ -795,11 +804,11 @@ class Listener{constructor(onWords,onState){this.onWords=onWords;this.onState=on
 /* What the phone heard, and help when it hears nothing (the same on every site). New languages: add a block to HEAR. */
 const IOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 const HEAR={
- ar:{heard:"سمعتُ:",quiet:"لا يصلني صوتك بعد",help:"مساعدة",title:"إذا لم يسمعك الهاتف",ok:"حسنًا",steps:[
+ ar:{heard:"سمعتُ:",quiet:"لا أسمعك",help:"مساعدة",title:"إذا لم يسمعك الهاتف",ok:"حسنًا",steps:[
   "افتح «الإعدادات» ← «عام» ← «لوحة المفاتيح»، وشغّل «تفعيل الإملاء».",
   "في Safari اضغط «aA» بجانب العنوان ← «إعدادات موقع الويب» ← «الميكروفون» ← «سماح».",
   "افتح الموقع من Safari نفسه (لا من أيقونة الشاشة الرئيسية)، ثم اضغط زر الميكروفون."]},
- en:{heard:"Heard:",quiet:"I can't hear you yet",help:"Help",title:"If the phone does not hear you",ok:"OK",steps:[
+ en:{heard:"Heard:",quiet:"Can't hear you",help:"Help",title:"If the phone does not hear you",ok:"OK",steps:[
   "Open Settings › General › Keyboard and turn on “Enable Dictation”.",
   "In Safari tap “aA” next to the address › Website Settings › Microphone › Allow.",
   "Open the site in Safari itself (not from the Home Screen icon), then tap the mic."]}};
@@ -811,7 +820,7 @@ function heardLine(el,txt,quiet){if(!el)return;const T=HT();
  if(txt==null){el.className="hrd";el.innerHTML="";return}
  const a=String(txt).trim().split(/\s+/).filter(Boolean).slice(-80),last=a.pop();el.className="hrd";
  /* the newest word stands out, so you can follow along word by word */
- el.innerHTML=last?`${hesc(T.heard)} <span lang="ar" dir="rtl">${hesc(a.join(" "))} <b>${hesc(last)}</b></span>`:"";el.scrollTop=el.scrollHeight}
+ el.innerHTML=last?`<span lang="ar" dir="rtl">${hesc(a.slice(-3).join(" "))} <b>${hesc(last)}</b></span>`:""}
 function hearHelp(){const T=HT();let o=document.getElementById("hearhelp");if(o)o.remove();o=document.createElement("div");o.id="hearhelp";o.className="hhov";
  o.innerHTML=`<div class="hhbox" role="dialog" dir="${LANG==="ar"?"rtl":"ltr"}"><b>${hesc(T.title)}</b><ol>${T.steps.map(s=>`<li>${hesc(s)}</li>`).join("")}</ol><button type="button" class="hhok">${hesc(T.ok)}</button></div>`;
  o.onclick=e=>{if(e.target===o||e.target.closest(".hhok"))o.remove()};document.body.appendChild(o)}
@@ -1334,7 +1343,9 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
       let j=this.W.findIndex(x=>x.id===sv.cur);if(j<0)j=this.W.findIndex(x=>!this.mk[x.id]);this.at=Math.max(0,j<0?this.W.length:j);if(this.at>=this.W.length)this.at=0}
     this.cur()},
   cur(){$$(".w.cur").forEach(w=>w.classList.remove("cur"));const x=this.W[this.at];if(!x)return;x.el.classList.add("cur");
-    const r=x.el.getBoundingClientRect();if(r.top<90||r.bottom>innerHeight-90)x.el.scrollIntoView({block:"center",behavior:"smooth"})},
+    const r=x.el.getBoundingClientRect(),d=$(".mdock .rq")||$(".rbar .rq")||$(".mdock")||$(".rbar"),lim=d?d.getBoundingClientRect().top-24:innerHeight-90;
+    /* keep the word you are on above the buttons at the bottom, never under them */
+    if(r.top<90||r.bottom>lim)window.scrollBy({top:r.top-Math.max(90,(lim-90)/2),behavior:"smooth"})},
   mark(j,kind){const x=this.W[j];if(!x)return;const el=x.el,hid=el.hasAttribute("data-h")||!!el.closest(".names.hid");
     x.wh=hid;const c=kind==="miss"?"miss":hid?"wm":"rd";el.classList.remove("h","fl","cur","wm","rd","miss","pk");el.removeAttribute("data-h");el.classList.add(c);this.mk[x.id]=c},
   step(n,kind){this.stuck=0;this.trail=[];setTimeout(()=>this.tryUI(),0);for(let k=0;k<n;k++){this.mark(this.at,k<n-1||kind==="miss"?kind:"ok");this.at++}
@@ -1380,10 +1391,10 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     let again=false;for(let b=1;b<=8;b++)if(W[i-b]&&wmatch(h,W[i-b].n)){again=true;break}if(again)continue;
     /* A wrong word: a beep, the word shakes, and we stay on it. On the third wrong try it is marked wrong and we move on. */
     this.pend.push(raw);beep();
-    if(this.pend.length>=3){const p=this.pend;this.pend=[];this.log([{k:i,s:p.join(" ")}],[],[],i,1);this.mark(i,"miss");this.at++;this.step(0);toast(t("wrongOn"))}
+    if(this.pend.length>=3){const p=this.pend;this.pend=[];this.log([{k:i,s:p.join(" ")}],[],[],i,1);this.mark(i,"miss");this.at++;this.step(0)}
     else{const el=W[i].el;el.classList.remove("wring");void el.offsetWidth;el.classList.add("wring");setTimeout(()=>el.classList.remove("wring"),700);this.tryUI()}}},
   /* The slim row above the buttons: what is happening now, and three helpers (one word back, skip a word, start again). */
-  rqHTML(){return`<div class="rq" id="rq"><span class="rs" id="rqS"></span><span class="hrd" id="rqH"></span><button type="button" data-rq="back">${ic("wback")}${t("wBack")}</button><button type="button" data-rq="skip">${ic("wskip")}${t("wSkip")}</button><button type="button" data-rq="again">${ic("wagain")}${t("wAgain")}</button></div>`},
+  rqHTML(){return`<div class="rq" id="rq"><span class="rqtop"><span class="rs" id="rqS"></span><span class="hrd" id="rqH"></span></span><button type="button" data-rq="back" aria-label="${t("wBack")}" title="${t("wBack")}">${ic("wback")}${t("wBack")}</button><button type="button" data-rq="skip" aria-label="${t("wSkip")}" title="${t("wSkip")}">${ic("wskip")}${t("wSkip")}</button><button type="button" data-rq="again" aria-label="${t("wAgain")}" title="${t("wAgain")}">${ic("wagain")}${t("wAgain")}</button></div>`},
   rqBind(box){const q=box&&$("#rq",box);if(!q)return;q.onclick=e=>{const b=e.target.closest("[data-rq]");if(!b||!this.live)return;const k=b.dataset.rq;
       if(k==="back")this.wordBack();else if(k==="skip")this.skip();else this.again2()};this.tryUI()},
   tryUI(){const s=$("#rqS");if(!s)return;if(this.paused||!this.live)heardLine($("#rqH"),null);const n=(this.pend||[]).length;s.className="rs"+(n?" tr":this.paused?" ps":"");
