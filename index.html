@@ -637,6 +637,16 @@ main{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 .plbar>*{flex:none}
 .plbar .chip,.plbar .btn.sm{min-height:34px;padding:4px 11px;font-size:.82rem}
 }
+/* recording player: Play/Pause, Stop, position bar, time (same on every site) */
+.aup{display:flex;align-items:center;gap:8px;width:100%;margin-top:8px;padding:6px 10px 6px 6px;border-radius:999px;background:var(--surface-2,rgba(0,0,0,.05));box-sizing:border-box}
+.aupb{flex:none;width:38px;height:38px;border-radius:50%;border:0;display:grid;place-items:center;background:var(--surface,#fff);color:var(--ink,inherit);cursor:pointer;padding:0}
+.aupb svg{width:18px;height:18px}
+.aupb.pp{background:var(--acc);color:var(--acc-ink,#fff)}
+.aupb:disabled{opacity:.35;cursor:default}
+.aupr{flex:1 1 auto;min-width:40px;margin:0;accent-color:var(--acc);height:28px}
+.aupt{flex:none;font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.rec .aup{grid-column:1/-1}
+#listenStop[hidden],#plStop[hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -743,6 +753,7 @@ if(GOAT&&!BOT&&!/^(localhost|127\.0\.0\.1|\[::1\]|)$/.test(location.hostname)){c
 /* ================= language ================= */
 let LANG=LS.get("lang",null)||((navigator.language||"").slice(0,2)==="ar"?"ar":"en");
 const TX={
+ auPlay:["Play","تشغيل"],auPause:["Pause","إيقاف مؤقت"],auStop:["Stop","إيقاف"],auCont:["Continue","متابعة"],auPos:["Move through the recording","تنقّل في التسجيل"],
  home:["Home","الرئيسية"],names:["Names","الأسماء"],memorize:["Memorize","الحفظ"],practice:["Practice","التدريب"],quiz:["Quiz","الاختبار"],progress:["Progress","تقدّمي"],settings:["Settings","الإعدادات"],
  lang:["العربية","English"],level:["Level","المستوى"],
  kicker:["The Most Beautiful Names of Allah","تعلّم أسماء الله الحسنى"],
@@ -910,7 +921,7 @@ function applySettings(){
 let toastT;function toast(s){const el=$("#toast");el.textContent=s;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,Math.max(1600,s.length*55))}
 
 /* ================= header / nav ================= */
-const ICON={
+const ICON={pause:'<path d="M9 5v14M15 5v14" stroke-width="2.8"/>',stopsq:'<rect x="6.5" y="6.5" width="11" height="11" rx="2" fill="currentColor"/>',
  home:'<path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z"/>',
  names:'<path d="M12 6.5C10 5 7 4.5 4 5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V5c-3-.5-6 0-8 1.5zM12 6.5V19"/>',
  memorize:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
@@ -1135,7 +1146,7 @@ V.names=el=>{
     <div class="stack"><input class="search" id="q" type="search" placeholder="${esc(t("search"))}" value="${esc(NamesQ)}" aria-label="${esc(t("search"))}">
     <div class="chips" id="setChips"><button class="chip ${NamesSet<0?"on":""}" data-k="-1">${t("all")}</button>${Array.from({length:SETS},(_,k)=>`<button class="chip ${NamesSet===k?"on":""}" data-k="${k}">${setLabel(k)}</button>`).join("")}</div>
     <div class="row">${evSw()}</div>
-    <div class="plbar" id="plbar"><button class="btn pri sm" id="plSet">${ic(Player.on?"x":"sound")}<span>${t(Player.on?"stop":"listenSet")}</span></button><button class="chip ${LS.get("plTurn",false)?"on":""}" id="plTurn" aria-pressed="${LS.get("plTurn",false)}">${t("yourTurn")}</button><button class="chip ${LS.get("plLoop",false)?"on":""}" id="plLoop" aria-pressed="${LS.get("plLoop",false)}">${t("loopSet")}</button><button class="chip ${LS.get("plNm",false)?"on":""}" id="plNm" aria-pressed="${LS.get("plNm",false)}">${t("nmOnly")}</button></div>
+    <div class="plbar" id="plbar"><button class="btn pri sm" id="plSet"></button><button class="btn out sm" id="plStop" hidden>${ic("stopsq")}<span>${t("auStop")}</span></button><button class="chip ${LS.get("plTurn",false)?"on":""}" id="plTurn" aria-pressed="${LS.get("plTurn",false)}">${t("yourTurn")}</button><button class="chip ${LS.get("plLoop",false)?"on":""}" id="plLoop" aria-pressed="${LS.get("plLoop",false)}">${t("loopSet")}</button><button class="chip ${LS.get("plNm",false)?"on":""}" id="plNm" aria-pressed="${LS.get("plNm",false)}">${t("nmOnly")}</button></div>
     <div class="list" id="list"></div></div></div></section>`;
   const draw=()=>{
     const q=norm(NamesQ.trim());
@@ -1152,7 +1163,7 @@ V.names=el=>{
     if(rd){Mem.hook();Mem.recLesson(Mem.li);Mem.bar();if(Mem.scrollTo){Mem.scrollTo=false;const r=Mem.root();if(r)r.scrollIntoView({block:"start"})}}
   };
   $("#q").oninput=e=>{NamesQ=e.target.value;Player.stop();draw()};
-  $("#plSet").onclick=()=>Player.on?Player.stop():Player.start(NamesIdx);
+  $("#plSet").onclick=()=>!Player.on?Player.start(NamesIdx):Player.held?Player.resume():Player.pause();$("#plStop").onclick=()=>Player.stop();Player.ui();
   $$("#plTurn,#plLoop,#plNm").forEach(b=>b.onclick=()=>{const k=b.id,v=!LS.get(k,false);LS.set(k,v);b.classList.toggle("on",v);b.setAttribute("aria-pressed",v);if(k==="plNm"){Player.stop();draw()}});
   $$("#setChips .chip").forEach(b=>b.onclick=()=>{Player.stop();NamesSet=+b.dataset.k;$$("#setChips .chip").forEach(x=>x.classList.toggle("on",x===b));draw()});
   draw();
@@ -1409,7 +1420,7 @@ V.memorize=el=>{
   $("#more").onclick=()=>{$("#shT").textContent=t("optL");$("#shX").textContent=t("closeL");const B=$("#shB");
     B.innerHTML=`<div class="opts">
       <div class="og"><h4>${t("levelL")}</h4><div class="seg5">${[0,1,2,3,4].map(n=>`<button type="button" data-lv="${n}" class="${n===lv?"on":""}">${t("lv"+n)}</button>`).join("")}</div>
-        <div class="row"><button class="chip ${hideNm?"on":""}" id="oNm" aria-pressed="${hideNm}">${ic(hideNm?"eyeoff":"eye")}${t("hideNm")}</button>${lv?`<button class="chip" id="oNw">${t("nextWord")}</button><button class="chip" id="oSa">${t("showAll")}</button>`:""}${AUDIO[i]?`<button class="chip" id="listen">${ic("sound")}<span>${t("listen")}</span></button>`:""}</div></div>
+        <div class="row"><button class="chip ${hideNm?"on":""}" id="oNm" aria-pressed="${hideNm}">${ic(hideNm?"eyeoff":"eye")}${t("hideNm")}</button>${lv?`<button class="chip" id="oNw">${t("nextWord")}</button><button class="chip" id="oSa">${t("showAll")}</button>`:""}${AUDIO[i]?`<button class="chip" id="listen">${ic("sound")}<span>${t("listen")}</span></button><button class="chip" id="listenStop" hidden>${ic("stopsq")}<span>${t("auStop")}</span></button>`:""}</div></div>
       <div class="og"><h4>${t("thisLesson")}</h4><div class="row"><span class="note" style="flex:1">${t("reps")} · ${N(p.reps)}/${N(target)}</span><button class="chip" id="tap">${ic("star")}${t("recited")}</button><button class="chip" id="rr">${ic("refresh")}${t("reset")}</button></div>
         <div class="row"><button class="btn pri sm" id="mm">${ic("check")}${t("markMem")}</button><button class="btn warn sm" id="rv">${p.rev?t("unRev"):t("needRev")}</button></div></div>
       <div class="og"><h4>${t("colorsL")}</h4><span class="legend"><span><i class="k-mem"></i>${t("kMem")}</span><span><i class="k-rd"></i>${t("kRd")}</span><span><i class="k-miss"></i>${t("kMiss")}</span></span></div>
@@ -1419,7 +1430,7 @@ V.memorize=el=>{
     $$("[data-lv]",B).forEach(b=>b.onclick=()=>{LS.set("lv",+b.dataset.lv);close();render()});
     $("#oNm").onclick=()=>{LS.set("hideNm",!hideNm);close();render()};
     if($("#oNw")){$("#oNw").onclick=()=>{const c=$(".w.cur")||$(".w[data-h]");if(c)reveal(c)};$("#oSa").onclick=()=>{$$(".w[data-h]").forEach(reveal);close()}}
-    if($("#listen"))$("#listen").onclick=()=>{Player.stop();speak(AUDIO[i])};
+    if($("#listen"))$("#listen").onclick=()=>{Player.stop();speak(AUDIO[i])};if($("#listenStop"))$("#listenStop").onclick=()=>stopSpeech();
     $("#tap").onclick=()=>{p.reps++;if(p.s==="new")p.s="learning";touch(i);if(p.reps===target&&lv<4)LS.set("lv",lv+1);saveST();addXP(2);close();render()};
     $("#rr").onclick=()=>{p.reps=0;saveST();close();render()};
     $("#mm").onclick=()=>{close();const was=p.s==="memorized"&&!p.rev;p.s="memorized";p.rev=false;touch(i);saveST();if(!was)addXP(10);LS.set("lv",0);
@@ -1443,35 +1454,39 @@ addEventListener("keydown",e=>{if(VIEW!=="memorize"||!Mem.run||e.target.matches(
 /* Listen plays pre-made audio of each lesson's names, read from the fully vowelled text (audio/01.mp3 … 70.mp3). No in-browser computer voice. */
 const AUDIO=Object.fromEntries(DATA.map((_,i)=>[i,`audio/${String(i+1).padStart(2,"0")}.mp3`]));
 let speaking=null;
-function stopSpeech(){if(speaking){try{speaking.pause()}catch(e){}speaking=null}}
+/* Listen: tap once to play, again to pause, again to continue; Stop ends it and goes back to the start. */
+function listenUI(){const b=$("#listen"),st=$("#listenStop"),on=!!speaking,pl=on&&!speaking._held;if(b)b.innerHTML=`${ic(on?(pl?"pause":"play"):"sound")}<span>${t(on?(pl?"auPause":"auCont"):"listen")}</span>`;if(st)st.hidden=!on}
+function stopSpeech(){if(speaking){try{speaking.pause()}catch(e){}speaking=null}listenUI()}
 function speak(src){
-  const b=$("#listen");
-  if(speaking){stopSpeech();$("span",b).textContent=t("listen");return}
+  if(speaking){const a=speaking;if(a._held){a._held=0;if(a.src)a.play().catch(()=>{})}else{a._held=1;try{a.pause()}catch(e){}}listenUI();return}
   Player.stop();stopSay();
-  const a=new Audio(),done=()=>{if(speaking===a)speaking=null;const bb=$("#listen");if(bb)$("span",bb).textContent=t("listen")};a.onended=a.onerror=done;
-  speaking=a;$("span",b).textContent=t("stop");
+  const a=new Audio(),done=()=>{if(speaking===a)speaking=null;listenUI()};a.onended=a.onerror=done;
+  speaking=a;listenUI();
   /* load as a whole file (works offline from the cache; iPhone audio range requests do not) */
-  fetch(src).then(r=>r.ok?r.blob():Promise.reject()).then(bl=>{if(speaking!==a)return;a.src=URL.createObjectURL(bl);return a.play()}).catch(done);
+  fetch(src).then(r=>r.ok?r.blob():Promise.reject()).then(bl=>{if(speaking!==a)return;a.src=URL.createObjectURL(bl);if(!a._held)return a.play()}).catch(done);
 }
 
 /* Set player (Names page): plays each shown lesson in turn. "Your turn" pauses after each one about as long as it took,
    so the learner can say it back; "Loop set" starts the set again at the end. */
 let NamesIdx=[];
 const Player={on:false,a:null,timer:null,
-  start(list){if(!list.length)return;stopSpeech();stopSay();this.list=list.slice();this.pos=0;this.on=true;this.ui();this.next()},
-  stop(){this.on=false;clearTimeout(this.timer);if(this.a){try{this.a.pause()}catch(e){}this.a=null}$$(".playing").forEach(x=>x.classList.remove("playing"));this.ui()},
-  ui(lbl){const b=$("#plSet");if(!b)return;$("#plbar").classList.toggle("on",this.on);b.innerHTML=`${ic(this.on?"x":"sound")}<span>${lbl||t(this.on?"stop":"listenSet")}</span>`},
+  start(list){if(!list.length)return;stopSpeech();stopSay();this.list=list.slice();this.pos=0;this.on=true;this.held=false;this.gapNext=false;this.ui();this.next()},
+  /* Pause keeps the place (also during a "Your turn" wait); Continue goes on from there. */
+  pause(){if(!this.on||this.held)return;this.held=true;if(this.timer){clearTimeout(this.timer);this.timer=null;this.gapNext=true}if(this.a){try{this.a.pause()}catch(e){}}this.ui()},
+  resume(){if(!this.on||!this.held)return;this.held=false;if(this.gapNext){this.gapNext=false;this.ui();return this.next()}if(this.a&&this.a.src)this.a.play().catch(()=>{});this.ui()},
+  stop(){this.on=false;this.held=false;this.gapNext=false;clearTimeout(this.timer);this.timer=null;if(this.a){try{this.a.pause()}catch(e){}this.a=null}$$(".playing").forEach(x=>x.classList.remove("playing"));this.ui()},
+  ui(lbl){const b=$("#plSet");if(!b)return;$("#plbar").classList.toggle("on",this.on);const k=!this.on?"listenSet":this.held?"auCont":"auPause";b.innerHTML=`${ic(!this.on?"sound":this.held?"play":"pause")}<span>${(!this.held&&lbl)||t(k)}</span>`;const st=$("#plStop");if(st)st.hidden=!this.on},
   next(){if(!this.on)return;if(!$("#plSet"))return this.stop();
     if(this.pos>=this.list.length){if(LS.get("plLoop",false))this.pos=0;else return this.stop()}
     const i=this.list[this.pos++];$$(".playing").forEach(x=>x.classList.remove("playing"));
     const card=$(`.lesson[data-i="${i}"],.nmo[data-i="${i}"]`);if(card){card.classList.add("playing");card.scrollIntoView({block:"start",behavior:"smooth"})}
     const a=new Audio();this.a=a;this.ui();
-    a.onended=()=>{if(this.a!==a)return;const gap=LS.get("plTurn",false)?Math.min(12,(a.duration||2)+0.6)*1000:700;if(gap>700)this.ui(t("sayIt"));this.timer=setTimeout(()=>this.next(),gap)};
+    a.onended=()=>{if(this.a!==a)return;const gap=LS.get("plTurn",false)?Math.min(12,(a.duration||2)+0.6)*1000:700;if(gap>700)this.ui(t("sayIt"));this.timer=setTimeout(()=>{this.timer=null;this.next()},gap)};
     a.onerror=()=>{if(this.a===a)this.timer=setTimeout(()=>this.next(),300)};
-    fetch(AUDIO[i]).then(r=>r.ok?r.blob():Promise.reject()).then(bl=>{if(this.a!==a)return;a.src=URL.createObjectURL(bl);return a.play()}).catch(()=>{if(this.a===a)this.stop()})}};
+    fetch(AUDIO[i]).then(r=>r.ok?r.blob():Promise.reject()).then(bl=>{if(this.a!==a)return;a.src=URL.createObjectURL(bl);if(!this.held)return a.play()}).catch(()=>{if(this.a===a)this.stop()})}};
 
 document.addEventListener("solo",e=>{const k=e.detail;
-  if(speaking&&speaking!==k){speaking=null;const bb=$("#listen");if(bb)$("span",bb).textContent=t("listen")}
+  if(speaking&&speaking!==k){speaking=null;listenUI()}
   if(SayA&&SayA!==k)stopSay();if(Player.on&&Player.a!==k)Player.stop();
   if(MIS.audio&&MIS.audio!==k){MIS.audio=null;$$(".misc .pl.on").forEach(x=>x.classList.remove("on"))}});
 /* ---------- practice ---------- */
@@ -1618,6 +1633,20 @@ const DB={db:null,open(){if(this.db)return Promise.resolve(this.db);return new P
 async function persisted(){try{return !!(navigator.storage&&navigator.storage.persisted&&await navigator.storage.persisted())}catch(e){return false}}
 async function keepForever(){try{if(navigator.storage&&navigator.storage.persist)return(await navigator.storage.persisted())||(await navigator.storage.persist())}catch(e){}return false}
 const fmtT=s=>{s=Math.max(0,Math.round(s));return N(Math.floor(s/60))+":"+N(String(s%60).padStart(2,"0"))};
+/* Recording player (same on every site): Play / Pause, Stop (back to the start), a bar to move through it, and the time. */
+const AUP={ic:{play:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>',pause:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="7" y="5" width="3.5" height="14" rx="1"/><rect x="13.5" y="5" width="3.5" height="14" rx="1"/></svg>',stop:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6.5" y="6.5" width="11" height="11" rx="2"/></svg>'},
+ html(id){return `<div class="aup" data-aup="${id}"><button type="button" class="aupb pp" aria-label="${t("auPlay")}">${AUP.ic.play}</button><button type="button" class="aupb st" aria-label="${t("auStop")}" disabled>${AUP.ic.stop}</button><input type="range" class="aupr" min="0" max="1000" step="1" value="0" aria-label="${t("auPos")}" dir="ltr"><span class="aupt" dir="ltr">${fmtT(0)}</span></div>`},
+ bind(root,by){root.querySelectorAll("[data-aup]").forEach(box=>{const r=by[box.dataset.aup];if(!r)return;let a=null,seek=null;
+  const pp=box.querySelector(".pp"),st=box.querySelector(".st"),rg=box.querySelector(".aupr"),tm=box.querySelector(".aupt");
+  const dur=()=>a&&isFinite(a.duration)&&a.duration>0?a.duration:(r.dur||0);
+  const show=()=>{const on=!!a&&!a.paused,c=a?a.currentTime:0,d=dur();pp.innerHTML=on?AUP.ic.pause:AUP.ic.play;pp.setAttribute("aria-label",t(on?"auPause":"auPlay"));box.classList.toggle("on",on);
+   st.disabled=!a||(!on&&c<0.05);if(!rg._drag)rg.value=d?Math.min(1000,Math.round(c/d*1000)):0;tm.textContent=(c>0.05||on?fmtT(c)+" / ":"")+fmtT(d)};
+  const get=()=>{if(!a){a=new Audio(URL.createObjectURL(r.blob));a.preload="auto";["play","playing","pause","timeupdate","durationchange"].forEach(ev=>a.addEventListener(ev,show));
+   a.addEventListener("loadedmetadata",()=>{if(seek!=null){try{a.currentTime=seek}catch(e){}seek=null}show()});a.addEventListener("ended",()=>{try{a.currentTime=0}catch(e){}show()})}return a};
+  pp.onclick=()=>{unlockAudio();const x=get();if(x.paused)x.play().catch(()=>show());else x.pause()};
+  st.onclick=()=>{if(!a)return;a.pause();try{a.currentTime=0}catch(e){}show()};
+  rg.oninput=()=>{rg._drag=1;const x=get(),d=dur(),p=rg.value/1000*d;if(d){if(x.readyState>0){try{x.currentTime=p}catch(e){}}else{seek=p;x.load()}}tm.textContent=fmtT(p)+" / "+fmtT(d);st.disabled=false};
+  rg.onchange=()=>{rg._drag=0;show()};show()})}};
 const fmtD=d=>{try{return new Date(d).toLocaleDateString(LANG==="ar"?"ar":"en",{year:"numeric",month:"short",day:"numeric"})}catch(e){return""}};
 const Rec={mr:null,stream:null,chunks:[],t0:0,lesson:0,tick:null,
  async start(i){if(this.mr)return true;try{this.stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){return false}
@@ -1631,9 +1660,9 @@ async function saveBlob(blob,name){
   try{const f=new File([blob],name,{type:blob.type});if(navigator.canShare&&navigator.canShare({files:[f]})&&/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){await navigator.share({files:[f],title:name});return}}catch(e){if(e&&e.name==="AbortError")return}
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000)}
 function recItem(r){return`<div class="rec" data-pick="rec:${r.id}"><div><b>${t("lessonN")} ${N(r.lesson+1)} · <span lang="ar" class="nmi">${esc(nm(r.lesson))}</span></b><div class="note">${fmtD(r.date)} · ${fmtT(r.dur||0)}</div></div>
-  <div class="row"><button class="btn out sm" data-dl="${r.id}">${ic("save")}${t("saveFile")}</button><button class="btn sm" data-rdel="${r.id}">${ic("trash")}${t("del")}</button></div><audio controls preload="metadata" data-src="${r.id}"></audio></div>`}
+  <div class="row"><button class="btn out sm" data-dl="${r.id}">${ic("save")}${t("saveFile")}</button><button class="btn sm" data-rdel="${r.id}">${ic("trash")}${t("del")}</button></div>${AUP.html(r.id)}</div>`}
 async function bindRecs(root,after){const all=await DB.all();const by={};all.forEach(r=>by[r.id]=r);
-  $$("audio[data-src]",root).forEach(a=>{const r=by[a.dataset.src];if(r)try{a.src=URL.createObjectURL(r.blob)}catch(e){}});
+  AUP.bind(root,by);
   $$("[data-dl]",root).forEach(b=>b.onclick=()=>{const r=by[b.dataset.dl];if(r)saveBlob(r.blob,`asma-${r.lesson+1}-${new Date(r.date).toISOString().slice(0,10)}.${extOf(r.type)}`)});
   $$("[data-rdel]",root).forEach(b=>b.onclick=async()=>{if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent=t("sure");setTimeout(()=>{if(b.isConnected){b.classList.remove("armed");b.textContent=t("del")}},4000);return}
     const k=await BIN.rec(b.dataset.rdel);after&&after();BIN.pop([k],1,after)})}
