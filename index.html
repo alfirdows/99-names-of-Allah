@@ -684,6 +684,14 @@ main{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 .rq .hrd{font-size:.82rem}
 .rq button[data-rq]{font-size:0!important;width:30px;height:30px;padding:0!important;justify-content:center;flex:none;border-radius:50%!important}
 .rq button[data-rq] svg{width:16px!important;height:16px!important}
+
+/* Hint: a small round lamp right beside Peek; it glows while first letters are shown */
+.pkw{position:relative;display:flex;align-items:flex-start;gap:0;min-width:0;justify-content:center}.pkw[hidden]{display:none!important}
+.dock.calm .pkw .hintb,.mdock .pkw .hintb,.pkw .hintb{position:relative!important;align-self:flex-start;margin:6px 0 0 0!important;margin-inline-end:-10px!important;order:-1;width:26px!important;height:26px!important;min-height:0!important;max-height:26px!important;min-width:0!important;flex:none!important;padding:0!important;border-radius:50%!important;
+ display:grid!important;place-items:center!important;background:var(--surface,#fff)!important;border:1px solid var(--line)!important;box-shadow:0 1px 4px rgba(0,0,0,.15);color:var(--muted)!important;z-index:2}
+.pkw .hintb svg{width:15px!important;height:15px!important;margin:0!important}.pkw .hintb span{display:none!important}
+.dock.calm .pkw .hintb.on,.mdock .pkw .hintb.on,.pkw .hintb.on{background:#fff4d6!important;border-color:#e6b84a!important;color:#b9790c!important}
+.pkw .hintb.on svg{color:#b9790c!important;filter:drop-shadow(0 0 4px rgba(240,180,40,.8))}
 .hhov{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:18px}
 .hhbox{background:var(--surface,#fff);color:var(--ink,#222);border-radius:18px;padding:18px 18px 14px;max-width:420px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.3);font-size:1rem;line-height:1.6}
 .hhbox ol{margin:10px 0 14px;padding-inline-start:22px}.hhbox li{margin:0 0 8px}
@@ -740,7 +748,8 @@ const AD=n=>String(n).replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 /* speech matching (same rules as the Tuhfa site) */
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-const snorm=s=>s.replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g,"").replace(/[«»"'(),.،؟?!:؛\[\]\-–﴿﴾]/g,"").replace(/[أإآٱ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").replace(/ؤ/g,"و").replace(/ئ/g,"ي").replace(/ء/g,"").trim();
+/* (.)\1{2,}: a sound held long when reciting with a melody comes out as the same letter many times (شددااا): keep one. */
+const snorm=s=>s.replace(/(.)\1{2,}/g,"$1").replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g,"").replace(/[«»"'(),.،؟?!:؛\[\]\-–﴿﴾]/g,"").replace(/[أإآٱ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").replace(/ؤ/g,"و").replace(/ئ/g,"ي").replace(/ء/g,"").trim();
 function lev(a,b){const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let p=Array.from({length:n+1},(_,i)=>i);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
 function sim(a,b){if(!a||!b)return 0;if(a===b)return 1;return 1-lev(a,b)/Math.max(a.length,b.length)}
 function wmatch(h,e){if(!h||!e)return false;if(h===e)return true;const need=L=>L<=3?1:L<=5?.78:.72;
@@ -754,6 +763,12 @@ function wnear(h,e,again){if(wmatch(h,e))return true;if(!h||!e)return false;cons
   const L=Math.max(a.length,b.length);return L<=2?false:L<=4?lev(a,b)<=1:sim(a,b)>=.6};
  /* checked twice: with "ال" dropped, and as it is (in واله the و and ا are part of the word, not "و" + "ال") */
  return t(fold(h),fold(e))||t(fold("-"+h).slice(1),fold("-"+e).slice(1))}
+/* Reading on without stopping: do the last words heard match words a little further on? Then you are there.
+   Two words in a row are enough (kindly checked), or one long word heard exactly. anch = how many heard words matched. */
+function catchUp(S,W,i){const L=S.length;if(!L)return null;const end=Math.min(W.length,i+11);
+ if(L>=2)for(let j=i+1;j<end;j++)if(wnear(S[L-1],W[j].n,true)&&wnear(S[L-2],W[j-1].n,true)&&(S[L-1]+S[L-2]).length>=5)return{to:j+1,anch:2};
+ if(S[L-1].length>3)for(let j=i+1;j<Math.min(W.length,i+6);j++)if(wmatch(S[L-1],W[j].n))return{to:j+1,anch:1};
+ return null}
 /* A short soft beep (and a buzz where the phone allows it) when a word is not right. Not music: one plain tone. */
 let AC=null;function unlockAudio(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume()}catch(e){}}
 function beep(){try{navigator.vibrate&&navigator.vibrate([60,40,60])}catch(e){}
@@ -1373,6 +1388,8 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     /* The phone joined the word just said to this one (e.g. "ارجوبه"): that is this word. */
     if(i>0&&wnear(h,W[i-1].n+W[i].n,true)){this.near(W[i]);continue}
     if(wi<rev)continue;
+    /* A held sound on its own (آه، اا) when reciting with a melody is not a word: ignore it. */
+    if(fold(h).length<=1&&h.length<=3)continue;
     if(W[i+2]&&wnear(h,W[i].n+W[i+1].n+W[i+2].n,true)){this.resolve(0,3);continue}
     if(W[i+1]&&wnear(h,W[i].n+W[i+1].n,true)){this.resolve(0,2);continue}
     /* The start of the word you are on: wait for the rest instead of calling it a mistake. */
@@ -1382,6 +1399,13 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     /* A small word (في، من، لا…) the phone left out is not your mistake. */
     if(j===1&&W[i].n.length<=3&&!this.pend.length){this.resolve(0,1);this.resolve(0,1);continue}
     if(j){this.resolve(j,jn);continue}
+    /* You read on without stopping and the phone wrote some words down differently: catch up with you. Words you said
+       in between count as said; only words with nothing said for them are missed. No need to read word by word. */
+    {const S=(this.pend||[]).map(snorm).concat([h]);const c=catchUp(S,W,i);
+     if(c){const sk=c.to-i-c.anch,said=S.length-c.anch;this.pend=[];
+      /* one spare for two words the phone joined into one; small words the phone drops are never missed */
+      for(let q=0;q<sk;q++){const x=W[this.at];if(q>=said+1&&x.n.length>3){this.resolve(1,0)}else{this.mark(this.at,"ok");this.at++}}
+      this.resolve(0,c.anch);continue}}
     /* Nothing moved: after a few words, listen afresh so the phone stops repeating the same wrong guess. */
     this.stuck=(this.stuck||0)+1;if(this.stuck===3&&this.L)this.L.refresh();if(h.length<2)continue;
     /* Words from another place: after two in a row, follow you there, back or ahead, anywhere in the lesson. */
@@ -1390,7 +1414,8 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     /* Not the expected word: hold it until we know whether it replaced a word or was extra. Repeating a word just said is fine. */
     let again=false;for(let b=1;b<=8;b++)if(W[i-b]&&wmatch(h,W[i-b].n)){again=true;break}if(again)continue;
     /* A wrong word: a beep, the word shakes, and we stay on it. On the third wrong try it is marked wrong and we move on. */
-    this.pend.push(raw);beep();
+    /* no beep for the first word that does not fit: you may simply be reading on (see catchUp) */
+    this.pend.push(raw);if(this.pend.length>=2)beep();
     if(this.pend.length>=3){const p=this.pend;this.pend=[];this.log([{k:i,s:p.join(" ")}],[],[],i,1);this.mark(i,"miss");this.at++;this.step(0)}
     else{const el=W[i].el;el.classList.remove("wring");void el.offsetWidth;el.classList.add("wring");setTimeout(()=>el.classList.remove("wring"),700);this.tryUI()}}},
   /* The slim row above the buttons: what is happening now, and three helpers (one word back, skip a word, start again). */
@@ -1497,7 +1522,7 @@ V.memorize=el=>{
   </div></section>
   <div class="mdock" id="mdock">${live?Mem.rqHTML():""}<div class="in">
     <button class="dk" type="button" id="lvBtn" aria-pressed="${!!lv}">${ic(lv?"eye":"eyeoff")}<span>${lv?t("showAllW"):t("hideAll")}</span></button>
-    ${lv?`<button class="dk" type="button" id="pkBtn">${ic("peek")}<span>${t("peekB")}</span></button>`:""}
+    ${lv?`<span class="pkw"><button class="dk" type="button" id="pkBtn">${ic("peek")}<span>${t("peekB")}</span></button><button class="dk hintb ${lv===3?"on":""}" type="button" id="hintBtn" aria-pressed="${lv===3}" aria-label="${LANG==="ar"?"تلميح":"Hint"}" title="${LANG==="ar"?"تلميح":"Hint"}">${ic("bulb")}<span>${LANG==="ar"?"تلميح":"Hint"}</span></button></span>`:""}
     <div class="mw"><button class="mic ${live&&!Mem.paused?"on":live?"ps":""}" type="button" id="live" aria-label="${live?(Mem.paused?t("resume"):t("pause")):t("live")}">${live?(Mem.paused?ic("play2"):'<svg class="i" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>'):ic("mic")}</button><small>${live?(Mem.paused?t("resume"):t("pause")):t("startL")}</small></div>
     <button class="dk" type="button" id="mvOpen">${ic("rev")}<span>${t("misBtn")}</span><b class="cnt" ${nMis?"":"hidden"}>${N(nMis)}</b></button>
     ${live?`<button class="dk stop" type="button" id="liveStop" aria-label="${t("liveStop")}"><svg class="i" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span>${t("liveStop")}</span></button>`:""}
@@ -1507,6 +1532,8 @@ V.memorize=el=>{
   $("#sets").onclick=()=>{Mem.stopLive();Mem.run=false;render()};
   $("#prev").onclick=()=>pos>0&&go(r[pos-1]);$("#next").onclick=()=>pos<r.length-1&&go(r[pos+1]);
   /* Peek: show the next hidden word. A peeked word counts as read, not from memory. */
+  /* Hint lamp: first letters on / off (only while the words are hidden) */
+  if($("#hintBtn"))$("#hintBtn").onclick=()=>{const n=lv===3?(LS.get("hintBack",4)||4):3;if(lv!==3)LS.set("hintBack",lv);LS.set("lv",n);render()};
   if($("#pkBtn"))$("#pkBtn").onclick=()=>{const x=Mem.live&&Mem.W&&Mem.W[Mem.at],c=x&&x.el.hasAttribute("data-h")?x.el:($(".w.cur[data-h]")||$(".w[data-h]"));if(c){c.classList.remove("h","fl");c.removeAttribute("data-h");c.classList.add("pk")}};
   $("#live").onclick=()=>{if(Mem.live){if(Mem.paused)Mem.resume();else Mem.pause()}else{Mem.mode="mem";Mem.startLive()}render()};
   if($("#liveStop"))$("#liveStop").onclick=()=>{Mem.stopLive();render()};
