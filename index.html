@@ -1163,7 +1163,7 @@ V.names=el=>{
     if(rd){Mem.hook();Mem.recLesson(Mem.li);Mem.bar();if(Mem.scrollTo){Mem.scrollTo=false;const r=Mem.root();if(r)r.scrollIntoView({block:"start"})}}
   };
   $("#q").oninput=e=>{NamesQ=e.target.value;Player.stop();draw()};
-  $("#plSet").onclick=()=>!Player.on?Player.start(NamesIdx):Player.held?Player.resume():Player.pause();$("#plStop").onclick=()=>Player.stop();Player.ui();
+  $("#plSet").onclick=()=>!Player.on?Player.start(NamesIdx,hereLesson()):Player.held?Player.resume():Player.pause();$("#plStop").onclick=()=>Player.stop();Player.ui();
   $$("#plTurn,#plLoop,#plNm").forEach(b=>b.onclick=()=>{const k=b.id,v=!LS.get(k,false);LS.set(k,v);b.classList.toggle("on",v);b.setAttribute("aria-pressed",v);if(k==="plNm"){Player.stop();draw()}});
   $$("#setChips .chip").forEach(b=>b.onclick=()=>{Player.stop();NamesSet=+b.dataset.k;$$("#setChips .chip").forEach(x=>x.classList.toggle("on",x===b));draw()});
   draw();
@@ -1469,8 +1469,12 @@ function speak(src){
 /* Set player (Names page): plays each shown lesson in turn. "Your turn" pauses after each one about as long as it took,
    so the learner can say it back; "Loop set" starts the set again at the end. */
 let NamesIdx=[];
+/* Listen starts from the lesson on screen now (not lesson 1); "Loop set" still goes round the whole set. */
+function hereLesson(){const top=(($(".plbar.on")||$("header")||document.body).getBoundingClientRect().bottom||0)+8;
+  const el=$$('.lesson[data-i],.nmo[data-i]').find(b=>{const r=b.getBoundingClientRect();return r.height&&r.bottom>top+40&&r.top<innerHeight});
+  const k=el?NamesIdx.indexOf(+el.dataset.i):0;return k<0?0:k}
 const Player={on:false,a:null,timer:null,
-  start(list){if(!list.length)return;stopSpeech();stopSay();this.list=list.slice();this.pos=0;this.on=true;this.held=false;this.gapNext=false;this.ui();this.next()},
+  start(list,from){if(!list.length)return;stopSpeech();stopSay();this.list=list.slice();this.pos=Math.max(0,from||0);this.on=true;this.held=false;this.gapNext=false;this.ui();this.next()},
   /* Pause keeps the place (also during a "Your turn" wait); Continue goes on from there. */
   pause(){if(!this.on||this.held)return;this.held=true;if(this.timer){clearTimeout(this.timer);this.timer=null;this.gapNext=true}if(this.a){try{this.a.pause()}catch(e){}}this.ui()},
   resume(){if(!this.on||!this.held)return;this.held=false;if(this.gapNext){this.gapNext=false;this.ui();return this.next()}if(this.a&&this.a.src)this.a.play().catch(()=>{});this.ui()},
