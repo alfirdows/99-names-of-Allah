@@ -1527,9 +1527,12 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     this.stuck=(this.stuck||0)+1;if(this.stuck===3&&this.L)this.L.refresh();if(h.length<2)continue;
     /* Words from another place: after two in a row, follow you there, back or ahead, anywhere in the lesson. */
     this.trail=(this.trail||[]).concat([h]).slice(-3);
-    if(this.trail.length>=2){const f=this.locate(this.trail);if(f){this.jump(f);continue}}
+    if(this.trail.length>=2){const f=this.locate(this.trail);
+      /* Tasnim: "don't follow me to another place unless I repeat 3 times": follow only after 3 words in a row read on from there */
+      if(f){const to=f.k+f.len,c=this.fcand;if(c&&c.at===this.at&&to>c.to&&to-c.to<=4){c.n++;c.to=to}else this.fcand={to,n:1,at:this.at};
+        if(this.fcand.n>=3){this.fcand=null;this.jump(f)}continue}}
     /* You went on to another lesson (Tasnim: "it's not following me"): three words heard that are in ONE place only, in another lesson. Follow you there. */
-    if(this.trail.length>=3){const f=this.findAny(this.trail),A=this.allW();if(f&&f.e-f.s>=2&&A[f.s].i!==LS.get("cur."+PID,0)&&A[f.s].i===A[f.e].i){this.trail=[];this.pend=[];this.gotoFound(f);return}}
+    if(this.farAt!==this.at){this.far=0;this.farAt=this.at}if(this.trail.length>=3&&++this.far>=3){const f=this.findAny(this.trail),A=this.allW();if(f&&f.e-f.s>=2&&A[f.s].i!==LS.get("cur."+PID,0)&&A[f.s].i===A[f.e].i){this.trail=[];this.pend=[];this.gotoFound(f);return}}
     /* Not the expected word: hold it until we know whether it replaced a word or was extra. Repeating a word just said is fine. */
     let again=false;for(let b=1;b<=8;b++)if(W[i-b]&&wnear(h,W[i-b].n,true)){again=true;break}if(again)continue;
     /* A wrong word: a beep, the word shakes, and we stay on it. On the third wrong try it is marked wrong and we move on. */
@@ -2275,5 +2278,11 @@ addEventListener("scroll",tuckFab,{passive:true});addEventListener("hashchange",
 </script>
 <script>(function(){const t=document.querySelector(".top");if(!t)return;const f=()=>document.documentElement.style.setProperty("--toph",t.offsetHeight+"px");f();try{new ResizeObserver(f).observe(t)}catch(e){addEventListener("resize",f)}})();</script>
 <script>(()=>{const h=()=>document.body.classList.toggle("athome",!location.hash||/^#home\b/.test(location.hash));addEventListener("hashchange",h);addEventListener("popstate",h);if(document.body)h();else addEventListener("DOMContentLoaded",h)})()</script>
+<script>(()=>{/* Guard (Tasnim: "why are you hiding"): while reciting, the word you are on can never end up out of view. If the page ever
+  scrolls away from it (and you are not scrolling yourself), it comes straight back. */
+ let touch=0;["touchstart","touchmove","wheel","keydown"].forEach(e=>addEventListener(e,()=>{touch=Date.now()},{passive:true}));
+ setInterval(()=>{try{if(typeof Mem==="undefined"||!Mem.live||Mem.paused||Date.now()-touch<4000)return;const x=Mem.W&&Mem.W[Mem.at];if(!x||!x.el||!x.el.isConnected)return;
+  const r=x.el.getBoundingClientRect(),hb=document.querySelector(".mfocus .mbar")||document.querySelector(".top"),top=hb?hb.getBoundingClientRect().bottom:90;
+  const d=document.querySelector(".mdock")||document.querySelector(".rbar"),lim=d&&d.offsetHeight?d.getBoundingClientRect().top:innerHeight;if(r.bottom<top+10||r.top>lim-10){slowBy.id=(slowBy.id||0)+1;Mem.cur()}}catch(e){}},700)})()</script>
 </body>
 </html>
