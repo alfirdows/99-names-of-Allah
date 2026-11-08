@@ -1423,7 +1423,10 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     /* The phone only rewrote a word it had already given: it may finish the word you are on (above), nothing more. */
     /* The phone joined the word just said to this one (e.g. "ارجوبه"): that is this word. */
     if(i>0&&wnear(h,W[i-1].n+W[i].n,true)){this.near(W[i]);continue}
-    if(wi<rev)continue;
+    /* The phone rewrote words it already gave (iPhone does this all the time): they can still show you read on.
+       Then catch up with you; rewritten words never make mistakes. */
+    if(wi<rev){const S=(this.rv||[]).concat([h]).slice(-6);this.rv=S;const c=catchUp(S,W,i);
+      if(c){this.rv=[];this.pend=[];for(let q=0;q<c.to-i-c.anch&&this.W[this.at];q++){this.mark(this.at,"ok");this.at++}this.resolve(0,c.anch)}continue}
     /* A held sound on its own (آه، اا) when reciting with a melody is not a word: ignore it. */
     if(fold(h).length<=1&&h.length<=3)continue;
     if(W[i+2]&&wnear(h,W[i].n+W[i+1].n+W[i+2].n,true)){this.resolve(0,3);continue}
@@ -1448,7 +1451,7 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     this.trail=(this.trail||[]).concat([h]).slice(-3);
     if(this.trail.length>=2){const f=this.locate(this.trail);if(f){this.jump(f);continue}}
     /* Not the expected word: hold it until we know whether it replaced a word or was extra. Repeating a word just said is fine. */
-    let again=false;for(let b=1;b<=8;b++)if(W[i-b]&&wmatch(h,W[i-b].n)){again=true;break}if(again)continue;
+    let again=false;for(let b=1;b<=8;b++)if(W[i-b]&&wnear(h,W[i-b].n,true)){again=true;break}if(again)continue;
     /* A wrong word: a beep, the word shakes, and we stay on it. On the third wrong try it is marked wrong and we move on. */
     /* no beep for the first word that does not fit: you may simply be reading on (see catchUp) */
     this.pend.push(raw);if(this.pend.length>=2)beep();
