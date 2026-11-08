@@ -1,5 +1,5 @@
 /* Offline support: pages are fetched fresh when online (so updates reach everyone), and saved for offline use. */
-const CACHE="asma-v70";
+const CACHE="asma-v71";
 const CORE=["./","index.html","run.js","manifest.webmanifest","icon-180.png","icon-192.png","icon-512.png","fonts/Amiri-Bold.woff","fonts/ScheherazadeNew-Regular.woff","fonts/ScheherazadeNew-Bold.woff","fonts/IBMPlexSansArabic-Regular.woff","fonts/IBMPlexSansArabic-SemiBold.woff","fonts/IBMPlexSansArabic-Bold.woff"];
 /* Listen audio (one file per lesson) is saved too, so it works offline; a failed audio file never blocks the update. */
 const AUDIO=Array.from({length:70},(_,i)=>`audio/${String(i+1).padStart(2,"0")}.mp3`);
@@ -12,5 +12,5 @@ self.addEventListener("fetch",e=>{const req=e.request;if(req.method!=="GET")retu
  if(url.pathname.endsWith(".ics"))return;
  if(url.origin!==location.origin)return;
  if(req.mode==="navigate"||url.pathname.endsWith("/index.html")||url.pathname.endsWith("/")){
-  e.respondWith(fetch(req).then(r=>{const cp=r.clone();caches.open(CACHE).then(c=>c.put("index.html",cp));return r}).catch(()=>caches.match("index.html")));return}
+  e.respondWith(fetch(req,{cache:"no-cache"}).then(r=>{const cp=r.clone();caches.open(CACHE).then(c=>c.put("index.html",cp));return r}).catch(()=>caches.match("index.html")));return}
  e.respondWith(caches.match(req).then(hit=>{const net=fetch(req).then(r=>{if(r&&r.ok){const cp=r.clone();caches.open(CACHE).then(c=>c.put(req,cp))}return r}).catch(()=>hit);return hit||net}))});
