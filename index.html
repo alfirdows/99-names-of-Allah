@@ -1473,7 +1473,10 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     const rt=this.root(),nm=rt&&$(".names.hid",rt);if(nm&&!nm.querySelector(".w:not(.wm):not(.rd):not(.miss)"))nm.classList.remove("hid");
     if(this.at>=this.W.length){delete this.saved[this.key()];this.finish()}else{this.saved[this.key()]={cur:this.W[this.at].id,mk:Object.assign({},this.mk)};this.cur()}},
   /* Find where you are reciting: the last few words heard, in a row, anywhere in the lesson (nearest to where we were). */
-  locate(seq){for(let len=Math.min(3,seq.length);len>=2;len--){const q=seq.slice(-len);if(q.join("").length<6)continue;let best=-1;
+  /* Words the part you are on also has never take you elsewhere: that is a slip here (Tasnim) */
+  locate(seq){const f=this.locate0(seq);if(!f)return null;const q=seq.slice(-f.len),own=this.W.slice(Math.max(0,this.at-8),this.at+12).map(x=>x.n);
+    if(q.filter(h=>own.some(n=>wmatch(h,n))).length*2>=q.length)return null;return f},
+  locate0(seq){for(let len=Math.min(3,seq.length);len>=2;len--){const q=seq.slice(-len);if(q.join("").length<6)continue;let best=-1;
       for(let k=0;k+len<=this.W.length;k++){if(k===this.at)continue;let ok=true;for(let x=0;x<len;x++)if(!wmatch(q[x],this.W[k+x].n)){ok=false;break}
         if(ok&&(best<0||Math.abs(k-this.at)<Math.abs(best-this.at)))best=k}
       /* two words only move you nearby; farther away needs three in a row (no jumping on a slip) */
