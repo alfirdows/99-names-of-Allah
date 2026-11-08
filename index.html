@@ -207,6 +207,10 @@ h3{margin:0;font-size:1.02rem;font-weight:700}
 
 /* set cards */
 .sets{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.anyv{display:flex;align-items:center;gap:14px;width:100%;text-align:start;border:1.5px solid var(--acc);background:var(--acc-soft);color:inherit;border-radius:16px;padding:14px 16px;margin:0 0 14px;cursor:pointer;font:inherit}
+.anyv .ic{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--acc);color:var(--acc-ink)}.anyv .ic svg{width:24px;height:24px}
+.anyv .tx{display:flex;flex-direction:column;gap:3px;min-width:0}.anyv b{font-size:1.08rem}.anyv small{color:var(--muted);font-size:.86rem;line-height:1.45}
+.anyfind{text-align:center;padding:48px 18px;color:var(--muted)}.anyfind svg{width:40px;height:40px;color:var(--acc);display:block;margin:0 auto 12px}.anyfind b{display:block;color:var(--ink);font-size:1.15rem;margin-bottom:6px}.anyfind p{margin:0;line-height:1.6}
 .setc{display:grid;grid-template-columns:auto 1fr auto;gap:2px 12px;align-items:center;text-align:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px}
 .setc:hover{border-color:var(--acc)}
 .setc .n{grid-row:span 2;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--band);color:var(--acc);font-weight:800}
@@ -697,6 +701,10 @@ html,body{overflow-x:clip}
 .hhbox{background:var(--surface,#fff);color:var(--ink,#222);border-radius:18px;padding:18px 18px 14px;max-width:420px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.3);font-size:1rem;line-height:1.6}
 .hhbox ol{margin:10px 0 14px;padding-inline-start:22px}.hhbox li{margin:0 0 8px}
 .hhok{display:block;margin:0 auto;border:0;border-radius:999px;padding:8px 26px;font:inherit;font-weight:700;background:#2e9d5b;color:#fff;cursor:pointer}
+/* Recite screen, compact (Tasnim: "too big"): more of the lesson fits on a phone; nothing removed */
+.sec.mfocus{padding-top:6px!important}
+.mfocus .lesson.framed{padding:14px 14px!important}
+.mfocus .mbar{padding:4px 0 6px!important;gap:4px!important}
 </style>
 </head>
 <body>
@@ -758,7 +766,7 @@ function wmatch(h,e){if(!h||!e)return false;if(h===e)return true;const need=L=>L
  const h2=h.replace(/^[وف]/,""),e2=e.replace(/^[وف]/,"");if(h2.length>1&&e2.length>1&&(h2!==h||e2!==e)&&ok(h2,e2))return true;
  const a=h.replace(/^ال/,""),b=e.replace(/^ال/,"");return a.length>2&&b.length>2&&ok(a,b)}
 /* Sounds the phone often mixes up (ص/س, ض/د, ط/ت, ق/ك, ح/ه, ذ/ظ/ز, ث/س, ع and alif) count as one, and "ال" (with و ف ب ك ل before it) is ignored. */
-const fold=s=>s.replace(/^[وف]?[بكل]?ال/,"").replace(/[صث]/g,"س").replace(/ض/g,"د").replace(/[ذظ]/g,"ز").replace(/ط/g,"ت").replace(/ق/g,"ك").replace(/ح/g,"ه").replace(/غ/g,"خ").replace(/[عا]/g,"").replace(/(.)\1+/g,"$1");
+const fold=s=>s.replace(/^[وف]?[بكل]?ال/,"").replace(/[صث]/g,"س").replace(/[ضدط]/g,"ت").replace(/[ذظ]/g,"ز").replace(/ق/g,"ك").replace(/ح/g,"ه").replace(/غ/g,"خ").replace(/[عا]/g,"").replace(/(.)\1+/g,"$1");
 /* Kinder check: the same word as the phone usually mishears it. "again" = you are already trying this word, so a close word is enough. */
 function wnear(h,e,again){if(wmatch(h,e))return true;if(!h||!e)return false;const t=(a,b)=>{if(!a||!b)return false;if(a===b)return true;if(!again)return false;
   const L=Math.max(a.length,b.length);return L<=2?false:L<=4?lev(a,b)<=1:sim(a,b)>=.6};
@@ -883,7 +891,7 @@ const TX={
  hwHint:["Tap an underlined word to see what the scholars said about it","اضغط على الكلمة المسطّرة لترى شرحها من كتب العلماء"],hwH:["Word meaning","معنى الكلمة"],hwIn:["Words explained in this lesson","كلمات مشروحة في هذا الدرس"],hwAr:["(in Arabic)",""],hwOpen:["Open the book page","افتح صفحة الكتاب"],hwNoteEn:["These are the words of the tafsir the Shaykh is explaining.",""],wmH:["Meaning of each name","معاني الأسماء"],wmSrc:["al-Sa'di, Tafsir Asma' Allah al-Husna (in Arabic)","السعدي، تفسير أسماء الله الحسنى"],wmP:["p.","ص"],wmNone:["Not added yet: we only add a meaning when we find it in the scholars' books.","لم يُضف بعد: لا نضيف معنى إلا إذا وجدناه في كتب العلماء."],
  evidence:["Evidence","الدليل"],meaning:["Meaning","المعنى"],memThis:["Memorize this","احفظ هذا الدرس"],
  st_new:["New","جديد"],st_learning:["Learning","قيد الحفظ"],st_memorized:["Memorized","محفوظ"],st_review:["Review","للمراجعة"],
- memHead:["Recite from memory","سمّع من حفظك"],memSub:["Stuck? Tap the highlighted word to show it.","توقفت؟ اضغط على الكلمة المظللة لتظهر."],
+ memHead:["Recite from memory","سمّع من حفظك"],anyH:["Recite from any name","سمّع من أي اسم"],anyS:["No need to choose. Tap, then start reading any name or lesson. I find your place.","لا حاجة للاختيار. اضغط، ثم ابدأ قراءة أي اسم أو درس، وأنا أجد مكانك."],anyF:["Start reading from any name","ابدأ القراءة من أي اسم"],anyFS:["Tap the microphone if it is off. After a few words I find your place and follow you.","اضغط على الميكروفون إن كان مطفأً. بعد كلمات قليلة أجد مكانك وأتابعك."],anyOK:["Found you · lesson ","وجدتُك · الدرس "],anyBar:["Any name","أي اسم"],memSub:["Stuck? Tap the highlighted word to show it.","توقفت؟ اضغط على الكلمة المظللة لتظهر."],
  chooseSet:["Choose a set","اختر مجموعة"],lessons:["lessons","دروس"],
  lv0:["Words shown","الكلمات ظاهرة"],lv1:["Hide some","أخفِ بعضها"],lv2:["Hide most","أخفِ أكثرها"],lv3:["First letters","أوائل الحروف"],lv4:["Words hidden","الكلمات مخفية"],
  trl:["AI translation · please check with your teacher","ترجمة آلية · راجعها مع معلمك"],
@@ -1340,7 +1348,22 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
   setQ(k,rnd){const list=k<0?DATA.map((_,i)=>i):setRange(k);LS.set("mq."+PID,{k,rnd,list:rnd?shuffle(list):list});return this.q()},
   /* One way to memorize, no mode to choose. */
   /* Opening a lesson never turns the mic on: listening starts only when you tap the mic (Tasnim asked, 2026-11-01). */
-  go(i){this.stopLive();this.mode="mem";this.autoLv(i);this.open(i)},
+  go(i){this.find=false;this.stopLive();this.mode="mem";this.autoLv(i);this.open(i)},
+  /* Recite from any name: no lesson to choose. The microphone listens, finds which lesson and word you are reading
+     (all lessons, in book order), then opens it there and follows you, moving on to the next lessons. */
+  startAny(){this.stopLive();this.mode="mem";this.run=false;this.find=true;this.fbuf=[];if(!this.startLive()){this.find=false;return}render();scrollTo(0,0)},
+  allW(){const ev=!document.documentElement.classList.contains("noev");if(this._aw&&this._aw.ev===ev)return this._aw.W;const W=[],d=document.createElement("div");
+    DATA.forEach((_,i)=>{d.innerHTML=lessonHTML(i,{framed:true,lv:0,hideEv:false,hideNames:false,sp:true});[["n",".names .w"],["e",".ev p .w"],["m",".mn p .w"]].forEach(([p,sel])=>$$(sel,d).forEach((el,k)=>{const n=snorm(el.textContent);if(n&&(p!=="e"||ev))W.push({i,n,id:p+k})}))});
+    this._aw={ev,W};return W},
+  /* The words heard so far, matched against every lesson. Only a place that fits and is the only one that fits. */
+  findAny(seq){const A=this.allW().filter(x=>!(fold(x.n).length<=1&&x.n.length<=3));for(const L of [8,7,6,5,4,3,2]){if(seq.length<L)continue;const q=seq.slice(-L);if(q.join("").length<6)continue;const hits=[];
+      for(let p=L-1;p<A.length;p++){let ok=true;for(let k=0;k<L;k++)if(!wmatch(q[k],A[p-L+1+k].n)){ok=false;break}if(ok){hits.push(p);if(hits.length>1)break}}
+      if(hits.length===1){const W=this.allW();return{s:W.indexOf(A[hits[0]-L+1]),e:W.indexOf(A[hits[0]])}}if(hits.length>1)return null}return null},
+  findHeard(ws,rev){const b=(this.fbuf||[]).slice(0,Math.max(0,(this.fbuf||[]).length-rev));for(const w of ws){const h=snorm(w);if(h&&!(fold(h).length<=1&&h.length<=3))b.push(h)}this.fbuf=b.slice(-8);
+    const f=this.findAny(this.fbuf);if(!f)return;const A=this.allW(),a=A[f.s],i=a.i,ids=[];let e=f.s;for(let k=f.s;k<=f.e&&A[k].i===i;k++){ids.push(A[k].id);e=k}
+    this.find=false;this.fbuf=[];this.setQ(-1,false);this.autoLv(i);const c=LS.get("lv",0)?"wm":"rd",mk={};ids.forEach(id=>mk[id]=c);
+    const nx=A[e+1]&&A[e+1].i===i?A[e+1].id:null;if(nx)this.saved["mem:"+i]={cur:nx,mk};else delete this.saved["mem:"+i];
+    toast(t("anyOK")+N(i+1));this.open(i);setTimeout(()=>this.cur(),350)},
   open(i){if(!this.q().list.includes(i))this.setQ(setOf(i),false);LS.set("cur."+PID,i);this.run=true;if(location.hash!=="#memorize"){this.opening=true;location.hash="#memorize"}else{render();scrollTo(0,0)}},
   startLive(){if(!SR){toast(t("noSR"));return false}unlockAudio();
     if(!this.L){this.L=new Listener((ws,rev)=>this.heard(ws,rev),st=>{if(st==="denied"){this.stopLive();toast(t("noMic"));hearHelp();if(VIEW==="memorize")render()}});this.L.onPeek=w=>this.peek(w);this.L.onRevise=()=>{this.pend=[]}}this.L.onHear=(x,q)=>heardLine($("#rqH"),x,q);
@@ -1361,7 +1384,9 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
   cur(){$$(".w.cur").forEach(w=>w.classList.remove("cur"));const x=this.W[this.at];if(!x)return;x.el.classList.add("cur");
     const r=x.el.getBoundingClientRect(),d=$(".mdock .rq")||$(".rbar .rq")||$(".mdock")||$(".rbar"),lim=d?d.getBoundingClientRect().top-24:innerHeight-90;
     /* keep the word you are on above the buttons at the bottom, never under them */
-    if(r.top<90||r.bottom>lim)window.scrollBy({top:r.top-Math.max(90,(lim-90)/2),behavior:"smooth"})},
+    /* and never under the bars at the top either (Tasnim: "I can't even see what I'm reading") */
+    const hb=$(".mfocus .mbar")||$(".top"),top=Math.max(90,(hb?hb.getBoundingClientRect().bottom:90)+16);
+    if(r.top<top||r.bottom>lim)window.scrollBy({top:r.top-Math.max(top,top+(lim-top)/2-r.height),behavior:"smooth"})},
   mark(j,kind){const x=this.W[j];if(!x)return;const el=x.el,hid=el.hasAttribute("data-h")||!!el.closest(".names.hid");
     x.wh=hid;const c=kind==="miss"?"miss":hid?"wm":"rd";el.classList.remove("h","fl","cur","wm","rd","miss","pk");el.removeAttribute("data-h");el.classList.add(c);this.mk[x.id]=c},
   step(n,kind){this.stuck=0;this.trail=[];setTimeout(()=>this.tryUI(),0);for(let k=0;k<n;k++){this.mark(this.at,k<n-1||kind==="miss"?kind:"ok");this.at++}
@@ -1372,13 +1397,14 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
   locate(seq){for(let len=Math.min(3,seq.length);len>=2;len--){const q=seq.slice(-len);if(q.join("").length<6)continue;let best=-1;
       for(let k=0;k+len<=this.W.length;k++){if(k===this.at)continue;let ok=true;for(let x=0;x<len;x++)if(!wmatch(q[x],this.W[k+x].n)){ok=false;break}
         if(ok&&(best<0||Math.abs(k-this.at)<Math.abs(best-this.at)))best=k}
-      if(best>=0)return{k:best,len}}return null},
+      /* two words only move you nearby; farther away needs three in a row (no jumping on a slip) */
+      if(best>=0&&len===2&&Math.abs(best-this.at)>10)continue;if(best>=0)return{k:best,len}}return null},
   /* "again": you are already trying this word (a slip was heard, or nothing moved for a few words), so a close word is enough. */
   again(){return this.pend.length>0||this.stuck>=2},
   /* Said again and now close enough: earlier tries that were also close were the phone mishearing you, not mistakes. */
   near(x){if(this.pend.every(p=>wnear(snorm(p),x.n,true)))this.pend=[];this.resolve(0,1)},
   peek(raw){if(!this.live||this.lock||this.paused)return false;const x=this.W[this.at],h=snorm(raw);if(x&&(wnear(h,x.n,true)||(this.frag&&wnear(this.frag+h,x.n,true)))){this.frag=null;this.near(x);return true}return false},
-  heard(ws,rev){rev=rev||0;if(!this.live||this.lock||this.paused||VIEW!==(this.mode==="read"?"names":"memorize"))return;for(let wi=0;wi<ws.length;wi++){const raw=ws[wi];if(this.lock)return;const h=snorm(raw),W=this.W,i=this.at;if(!h||!W[i])continue;
+  heard(ws,rev){rev=rev||0;if(!this.live||this.lock||this.paused||VIEW!==(this.mode==="read"?"names":"memorize"))return;if(this.find){this.findHeard(ws,rev);return}for(let wi=0;wi<ws.length;wi++){const raw=ws[wi];if(this.lock)return;const h=snorm(raw),W=this.W,i=this.at;if(!h||!W[i])continue;
     if(wmatch(h,W[i].n)){this.frag=null;this.resolve(0,1);continue}
     /* The word you are on is checked kindly every time (the phone rarely writes a recited word exactly), so it works at
        a normal reading speed, not only when you go slowly and repeat. */
@@ -1494,15 +1520,29 @@ V.mistakes=el=>{
   $("#mClr").onclick=()=>{$("#mcf").innerHTML=`<div class="confirm"><p class="note" style="color:var(--ink)">${t("clearMisQ")}</p><div class="row"><button class="btn warn" id="y">${t("yes")}</button><button class="btn" id="n">${t("cancel")}</button></div></div>`;
     $("#y").onclick=()=>{const list=MIS.all();MIS.save([]);$("#mcf").innerHTML="";draw();if(list.length)BIN.pop(["bin:"+BIN.add("misall",{pid:PID,list})],list.length,draw)};$("#n").onclick=()=>$("#mcf").innerHTML=""}};
 V.memorize=el=>{
+  /* Recite from any name: listening, not yet sure where you are. */
+  if(!Mem.run&&Mem.find){const live=Mem.live;
+    el.innerHTML=`<section class="sec mfocus"><div class="wrap narrow stack"><div class="mbar"><div class="r1"><b class="where">${t("anyBar")}</b><span class="sp"></span></div>
+      <div class="r2">${live?`<span class="lv ${Mem.paused?"ps":""}"><i></i>${Mem.paused?t("pausedS"):t("listenL")}</span>`:""}</div></div>
+      <div class="anyfind">${ic("mic")}<b>${t("anyF")}</b><p>${t("anyFS")}</p></div></div></section>
+    <div class="mdock" id="mdock">${live?Mem.rqHTML():""}<div class="in">
+      <div class="mw"><button class="mic ${live&&!Mem.paused?"on":live?"ps":""}" type="button" id="live" aria-label="${live?(Mem.paused?t("resume"):t("pause")):t("live")}">${live?(Mem.paused?ic("play2"):'<svg class="i" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>'):ic("mic")}</button><small>${live?(Mem.paused?t("resume"):t("pause")):t("startL")}</small></div>
+      <button class="dk stop" type="button" id="liveStop" aria-label="${t("liveStop")}"><svg class="i" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span>${t("liveStop")}</span></button></div></div>`;
+    document.body.classList.add("mdocked");document.body.classList.toggle("rqon",live);Mem.rqBind($("#mdock"));
+    $("#live").onclick=()=>{if(Mem.live){if(Mem.paused)Mem.resume();else Mem.pause()}else{Mem.mode="mem";Mem.startLive()}render()};
+    $("#liveStop").onclick=()=>{Mem.find=false;Mem.stopLive();render()};
+    return}
   if(!Mem.run){
     el.innerHTML=`<section class="sec"><div class="wrap narrow">
       <div class="head"><h2>${t("memHead")}</h2><p>${t("memSub")}</p></div>
+      <button type="button" class="anyv" id="anyv"><span class="ic">${ic("mic")}</span><span class="tx"><b>${t("anyH")}</b><small>${t("anyS")}</small></span></button>
       <div class="panel"><div class="row" style="justify-content:space-between"><h3>${t("chooseSet")}</h3><div class="ordsw" role="group" aria-label="${t("orderH")}"><button data-rnd="0" class="${Mem.q().rnd?"":"on"}">${ic("arrows")}${t("ordIn")}</button><button data-rnd="1" class="${Mem.q().rnd?"on":""}">${ic("shuffle")}${t("ordRnd")}</button></div></div><div class="sets"><button class="setc" data-k="-1"><span class="n">∗</span><span class="t">${t("allLessons")}</span><span class="r">${N(1)}–${N(DATA.length)}</span><span class="s">${N(TOTAL)} ${t("fNames")}</span><span class="prog"><i style="width:${DATA.filter((_,i)=>status(i)==="memorized").length/DATA.length*100}%"></i></span></button>${Array.from({length:SETS},(_,k)=>{const r=setRange(k),done=r.filter(i=>status(i)==="memorized").length;
         return`<button class="setc ${hue(k)}" data-k="${k}"><span class="n">${N(k+1)}</span><span class="t">${setLabel(k)}</span><span class="r">${N(r[0]+1)}–${N(r[r.length-1]+1)}</span><span class="s" lang="ar">${esc(setSpan(k))}</span><span class="prog"><i style="width:${done/r.length*100}%"></i></span></button>`}).join("")}</div>
       <div class="row"><a class="btn out" href="#mistakes">${ic("history")}${t("pastMis")}</a><button class="btn pri" id="cont">${ic("play")}${t("continue")}: ${t("lessonN")} ${N(LS.get("cur."+PID,0)+1)}</button></div></div></div></section>`;
     let rnd=Mem.q().rnd;$$("[data-rnd]").forEach(b=>b.onclick=()=>{rnd=b.dataset.rnd==="1";$$("[data-rnd]").forEach(x=>x.classList.toggle("on",x===b))});
     $$(".setc").forEach(b=>b.onclick=()=>{const r=Mem.setQ(+b.dataset.k,rnd).list;Mem.go(r.find(i=>status(i)!=="memorized")??r[0])});
     $("#cont").onclick=()=>Mem.go(LS.get("cur."+PID,0));
+    $("#anyv").onclick=()=>Mem.startAny();
     return;
   }
   const i=LS.get("cur."+PID,0), p=P(i), lv=LS.get("lv",0), target=LS.get("target",5);
