@@ -821,7 +821,9 @@ function wnear(h,e,again){if(wmatch(h,e))return true;if(!h||!e)return false;cons
  if(t(fold(h),fold(e))||t(fold("-"+h).slice(1),fold("-"+e).slice(1)))return true;
  /* the phone writes a related form (غنه heard as يغنون): same core letters, when you are on that word */
  const stem=x=>{x=fold(x);if(x.length>3)x=x.replace(/^[يتن]/,"");return x.replace(/(ون|ين|ان|ه|ي|و)$/,"")};
- return !!again&&e.length>=3&&stem(e).length>=2&&stem(h)===stem(e)}
+ if(!again)return false;if(e.length>=3&&stem(e).length>=2&&stem(h)===stem(e))return true;
+ /* the phone caught only the start of a long word (كَرِّرَنَّهْ heard as "كرر"): most of it, when you are on that word */
+ return e.length>=5&&h.length>=3&&h.length>=.6*e.length&&(e.startsWith(h)||fold(e).startsWith(fold(h)))}
 /* Reading on without stopping: do the last words heard match words a little further on? Then you are there.
    Two words in a row are enough (kindly checked), or one long word heard exactly. anch = how many heard words matched. */
 function catchUp(S,W,i){const L=S.length;if(!L)return null;const end=Math.min(W.length,i+11);
@@ -889,6 +891,10 @@ const HEAR={
 const HT=()=>HEAR[LANG]||HEAR.en;
 const hesc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 /* The small grey line under "Listening": the last words the phone wrote down, so you can see it is hearing you. */
+/* A slow, gentle scroll (Tasnim: "scroll slowly so I see the last verse"), never a jump. */
+function slowBy(dy,ms){if(Math.abs(dy)<6)return;if(matchMedia("(prefers-reduced-motion: reduce)").matches){scrollBy({top:dy,behavior:"instant"});return}ms=ms||Math.min(1100,450+Math.abs(dy)*1.2);
+ const y0=scrollY,t0=performance.now(),id=(slowBy.id=(slowBy.id||0)+1);const ease=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
+ const st=n=>{if(id!==slowBy.id)return;const k=Math.min(1,(n-t0)/ms);scrollTo({top:y0+dy*ease(k),behavior:"instant"});if(k<1)requestAnimationFrame(st)};requestAnimationFrame(st)}
 function heardLine(el,txt,quiet){if(!el)return;const T=HT();
  if(quiet){el.className="hrd hq";el.innerHTML=`${hesc(T.quiet)} <button type="button" data-hearhelp>${hesc(T.help)}</button>`;return}
  if(txt==null){el.className="hrd";el.innerHTML="";return}
@@ -1415,7 +1421,8 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     c.onclick=e=>{const b=e.target.closest("[data-nx]");if(!b)return;if(b.dataset.nx==="go")this.contNext();else{this.choose=null;c.remove();this.stopLive();toast(t("setDone"));Mem.run=false;render()}}},
   contNext(){const k=this.choose;this.choose=null;const c=$("#nxc");if(c)c.remove();if(k==null)return;const nx=this.setQ(k,false).list[0];LS.set("cur."+PID,nx);this.autoLv(nx);this.lock=false;render();scrollTo(0,0)},
   findHeard(ws,rev){const b=(this.fbuf||[]).slice(0,Math.max(0,(this.fbuf||[]).length-rev));for(const w of ws){const h=snorm(w);if(h&&!(fold(h).length<=1&&h.length<=3))b.push(h)}this.fbuf=b.slice(-8);
-    const f=this.findAny(this.fbuf);if(!f)return;const A=this.allW(),a=A[f.s],i=a.i,ids=[];let e=f.s;for(let k=f.s;k<=f.e&&A[k].i===i;k++){ids.push(A[k].id);e=k}
+    const f=this.findAny(this.fbuf);if(!f)return;this.gotoFound(f)},
+  gotoFound(f){const A=this.allW(),a=A[f.s],i=a.i,ids=[];let e=f.s;for(let k=f.s;k<=f.e&&A[k].i===i;k++){ids.push(A[k].id);e=k}
     this.find=false;this.fbuf=[];this.setQ(-1,false);this.autoLv(i);const c=LS.get("lv",0)?"wm":"rd",mk={};ids.forEach(id=>mk[id]=c);
     const nx=A[e+1]&&A[e+1].i===i?A[e+1].id:null;if(nx)this.saved["mem:"+i]={cur:nx,mk};else delete this.saved["mem:"+i];
     toast(t("anyOK")+N(i+1));this.open(i);setTimeout(()=>this.cur(),350)},
@@ -1437,11 +1444,12 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
       let j=this.W.findIndex(x=>x.id===sv.cur);if(j<0)j=this.W.findIndex(x=>!this.mk[x.id]);this.at=Math.max(0,j<0?this.W.length:j);if(this.at>=this.W.length)this.at=0}
     this.cur()},
   cur(){$$(".w.cur").forEach(w=>w.classList.remove("cur"));const x=this.W[this.at];if(!x)return;x.el.classList.add("cur");
-    const r=x.el.getBoundingClientRect(),d=$(".mdock .rq")||$(".rbar .rq")||$(".mdock")||$(".rbar"),lim=d?d.getBoundingClientRect().top-24:innerHeight-90;
+    const r=x.el.getBoundingClientRect(),vis=x=>x&&x.getBoundingClientRect().height>0?x:null,d=vis($(".mdock .rq"))||vis($(".rbar .rq"))||vis($(".mdock"))||vis($(".rbar")),lim=d?d.getBoundingClientRect().top-24:innerHeight-90;
     /* keep the word you are on above the buttons at the bottom, never under them */
     /* and never under the bars at the top either (Tasnim: "I can't even see what I'm reading") */
     const hb=$(".mfocus .mbar")||$(".top"),top=Math.max(90,(hb?hb.getBoundingClientRect().bottom:90)+16);
-    if(r.top<top||r.bottom>lim)window.scrollBy({top:r.top-Math.max(top,top+(lim-top)/2-r.height),behavior:"smooth"})},
+    /* move gently and keep the word lower down, so what you just said stays in view above it */
+    if(r.top<top||r.bottom>lim)slowBy(r.top-Math.max(top,top+(lim-top)*.62-r.height))},
   mark(j,kind){const x=this.W[j];if(!x)return;const el=x.el,hid=el.hasAttribute("data-h")||!!el.closest(".names.hid");
     x.wh=hid;const c=kind==="miss"?"miss":hid?"wm":"rd";el.classList.remove("h","fl","cur","wm","rd","miss","pk");el.removeAttribute("data-h");el.classList.add(c);this.mk[x.id]=c},
   step(n,kind){this.stuck=0;this.trail=[];setTimeout(()=>this.tryUI(),0);for(let k=0;k<n;k++){this.mark(this.at,k<n-1||kind==="miss"?kind:"ok");this.at++}
@@ -1459,12 +1467,12 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
   /* Said again and now close enough: earlier tries that were also close were the phone mishearing you, not mistakes. */
   near(x){if(this.pend.every(p=>wnear(snorm(p),x.n,true)))this.pend=[];this.resolve(0,1)},
   peek(raw){if(!this.live||this.lock||this.paused)return false;const x=this.W[this.at],h=snorm(raw);if(x&&(wnear(h,x.n,true)||(this.frag&&wnear(this.frag+h,x.n,true)))){this.frag=null;this.near(x);return true}return false},
-  heard(ws,rev){rev=rev||0;
+  heard(ws,rev){rev=rev||0;if(!rev)this.fol=0;
     if(this.choose!=null&&this.live&&!this.paused){const nx=setRange(this.choose)[0],f=this.allW().filter(x=>x.i===nx).slice(0,2);
       for(let wi=0;wi<ws.length;wi++){const h=snorm(ws[wi]);if(h&&f.some(x=>wnear(h,x.n,false))){this.contNext();return}}return}
     if(!this.live||this.lock||this.paused||VIEW!==(this.mode==="read"?"names":"memorize"))return;if(this.find){this.findHeard(ws,rev);return}for(let wi=0;wi<ws.length;wi++){const raw=ws[wi];if(this.lock)return;const h=snorm(raw),W=this.W,i=this.at;if(!h||!W[i])continue;
     /* a rewrite (from the phone) of a word you already passed is just that: never use it again (repeated phrases like فليس … شيء) */
-    if(wi<rev){let back=false;for(let b=1;b<=12;b++)if(W[i-b]&&wnear(h,W[i-b].n,false)){back=true;break}if(back)continue}
+    if(wi<rev&&this.fol)continue;if(wi<rev){let back=false;for(let b=1;b<=12;b++)if(W[i-b]&&wnear(h,W[i-b].n,false)){back=true;break}if(back)continue}
     if(wmatch(h,W[i].n)){this.frag=null;this.resolve(0,1);continue}
     /* The word you are on is checked kindly every time (the phone rarely writes a recited word exactly), so it works at
        a normal reading speed, not only when you go slowly and repeat. */
@@ -1476,6 +1484,7 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     if(i>0&&wnear(h,W[i-1].n+W[i].n,true)){this.near(W[i]);continue}
     /* The phone rewrote words it already gave (iPhone does this all the time): they can still show you read on.
        Then catch up with you; rewritten words never make mistakes. */
+    if(wi<rev&&this.fol)continue;
     if(wi<rev){/* a rewrite of words already passed is just that: only words not found just behind can move you on */
       {let back=false;for(let b=1;b<=12;b++)if(W[i-b]&&wnear(h,W[i-b].n,false)){back=true;break}if(back){this.rv=[];continue}}
       const S=(this.rv||[]).concat([h]).slice(-6);this.rv=S;const c=catchUp(S,W,i);
@@ -1503,6 +1512,8 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     /* Words from another place: after two in a row, follow you there, back or ahead, anywhere in the lesson. */
     this.trail=(this.trail||[]).concat([h]).slice(-3);
     if(this.trail.length>=2){const f=this.locate(this.trail);if(f){this.jump(f);continue}}
+    /* You went on to another lesson (Tasnim: "it's not following me"): three words heard that are in ONE place only, in another lesson. Follow you there. */
+    if(this.trail.length>=3){const f=this.findAny(this.trail),A=this.allW();if(f&&f.e-f.s>=2&&A[f.s].i!==LS.get("cur."+PID,0)&&A[f.s].i===A[f.e].i){this.trail=[];this.pend=[];this.gotoFound(f);return}}
     /* Not the expected word: hold it until we know whether it replaced a word or was extra. Repeating a word just said is fine. */
     let again=false;for(let b=1;b<=8;b++)if(W[i-b]&&wnear(h,W[i-b].n,true)){again=true;break}if(again)continue;
     /* A wrong word: a beep, the word shakes, and we stay on it. On the third wrong try it is marked wrong and we move on. */
@@ -1530,7 +1541,9 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
   for(let k=a;k<W.length&&k<=Math.max(i,this.at);k++){const x=W[k];x.el.classList.remove("wm","rd","miss","pk");delete this.mk[x.id];if(x.wh){x.el.setAttribute("data-h","");x.el.classList.add("h")}}
   this.at=a;this.pend=[];this.trail=[];this.stuck=0;this.frag=null;this.saved[this.key()]={cur:W[a].id,mk:Object.assign({},this.mk)};this.cur();this.tryUI();toast(t("wAgainT"))},
   /* Follow the reader to another place. A long way back or ahead keeps a button to return to where you were. */
-  jump(f){const i=this.at,to=f.k+f.len;if(to===i){this.trail=[];return}if(Math.abs(to-i)>10){if(this.ret==null||(to<i&&i>this.ret)){this.ret=i;this.retDir=to<i?1:-1}}
+  jump(f){const i=this.at,to=f.k+f.len;if(to===i){this.trail=[];return}
+    /* the phone will send the words before this again: they must not pull you back to where you were */
+    this.fol=1;if(Math.abs(to-i)>10){if(this.ret==null||(to<i&&i>this.ret)){this.ret=i;this.retDir=to<i?1:-1}}
     this.pend=[];for(let x=0;x<f.len;x++)this.mark(f.k+x,"ok");this.at=to;toast(t("following"));this.step(0);this.retUI()},
   retUI(){let c=$("#retc");if(this.ret==null||!this.live||!this.W[this.ret]){if(c)c.remove();return}
     if(!c){c=document.createElement("div");c.id="retc";c.className="retc";document.body.appendChild(c)}
