@@ -744,6 +744,14 @@ html,body{overflow-x:clip}
 .notecard .ncgo{background:var(--bg);color:var(--ink);border-radius:999px;font-weight:700;font-size:.85rem;padding:7px 14px;flex:none}
 .notecard .ncx{background:transparent;color:inherit;width:30px;height:30px;padding:6px;flex:none;opacity:.8}
 @keyframes ncDrop{from{opacity:0;transform:translate(-50%,-10px)}}
+/* Phone header (Tasnim: book name not placed professionally): the name on its own centred line, the controls neatly under it */
+@media (max-width:560px){.top .bar1{flex-wrap:wrap!important;height:auto!important;justify-content:center;row-gap:4px;padding:8px 0 6px}
+ .top .brand,.top .brand.en{flex:1 0 100%!important;margin:0!important;max-width:none!important;text-align:center;white-space:nowrap!important;font-size:1.18rem!important;line-height:1.3}
+ .top .hctl{margin-inline:auto;height:32px!important}
+ .top .bar1{padding:6px 0 4px!important;row-gap:2px!important}
+ /* smaller عربي / English (Tasnim) */
+ .top .lsw{padding:2px!important}.top .lsw button{font-size:.74rem!important;padding:0 8px!important}
+ .top .hctl>.hbtn{padding:0 8px!important;min-width:32px!important;font-size:.8rem}.top .hctl .i{width:17px;height:17px}}
 </style>
 </head>
 <body>
@@ -2231,5 +2239,6 @@ if("serviceWorker" in navigator&&location.protocol==="https:")addEventListener("
 function tuckFab(){const f=document.getElementById("fab");if(!f)return;const on=[...document.querySelectorAll(".hero .cta,.startbar")].some(c=>{if(!c.offsetParent&&getComputedStyle(c).position!=="fixed")return false;const r=c.getBoundingClientRect();return r.width>0&&r.bottom>0&&r.top<innerHeight});f.classList.toggle("tuck",on)}
 addEventListener("scroll",tuckFab,{passive:true});addEventListener("hashchange",()=>setTimeout(tuckFab,80));addEventListener("click",()=>setTimeout(tuckFab,120));setTimeout(tuckFab,300);
 </script>
+<script>(function(){const t=document.querySelector(".top");if(!t)return;const f=()=>document.documentElement.style.setProperty("--toph",t.offsetHeight+"px");f();try{new ResizeObserver(f).observe(t)}catch(e){addEventListener("resize",f)}})();</script>
 </body>
 </html>
