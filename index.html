@@ -209,6 +209,7 @@ h3{margin:0;font-size:1.02rem;font-weight:700}
 .sets{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
 .nxc{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(170px + env(safe-area-inset-bottom,0px));z-index:66;width:min(420px,calc(100vw - 24px));display:grid;gap:6px;padding:14px 16px;border-radius:18px;background:var(--surface);border:1.5px solid var(--acc);box-shadow:0 10px 28px rgba(0,0,0,.25);text-align:center}
 .nxc .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:4px}.nxc .note{margin:0}
+.toprow{display:flex;gap:8px;margin:0 0 14px}.toprow .btn{flex:1 1 0;min-width:0;justify-content:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .anyv{display:flex;align-items:center;gap:14px;width:100%;text-align:start;border:1.5px solid var(--acc);background:var(--acc-soft);color:inherit;border-radius:16px;padding:14px 16px;margin:0 0 14px;cursor:pointer;font:inherit}
 .anyv .ic{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--acc);color:var(--acc-ink)}.anyv .ic svg{width:24px;height:24px}
 .anyv .tx{display:flex;flex-direction:column;gap:3px;min-width:0}.anyv b{font-size:1.08rem}.anyv small{color:var(--muted);font-size:.86rem;line-height:1.45}
@@ -773,7 +774,10 @@ const fold=s=>s.replace(/^[وف]?[بكل]?ال/,"").replace(/[صث]/g,"س").repl
 function wnear(h,e,again){if(wmatch(h,e))return true;if(!h||!e)return false;const t=(a,b)=>{if(!a||!b)return false;if(a===b)return true;if(!again)return false;
   const L=Math.max(a.length,b.length);return L<=2?false:L<=4?lev(a,b)<=1:sim(a,b)>=.6};
  /* checked twice: with "ال" dropped, and as it is (in واله the و and ا are part of the word, not "و" + "ال") */
- return t(fold(h),fold(e))||t(fold("-"+h).slice(1),fold("-"+e).slice(1))}
+ if(t(fold(h),fold(e))||t(fold("-"+h).slice(1),fold("-"+e).slice(1)))return true;
+ /* the phone writes a related form (غنه heard as يغنون): same core letters, when you are on that word */
+ const stem=x=>{x=fold(x);if(x.length>3)x=x.replace(/^[يتن]/,"");return x.replace(/(ون|ين|ان|ه|ي|و)$/,"")};
+ return !!again&&e.length>=3&&stem(e).length>=2&&stem(h)===stem(e)}
 /* Reading on without stopping: do the last words heard match words a little further on? Then you are there.
    Two words in a row are enough (kindly checked), or one long word heard exactly. anch = how many heard words matched. */
 function catchUp(S,W,i){const L=S.length;if(!L)return null;const end=Math.min(W.length,i+11);
@@ -893,7 +897,7 @@ const TX={
  hwHint:["Tap an underlined word to see what the scholars said about it","اضغط على الكلمة المسطّرة لترى شرحها من كتب العلماء"],hwH:["Word meaning","معنى الكلمة"],hwIn:["Words explained in this lesson","كلمات مشروحة في هذا الدرس"],hwAr:["(in Arabic)",""],hwOpen:["Open the book page","افتح صفحة الكتاب"],hwNoteEn:["These are the words of the tafsir the Shaykh is explaining.",""],wmH:["Meaning of each name","معاني الأسماء"],wmSrc:["al-Sa'di, Tafsir Asma' Allah al-Husna (in Arabic)","السعدي، تفسير أسماء الله الحسنى"],wmP:["p.","ص"],wmNone:["Not added yet: we only add a meaning when we find it in the scholars' books.","لم يُضف بعد: لا نضيف معنى إلا إذا وجدناه في كتب العلماء."],
  evidence:["Evidence","الدليل"],meaning:["Meaning","المعنى"],memThis:["Memorize this","احفظ هذا الدرس"],
  st_new:["New","جديد"],st_learning:["Learning","قيد الحفظ"],st_memorized:["Memorized","محفوظ"],st_review:["Review","للمراجعة"],
- memHead:["Recite from memory","سمّع من حفظك"],anyH:["Recite from any name","سمّع من أي اسم"],nxDone:["Set finished","انتهت المجموعة"],nxNext:["Next","التالي"],nxGo:["Continue to next set","تابع إلى المجموعة التالية"],nxStop:["Done","انتهيت"],anyS:["No need to choose. Tap, then start reading any name or lesson. I find your place.","لا حاجة للاختيار. اضغط، ثم ابدأ قراءة أي اسم أو درس، وأنا أجد مكانك."],anyF:["Start reading from any name","ابدأ القراءة من أي اسم"],anyFS:["Tap the microphone if it is off. After a few words I find your place and follow you.","اضغط على الميكروفون إن كان مطفأً. بعد كلمات قليلة أجد مكانك وأتابعك."],anyOK:["Found you · lesson ","وجدتُك · الدرس "],anyBar:["Any name","أي اسم"],memSub:["Stuck? Tap the highlighted word to show it.","توقفت؟ اضغط على الكلمة المظللة لتظهر."],
+ memHead:["Recite from memory","سمّع من حفظك"],anyH:["Recite from any name","سمّع من أي اسم"],anyB:["Any name","من أي اسم"],nxDone:["Set finished","انتهت المجموعة"],nxNext:["Next","التالي"],nxGo:["Continue to next set","تابع إلى المجموعة التالية"],nxStop:["Done","انتهيت"],anyS:["No need to choose. Tap, then start reading any name or lesson. I find your place.","لا حاجة للاختيار. اضغط، ثم ابدأ قراءة أي اسم أو درس، وأنا أجد مكانك."],anyF:["Start reading from any name","ابدأ القراءة من أي اسم"],anyFS:["Tap the microphone if it is off. After a few words I find your place and follow you.","اضغط على الميكروفون إن كان مطفأً. بعد كلمات قليلة أجد مكانك وأتابعك."],anyOK:["Found you · lesson ","وجدتُك · الدرس "],anyBar:["Any name","أي اسم"],memSub:["Stuck? Tap the highlighted word to show it.","توقفت؟ اضغط على الكلمة المظللة لتظهر."],
  chooseSet:["Choose a set","اختر مجموعة"],lessons:["lessons","دروس"],
  lv0:["Words shown","الكلمات ظاهرة"],lv1:["Hide some","أخفِ بعضها"],lv2:["Hide most","أخفِ أكثرها"],lv3:["First letters","أوائل الحروف"],lv4:["Words hidden","الكلمات مخفية"],
  trl:["AI translation · please check with your teacher","ترجمة آلية · راجعها مع معلمك"],
@@ -1414,6 +1418,8 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     if(this.choose!=null&&this.live&&!this.paused){const nx=setRange(this.choose)[0],f=this.allW().filter(x=>x.i===nx).slice(0,2);
       for(let wi=0;wi<ws.length;wi++){const h=snorm(ws[wi]);if(h&&f.some(x=>wnear(h,x.n,false))){this.contNext();return}}return}
     if(!this.live||this.lock||this.paused||VIEW!==(this.mode==="read"?"names":"memorize"))return;if(this.find){this.findHeard(ws,rev);return}for(let wi=0;wi<ws.length;wi++){const raw=ws[wi];if(this.lock)return;const h=snorm(raw),W=this.W,i=this.at;if(!h||!W[i])continue;
+    /* a rewrite (from the phone) of a word you already passed is just that: never use it again (repeated phrases like فليس … شيء) */
+    if(wi<rev){let back=false;for(let b=1;b<=12;b++)if(W[i-b]&&wnear(h,W[i-b].n,false)){back=true;break}if(back)continue}
     if(wmatch(h,W[i].n)){this.frag=null;this.resolve(0,1);continue}
     /* The word you are on is checked kindly every time (the phone rarely writes a recited word exactly), so it works at
        a normal reading speed, not only when you go slowly and repeat. */
@@ -1425,7 +1431,9 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     if(i>0&&wnear(h,W[i-1].n+W[i].n,true)){this.near(W[i]);continue}
     /* The phone rewrote words it already gave (iPhone does this all the time): they can still show you read on.
        Then catch up with you; rewritten words never make mistakes. */
-    if(wi<rev){const S=(this.rv||[]).concat([h]).slice(-6);this.rv=S;const c=catchUp(S,W,i);
+    if(wi<rev){/* a rewrite of words already passed is just that: only words not found just behind can move you on */
+      {let back=false;for(let b=1;b<=12;b++)if(W[i-b]&&wnear(h,W[i-b].n,false)){back=true;break}if(back){this.rv=[];continue}}
+      const S=(this.rv||[]).concat([h]).slice(-6);this.rv=S;const c=catchUp(S,W,i);
       if(c){this.rv=[];this.pend=[];for(let q=0;q<c.to-i-c.anch&&this.W[this.at];q++){this.mark(this.at,"ok");this.at++}this.resolve(0,c.anch)}continue}
     /* A held sound on its own (آه، اا) when reciting with a melody is not a word: ignore it. */
     if(fold(h).length<=1&&h.length<=3)continue;
@@ -1436,7 +1444,7 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
     let j=0,jn=1;for(let d=1;d<=3&&W[i+d];d++){if(d===1?wnear(h,W[i+1].n,h.length>2):h.length>3&&wnear(h,W[i+d].n,false)){j=d;break}
      if(d===1&&W[i+2]&&h.length>4&&wnear(h,W[i+1].n+W[i+2].n,true)){j=1;jn=2;break}}
     /* A small word (في، من، لا…) the phone left out is not your mistake. */
-    if(j===1&&W[i].n.length<=3&&!this.pend.length){this.resolve(0,1);this.resolve(0,1);continue}
+    if(j&&!this.pend.length&&W.slice(i,i+j).every(x=>x.n.length<=3)){for(let q=0;q<j;q++)this.resolve(0,1);this.resolve(0,jn);continue}
     if(j){this.resolve(j,jn);continue}
     /* You read on without stopping and the phone wrote some words down differently: catch up with you. Words you said
        in between count as said; only words with nothing said for them are missed. No need to read word by word. */
@@ -1549,10 +1557,10 @@ V.memorize=el=>{
   if(!Mem.run){
     el.innerHTML=`<section class="sec"><div class="wrap narrow">
       <div class="head"><h2>${t("memHead")}</h2><p>${t("memSub")}</p></div>
-      <button type="button" class="anyv" id="anyv"><span class="ic">${ic("mic")}</span><span class="tx"><b>${t("anyH")}</b><small>${t("anyS")}</small></span></button>
+      <div class="toprow"><button class="btn" id="anyv" title="${esc(t("anyS"))}">${ic("mic")}${t("anyB")}</button><button class="btn pri" id="cont">${ic("play")}${t("continue")}: ${t("lessonN")} ${N(LS.get("cur."+PID,0)+1)}</button></div>
       <div class="panel"><div class="row" style="justify-content:space-between"><h3>${t("chooseSet")}</h3><div class="ordsw" role="group" aria-label="${t("orderH")}"><button data-rnd="0" class="${Mem.q().rnd?"":"on"}">${ic("arrows")}${t("ordIn")}</button><button data-rnd="1" class="${Mem.q().rnd?"on":""}">${ic("shuffle")}${t("ordRnd")}</button></div></div><div class="sets"><button class="setc" data-k="-1"><span class="n">∗</span><span class="t">${t("allLessons")}</span><span class="r">${N(1)}–${N(DATA.length)}</span><span class="s">${N(TOTAL)} ${t("fNames")}</span><span class="prog"><i style="width:${DATA.filter((_,i)=>status(i)==="memorized").length/DATA.length*100}%"></i></span></button>${Array.from({length:SETS},(_,k)=>{const r=setRange(k),done=r.filter(i=>status(i)==="memorized").length;
         return`<button class="setc ${hue(k)}" data-k="${k}"><span class="n">${N(k+1)}</span><span class="t">${setLabel(k)}</span><span class="r">${N(r[0]+1)}–${N(r[r.length-1]+1)}</span><span class="s" lang="ar">${esc(setSpan(k))}</span><span class="prog"><i style="width:${done/r.length*100}%"></i></span></button>`}).join("")}</div>
-      <div class="row"><a class="btn out" href="#mistakes">${ic("history")}${t("pastMis")}</a><button class="btn pri" id="cont">${ic("play")}${t("continue")}: ${t("lessonN")} ${N(LS.get("cur."+PID,0)+1)}</button></div></div></div></section>`;
+      <div class="row"><a class="btn out" href="#mistakes">${ic("history")}${t("pastMis")}</a></div></div></div></section>`;
     let rnd=Mem.q().rnd;$$("[data-rnd]").forEach(b=>b.onclick=()=>{rnd=b.dataset.rnd==="1";$$("[data-rnd]").forEach(x=>x.classList.toggle("on",x===b))});
     $$(".setc").forEach(b=>b.onclick=()=>{const r=Mem.setQ(+b.dataset.k,rnd).list;Mem.go(r.find(i=>status(i)!=="memorized")??r[0])});
     $("#cont").onclick=()=>Mem.go(LS.get("cur."+PID,0));
