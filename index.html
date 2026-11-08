@@ -987,7 +987,7 @@ const TX={
  rec:["Record","سجّل"],recStop:["Stop and save","أوقف واحفظ"],myRec:["My recitation","تسميعي"],myRecs:["My recordings","تسجيلاتي"],
  recHint:["Record yourself reciting, then listen back. Recordings stay on this device until you delete them.","سجّل تسميعك ثم استمع إليه. تبقى التسجيلات على هذا الجهاز حتى تحذفها."],
  noRecs:["No recordings yet.","لا توجد تسجيلات بعد."],recSaved:["Recording saved","تم حفظ التسجيل"],
- live:["Start reciting","ابدأ التسميع"],liveStop:["Stop all","إيقاف الكل"],tryN:["Try again · {a} of {b}","حاول مرة أخرى · {a} من {b}"],pausedS:["Paused","متوقف مؤقتًا"],wBack:["Word back","كلمة للخلف"],wSkip:["Skip word","تخطَّ الكلمة"],wAgain:["Start again","من البداية"],autoPaused:["Paused while you were away. Tap Continue when ready.","توقف مؤقتًا لأنك خرجت. اضغط متابعة عند الاستعداد."],wrongOn:["Marked wrong, moving on","سُجّلت خطأً، ننتقل إلى ما بعدها"],liveHint:["Tap Start and recite. The words follow your voice, and it moves on by itself until you tap Stop.","اضغط ابدأ وسمّع. تتبع الكلماتُ صوتك، وينتقل وحده حتى تضغط إيقاف."],
+ live:["Start reciting","ابدأ التسميع"],liveStop:["Stop all","إيقاف الكل"],tryN:["Try again · {a} of {b}","حاول مرة أخرى · {a} من {b}"],pausedS:["Paused","متوقف مؤقتًا"],wBack:["Word back","كلمة للخلف"],wSkip:["Skip word","تخطَّ الكلمة"],wAgain:["This part again","أعد هذا الجزء"],wAgainT:["Again from the start of this part","من بداية هذا الجزء"],autoPaused:["Paused while you were away. Tap Continue when ready.","توقف مؤقتًا لأنك خرجت. اضغط متابعة عند الاستعداد."],wrongOn:["Marked wrong, moving on","سُجّلت خطأً، ننتقل إلى ما بعدها"],liveHint:["Tap Start and recite. The words follow your voice, and it moves on by itself until you tap Stop.","اضغط ابدأ وسمّع. تتبع الكلماتُ صوتك، وينتقل وحده حتى تضغط إيقاف."],
  liveOn:["Listening… recite now","أستمع… سمّع الآن"],kMem:["From memory","من الحفظ"],kRd:["Read","قراءة"],kMiss:["Mistake","خطأ"],
  repN:["Repetition {a} of {b}. Again!","التكرار {a} من {b}. مرة أخرى!"],memNext:["Memorized! Next lesson","ممتاز، تمّ حفظه! الدرس التالي"],
  noSR:["This browser can't listen. On iPhone use Safari, and turn on Siri or Dictation in Settings.","هذا المتصفح لا يستطيع الاستماع. على الآيفون استخدم سفاري، وفعّل سيري أو الإملاء من الإعدادات."],
@@ -1523,7 +1523,12 @@ const Mem={run:false,live:false,paused:false,L:null,W:[],at:0,lock:false,mode:"m
   /* Skip a word the phone cannot hear: it counts as read (blue), not as a mistake. */
   skip(){if(this.lock||!this.W[this.at])return;this.pend=[];const x=this.W[this.at];x.el.removeAttribute("data-h");x.el.classList.remove("h","fl");this.step(1,"ok")},
   /* Start this lesson again from the first word. */
-  again2(){if(this.lock)return;delete this.saved[this.key()];if(this.mode==="read"){this.hook();this.W.forEach(x=>{x.el.classList.remove("wm","rd","miss","pk")});this.cur();this.tryUI()}else{render();scrollTo(0,0)}},
+  /* Say this part again (Tasnim: it restarted everything): back to the start of the part you are in (the names, the evidence
+    or the meaning); at the very start of a part, the part before. Listening carries on. */
+ again2(){if(this.lock||!this.W.length)return;const W=this.W;let i=Math.min(this.at,W.length-1);const sec=x=>x.id[0];
+  let a=i;while(a>0&&sec(W[a-1])===sec(W[i]))a--;if(a===i&&!this.mk[W[i].id]&&a>0){a--;while(a>0&&sec(W[a-1])===sec(W[i-1]))a--}
+  for(let k=a;k<W.length&&k<=Math.max(i,this.at);k++){const x=W[k];x.el.classList.remove("wm","rd","miss","pk");delete this.mk[x.id];if(x.wh){x.el.setAttribute("data-h","");x.el.classList.add("h")}}
+  this.at=a;this.pend=[];this.trail=[];this.stuck=0;this.frag=null;this.saved[this.key()]={cur:W[a].id,mk:Object.assign({},this.mk)};this.cur();this.tryUI();toast(t("wAgainT"))},
   /* Follow the reader to another place. A long way back or ahead keeps a button to return to where you were. */
   jump(f){const i=this.at,to=f.k+f.len;if(to===i){this.trail=[];return}if(Math.abs(to-i)>10){if(this.ret==null||(to<i&&i>this.ret)){this.ret=i;this.retDir=to<i?1:-1}}
     this.pend=[];for(let x=0;x<f.len;x++)this.mark(f.k+x,"ok");this.at=to;toast(t("following"));this.step(0);this.retUI()},
