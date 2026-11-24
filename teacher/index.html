@@ -38,7 +38,7 @@ svg.i{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-widt
 .lsw button{border:0;background:none;border-radius:999px;padding:3px 11px;font-size:.8rem;font-weight:600;color:var(--muted);min-height:30px}
 .lsw button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
 .back{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center}
-[dir="ltr"] .back svg{transform:scaleX(-1)}
+[dir="rtl"] .back svg{transform:scaleX(-1)}
 main{max-width:760px;margin:auto;padding:16px 16px calc(96px + env(safe-area-inset-bottom,0))}
 /* bottom tabs */
 .tb{position:fixed;inset-inline:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0)}
@@ -72,7 +72,7 @@ main{max-width:760px;margin:auto;padding:16px 16px calc(96px + env(safe-area-ins
 .dayhd{display:flex;align-items:center;gap:8px;margin-bottom:12px}
 .dayhd .d{flex:1;text-align:center}.dayhd .d b{display:block;font-size:1.05rem}
 .rbtn{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center}
-[dir="rtl"] .rbtn.prev svg,[dir="ltr"] .rbtn.next svg{transform:scaleX(-1)}
+[dir="ltr"] .rbtn.prev svg,[dir="rtl"] .rbtn.next svg{transform:scaleX(-1)}
 .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.8rem;color:var(--muted);margin:2px 0 10px}
 .st{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}.st:last-child{border-bottom:0}
 .av{width:38px;height:38px;border-radius:50%;background:var(--acc-soft);color:var(--acc);display:grid;place-items:center;font-weight:700;font-size:.82rem;flex:none}
@@ -97,7 +97,7 @@ main{max-width:760px;margin:auto;padding:16px 16px calc(96px + env(safe-area-ins
 .log{padding:10px 0;border-bottom:1px solid var(--line);font-size:.88rem}.log:last-child{border-bottom:0}
 .log .w{color:var(--muted);font-size:.78rem}
 .tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line);margin:0 -16px 14px;padding:0 16px}
-.tabs button{border:0;background:none;padding:10px 12px;font-weight:600;font-size:.88rem;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
+.tabs button{border:0;background:none;padding:10px 9px;font-weight:600;font-size:.88rem;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
 .tabs button[aria-selected="true"]{color:var(--acc);border-bottom-color:var(--acc)}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;text-align:center;font-size:.78rem}
 .cal .h{color:var(--muted);font-weight:600}
@@ -121,7 +121,23 @@ main{max-width:760px;margin:auto;padding:16px 16px calc(96px + env(safe-area-ins
 .spin{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--acc);animation:sp 0.8s linear infinite;margin:40px auto}
 @keyframes sp{to{transform:rotate(360deg)}}
 .rule{font-size:.82rem;line-height:1.8}
+.mv{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-size:.7rem;color:var(--muted)}.mv:disabled{opacity:.3}
 .pill{display:inline-block;font-size:.72rem;font-weight:700;border-radius:999px;padding:1px 8px;background:var(--surface-2);color:var(--muted)}
+.rh{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px}
+.tw{overflow-x:auto;margin:0 -4px}
+.rt{width:100%;border-collapse:collapse;font-size:.86rem}
+.rt th,.rt td{border-bottom:1px solid var(--line);padding:8px 5px;text-align:center;white-space:nowrap}
+.rt th{font-size:.74rem;color:var(--muted);font-weight:600;line-height:1.3}.rt .n{text-align:start;white-space:normal}
+.rt tr.la td{color:var(--muted)}
+.rt.wk{font-size:.8rem}.rt.wk th,.rt.wk td{padding:7px 2px}.rt.wk .n{min-width:72px}
+@media print{
+ @page{margin:14mm}
+ body{background:#fff;color:#000}
+ .hd,.tb,.row2,.chips,.toast,.ov{display:none!important}
+ main{padding:0;max-width:none}
+ .card{box-shadow:none;border:0;padding:0}
+ .rt{font-size:11pt}.rt th,.rt td{border-bottom:1px solid #ccc}
+}
 </style>
 </head>
 <body>
@@ -144,33 +160,37 @@ ar:{portal:"بوابة المعلّم",site:"أسماء الله الحسنى",t
  checkEmail:"أرسلنا رسالة تأكيد إلى بريدك. افتح الرابط فيها، ثم ارجع وسجّل الدخول.",passShort:"كلمة المرور ٨ أحرف على الأقل.",passMismatch:"كلمتا المرور غير متطابقتين.",
  errLogin:"البريد أو كلمة المرور غير صحيحة.",errConfirm:"لم يُؤكَّد البريد بعد. افتح رسالة التأكيد في بريدك.",errGoogle:"الدخول بـ Google غير مفعّل بعد. استخدم البريد وكلمة المرور الآن.",errNet:"تعذّر الاتصال. تحقّق من الإنترنت وحاول مرة أخرى.",errGeneric:"حدث خطأ. حاول مرة أخرى.",errRate:"محاولات كثيرة. انتظر قليلًا ثم حاول مرة أخرى.",
  today:"الحضور",students:"الطلاب",history:"السجلّ",settings:"الإعدادات",
- present:"حاضر",absent:"غائب بلا عذر",excused:"غائب بعذر",notMarked:"لم يُسجَّل",allPresent:"الكل حاضر",
+ present:"حضور",absent:"غياب بلا عذر",excused:"غياب بعذر",notMarked:"لم يُسجَّل",allPresent:"حضور الجميع",
  dayOff:"يوم إجازة",noClass:"لا توجد حلقة في هذا اليوم.",markAnyway:"سجّل الحضور على أي حال",future:"هذا يوم لم يأتِ بعد.",goToday:"اذهب إلى اليوم",
- addStudent:"إضافة طالب",studentName:"اسم الطالب",add:"إضافة",save:"حفظ",cancel:"إلغاء",close:"إغلاق",edit:"تعديل",rename:"تغيير الاسم",remove:"إزالة",restore:"استعادة",
- noStudents:"لا يوجد طلاب بعد. أضف أسماءهم حين تصلك.",removedList:"أُزيلوا مؤخرًا",removedNote:"تُحذف نهائيًا بعد ٣٠ يومًا. يمكنك استعادتهم قبل ذلك.",daysLeft:n=>`يُحذف بعد ${n} يوم`,
- removeQ:n=>`إزالة «${n}»؟`,removeBody:"سيختفي من القوائم، ويبقى ٣٠ يومًا قابلًا للاستعادة مع كل سجلّاته، ثم يُحذف نهائيًا.",removed:n=>`أُزيل «${n}»`,undo:"تراجع",restored:n=>`استُعيد «${n}»`,
- flagT:n=>`${n} غاب ٣ أيام متتالية أو أكثر بلا عذر`,flagT2:(n,k)=>`${n}: ${k} أيام غياب متتالية بلا عذر`,remind:"رسالة تذكير",flagged:"تنبيه: غياب متتالٍ",
- remindMsg:n=>`السلام عليكم ورحمة الله ${n}،\nافتقدناك في حلقة أسماء الله الحسنى في الأيام الماضية. نتمنى أن تكون بخير.\nهل تودّ الاستمرار معنا؟ أخبرنا من فضلك، وإن تعذّر عليك الحضور فلا حرج.\nجزاك الله خيرًا.`,
+ addStudent:"إضافة اسم",studentName:"الاسم",add:"إضافة",save:"حفظ",cancel:"إلغاء",close:"إغلاق",edit:"تعديل",rename:"تغيير الاسم",remove:"إزالة",restore:"استعادة",
+ noStudents:"لا توجد أسماء بعد. أضف الأسماء حين تصلك.",removedList:"أُزيلوا مؤخرًا",removedNote:"تُحذف نهائيًا بعد ٣٠ يومًا. يمكنك استعادتهم قبل ذلك.",daysLeft:n=>`يُحذف بعد ${n} يوم`,
+ removeQ:n=>`إزالة «${n}»؟`,removeBody:"يختفي الاسم من القوائم، ويمكن استعادته مع كل سجلّاته خلال ٣٠ يومًا، ثم يُحذف نهائيًا.",removed:n=>`أُزيل «${n}»`,undo:"تراجع",restored:n=>`استُعيد «${n}»`,
+ flagT:n=>`${n}: غياب ٣ أيام متتالية أو أكثر بلا عذر`,flagT2:(n,k)=>`${n}: ${k} أيام غياب متتالية بلا عذر`,remind:"رسالة تذكير",flagged:"تنبيه: غياب متتالٍ",
+ remindMsg:n=>`السلام عليكم ورحمة الله ${n}،\nافتقدناك في حلقة أسماء الله الحسنى في الأيام الماضية، ونرجو أن يكون كل شيء على ما يرام.\nنودّ معرفة رغبتك في الاستمرار معنا، وإن تعذّر عليك الحضور فلا حرج.\nجزاك الله خيرًا.`,
  copy:"نسخ",copied:"تم النسخ",
  summary:"ملخص اليوم",tabHifz:"الحفظ",tabReview:"المراجعة",tabAtt:"الحضور",tabScores:"الدرجات",tabAwards:"التكريم",
  soonHifz:"متابعة الحفظ تأتي في المرحلة الثانية، بعد أن ترسل المنهج.",soonReview:"متابعة المراجعة تأتي في المرحلة الثانية، بعد أن ترسل المنهج.",soonScores:"الدرجات تأتي في المرحلة الثالثة (التصحيح أثناء القراءة).",soonAwards:"التكريم يأتي في المرحلة الثالثة مع أفضل ثلاثة يوميًا.",
- note:"ملاحظة خاصة",notePh:"مثال: يحتاج إلى وقت أطول",noteSaved:"حُفظت الملاحظة",
+ note:"ملاحظة خاصة",notePh:"مثال: وقت أطول للحفظ",noteSaved:"حُفظت الملاحظة",
  histAll:"الكل",histAtt:"الحضور",histStu:"الطلاب",histSet:"الإعدادات",noHist:"لا توجد تغييرات بعد.",by:"بواسطة",you:"أنت",
  actSet:(n,d,v)=>`${n} · ${d}: سُجّل ${v}`,actChange:(n,d,a,b)=>`${n} · ${d}: ${a} ← ${b}`,actClear:(n,d,a)=>`${n} · ${d}: أُلغي ${a}`,
- actAdd:n=>`أُضيف الطالب «${n}»`,actRename:(a,b)=>`تغيّر الاسم: «${a}» ← «${b}»`,actRemove:n=>`أُزيل الطالب «${n}»`,actRestore:n=>`استُعيد الطالب «${n}»`,actNote:n=>`تغيّرت ملاحظة «${n}»`,actOff:(a,b)=>`أيام الإجازة: ${a} ← ${b}`,actClass:(a,b)=>`اسم الحلقة: «${a}» ← «${b}»`,
+ actAdd:n=>`أُضيف «${n}»`,actRename:(a,b)=>`تغيّر الاسم: «${a}» ← «${b}»`,actRemove:n=>`أُزيل «${n}»`,actRestore:n=>`استُعيد «${n}»`,actNote:n=>`تغيّرت ملاحظة «${n}»`,actOff:(a,b)=>`أيام الإجازة: ${a} ← ${b}`,actClass:(a,b)=>`اسم الحلقة: «${a}» ← «${b}»`,
  klass:"الحلقة",className:"اسم الحلقة",defClass:"حلقتي",offDays:"أيام الإجازة (بلا حلقة)",presetUS:"أمريكا: الخميس",presetSA:"السعودية: الجمعة",
  lang:"اللغة",theme:"المظهر",light:"فاتح",dark:"داكن",auto:"تلقائي",
  downloads:"التنزيلات",dlAll:"كل السجلّات",dlAbs:"الغياب فقط",dlPres:"الحضور فقط",dlJson:"نسخة كاملة (JSON)",dlNote:"ملف CSV يفتح في Excel أو Numbers أو Google Sheets.",
  tourAgain:"إعادة الجولة التعريفية",account:"الحساب",signout:"تسجيل الخروج",delAcc:"حذف حسابي",delQ:"حذف حسابك وكل سجلّاتك؟",delBody:"يُحذف بعد ٣٠ يومًا. إن سجّلت الدخول قبل ذلك يمكنك استعادة كل شيء بضغطة.",delYes:"نعم، احذف بعد ٣٠ يومًا",
  pendingDel:d=>`حسابك مجدول للحذف يوم ${d}.`,restoreAcc:"استعادة حسابي",accRestored:"تمت استعادة حسابك.",
- privacyFull:"• لا يرى سجلّات طلابك إلا أنت (أقفال على مستوى قاعدة البيانات).\n• نحفظ فقط: أسماء الطلاب، والحضور، وملاحظاتك، وسجلّ التعديلات.\n• لا تسجيل للأصوات، ولا إعلانات، ولا مشاركة مع أي جهة.\n• يمكنك تنزيل كل شيء أو حذف حسابك في أي وقت (يُحذف نهائيًا بعد ٣٠ يومًا).\n• ننصح بكتابة الاسم الأول فقط لكل طالب.",
- term:"المصطلحات",ruleTitle:"قاعدة التنبيه (واحدة للجميع)",rule:"يظهر التنبيه لأي طالب له ٣ أيام حلقة متتالية أو أكثر مسجَّلة «غائب بلا عذر». أيام الإجازة والأيام غير المسجَّلة لا تُحسب، والغياب بعذر يقطع السلسلة.",
- tour:[["مرحبًا في بوابة المعلّم","هنا تسجّل حضور حلقتك يوميًا، وكل تعديل يُحفظ في السجلّ."],["أضف طلابك","من «الطلاب» اضغط «إضافة طالب». تستطيع إزالة أي طالب واستعادته خلال ٣٠ يومًا."],["سجّل الحضور بضغطة","✅ حاضر · ❌ غائب بلا عذر · 🚫 غائب بعذر. اضغط «الكل حاضر» ثم غيّر الغائبين فقط."],["تنبيه عادل للجميع","من يغيب ٣ أيام متتالية بلا عذر يظهر له تنبيه ورسالة تذكير جاهزة للنسخ."],["كل تعديل محفوظ","«السجلّ» يبيّن من غيّر ماذا ومتى: من ← إلى."]],
+ privacyFull:"• لا يرى سجلّات طلابك إلا أنت (أقفال على مستوى قاعدة البيانات).\n• نحفظ فقط: أسماء الطلاب، والحضور، وملاحظاتك، وسجلّ التعديلات.\n• لا تسجيل للأصوات، ولا إعلانات، ولا مشاركة مع أي جهة.\n• يمكنك تنزيل كل شيء أو حذف حسابك في أي وقت (يُحذف نهائيًا بعد ٣٠ يومًا).\n• ننصح بكتابة الاسم الأول فقط.",
+ term:"المصطلحات",ruleTitle:"قاعدة التنبيه (واحدة للجميع)",rule:"يظهر التنبيه لكل اسم له ٣ أيام حلقة متتالية أو أكثر مسجَّلة «غياب بلا عذر». أيام الإجازة والأيام غير المسجَّلة لا تُحسب، والغياب بعذر يقطع السلسلة.",
+ tour:[["مرحبًا في بوابة المعلّم","هنا تسجّل حضور حلقتك يوميًا، وكل تعديل يُحفظ في السجلّ."],["أضف الأسماء","من «الطلاب» اضغط «إضافة اسم». يمكنك إزالة أي اسم واستعادته خلال ٣٠ يومًا."],["سجّل الحضور بضغطة","✅ حضور · ❌ غياب بلا عذر · 🚫 غياب بعذر. اضغط «حضور الجميع» ثم غيّر الغياب فقط."],["تنبيه عادل للجميع","عند غياب ٣ أيام متتالية بلا عذر يظهر تنبيه ورسالة تذكير جاهزة للنسخ."],["كل تعديل محفوظ","«السجلّ» يبيّن من غيّر ماذا ومتى: من ← إلى."]],
  next:"التالي",skip:"تخطَّ",done:"ابدأ",tourNote:"ستظهر هذه الجولة في أول ٣ أيام، ويمكنك إعادتها من الإعدادات.",
  back:"رجوع",loading:"جارٍ التحميل…",saved:"تم الحفظ",offline:"لا يوجد اتصال. لم يُحفظ التغيير.",
  wk:["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"],wks:["أحد","إثن","ثلا","أرب","خمي","جمع","سبت"],
  attSummary:"ملخص الحضور",streak:"غياب متتالٍ الآن",backToSite:"العودة إلى الموقع",stage:"المرحلة الأولى",
- count:n=>`${n} طالب`},
+ count:n=>`عدد الأسماء: ${n}`,
+ inRow:n=>`${n} غياب متتالٍ بلا عذر`,report:"تقرير",repDay:"تقرير يومي",repWeek:"تقرير أسبوعي",repDayD:"حضور يوم واحد، جاهز للإرسال.",repWeekD:"الأسبوع كاملًا: كل اسم وكل يوم.",print:"طباعة / حفظ PDF",csv:"تنزيل CSV",
+ repOrder:"الترتيب كما أُدخلت الأسماء. الغياب أكثر من أسبوع بلا عذر ينقل الاسم إلى آخر القائمة في التقرير فقط.",longAbs:"غياب أكثر من أسبوع",total:"المجموع",no:"م",name:"الاسم",status:"الحالة",week:"الأسبوع",generated:"أُنشئ",
+ moveUp:"تحريك للأعلى",moveDown:"تحريك للأسفل",order:"ترتيب الأسماء",orderNote:"رتّب الأسماء كما وصلت في مجموعة المحادثة. التقارير تتبع هذا الترتيب.",
+ storage:"التخزين",storageTxt:"تُحفظ السجلّات في حسابك على خادم آمن مجاني، لا في الموقع. سجلّات الحضور صغيرة جدًا: حلقة من ٣٠ اسمًا لعشر سنوات تستهلك أقل من ٥٪ من المساحة المجانية.\nللأمان: احفظ نسخة احتياطية على هاتفك كل أسبوع (زر «نسخة كاملة»).",lastBackup:d=>`آخر نسخة احتياطية: ${d}`,noBackup:"لم تحفظ نسخة احتياطية بعد.",backupDue:"مرّ أسبوع على آخر نسخة احتياطية. حفظ نسخة الآن؟",saveBackup:"حفظ نسخة احتياطية"},
 en:{portal:"Teacher portal",site:"The Most Beautiful Names of Allah",tagline:"Class records, private to you",email:"Email",password:"Password",password2:"Type the password again",signin:"Sign in",signup:"Create account",google:"Continue with Google",forgot:"Forgot password?",noAcc:"No account yet?",haveAcc:"Already have an account?",or:"or",
  privNote:"Only you can see your students’ records. Nothing is shared or sold, and you can download or delete everything at any time.",privacy:"Privacy",
  sendReset:"Send reset link",resetTitle:"Reset password",resetSent:"If this email is registered, you’ll get a message with a link. Open the link on this phone.",newPass:"New password",savePass:"Save password",passSaved:"Your new password is saved.",
@@ -203,7 +223,11 @@ en:{portal:"Teacher portal",site:"The Most Beautiful Names of Allah",tagline:"Cl
  back:"Back",loading:"Loading…",saved:"Saved",offline:"No connection. The change wasn’t saved.",
  wk:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],wks:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
  attSummary:"Attendance summary",streak:"Absent in a row now",backToSite:"Back to the website",stage:"Stage 1",
- count:n=>`${n} student${n===1?"":"s"}`}
+ count:n=>`${n} student${n===1?"":"s"}`,
+ inRow:n=>`${n} unexcused in a row`,report:"Report",repDay:"Daily report",repWeek:"Weekly report",repDayD:"One day’s attendance, ready to submit.",repWeekD:"The whole week: every student, every day.",print:"Print / Save as PDF",csv:"Download CSV",
+ repOrder:"Order is the order you entered the names. Anyone absent without excuse for more than a week moves to the bottom in reports only.",longAbs:"Absent over a week",total:"Total",no:"#",name:"Name",status:"Status",week:"Week",generated:"Created",
+ moveUp:"Move up",moveDown:"Move down",order:"Name order",orderNote:"Put names in the order they arrived in the group chat. Reports follow this order.",
+ storage:"Storage",storageTxt:"Records are saved in your account on a secure free server, not in the website. Attendance records are tiny: a class of 30 for ten years uses under 5% of the free space.\nTo be safe, save a backup to your phone each week (the “Full backup” button).",lastBackup:d=>`Last backup: ${d}`,noBackup:"No backup saved yet.",backupDue:"It’s been a week since your last backup. Save one now?",saveBackup:"Save backup"}
 };
 const t=(k,...a)=>{const v=(TX[LANG]||TX.en)[k];return typeof v==="function"?v(...a):(v??k)};
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -290,7 +314,7 @@ async function loadAll(){
  S.classes=cls;S.cls=cls.find(c=>c.id===LS.get("teacher.cls",""))||cls[0];
  await loadStudents();
 }
-async function loadStudents(){S.students=await q(sb.from("students").select("*").eq("class_id",S.cls.id).order("created_at"));await loadAtt()}
+async function loadStudents(){S.students=await q(sb.from("students").select("*").eq("class_id",S.cls.id).order("sort_order").order("created_at"));await loadAtt()}
 async function loadAtt(){const ids=S.students.map(s=>s.id);S.att={};if(!ids.length)return;
  const from=addDays(S.day,-120);const rows=await q(sb.from("attendance").select("student_id,day,status").in("student_id",ids).gte("day",from).order("day"));
  for(const r of rows)(S.att[r.student_id]??={})[r.day]=r.status}
@@ -299,6 +323,9 @@ const isOff=day=>(S.cls?.off_days||[]).includes(fromIso(day).getDay());
 /* Flag rule: consecutive class days marked "absent" ending at (or before) the given day. Off days and unmarked days are skipped; anything else breaks the run. */
 function absentRun(sid,upTo){const a=S.att[sid]||{};const days=Object.keys(a).filter(d=>d<=upTo&&!isOff(d)).sort().reverse();let n=0;for(const d of days){if(a[d]==="absent")n++;else break}return n}
 
+/* Reports only: unexcused run whose first absence is more than 7 days before the report day. */
+function longAbsent(sid,upTo){const a=S.att[sid]||{};const days=Object.keys(a).filter(d=>d<=upTo&&!isOff(d)).sort().reverse();let first=null;for(const d of days){if(a[d]==="absent")first=d;else break}return !!first&&first<addDays(upTo,-7)}
+const reportOrder=upTo=>{const l=active();return [...l.filter(s=>!longAbsent(s.id,upTo)),...l.filter(s=>longAbsent(s.id,upTo))]};
 async function setStatus(sid,status){const prev=S.att[sid]?.[S.day];const next=prev===status?null:status;
  (S.att[sid]??={})[S.day]=next||undefined;if(!next)delete S.att[sid][S.day];renderToday();
  try{if(next)await q(sb.from("attendance").upsert({student_id:sid,day:S.day,status:next,updated_at:new Date().toISOString()},{onConflict:"student_id,day"}));
@@ -310,7 +337,7 @@ async function allPresent(){const todo=active().filter(s=>!S.att[s.id]?.[S.day])
 
 /* ---------- views ---------- */
 function render(){if(!S.user){renderAuth();return}if(S.pendingDel){renderPending();return}
- ({today:renderToday,students:renderStudents,student:renderStudent,history:renderHistory,settings:renderSettings}[S.view]||renderToday)()}
+ ({report:renderReport,today:renderToday,students:renderStudents,student:renderStudent,history:renderHistory,settings:renderSettings}[S.view]||renderToday)()}
 
 function renderToday(){
  if(S.view!=="today")return;
@@ -324,13 +351,14 @@ function renderToday(){
   body=`${flags.map(([s,n])=>`<div class="flag">${ic("flag")}<div style="flex:1"><b>${esc(t("flagT2",s.name,NUM(n)))}</b><div><button class="link" style="color:inherit;text-decoration:underline;padding:4px 0;min-height:0" data-remind="${s.id}">${t("remind")}</button></div></div></div>`).join("")}
   <div class="sum"><div><b>${NUM(c.present)}</b><span>✅ ${t("present")}</span></div><div><b>${NUM(c.absent)}</b><span>❌ ${t("absent")}</span></div><div><b>${NUM(c.excused)}</b><span>🚫 ${t("excused")}</span></div><div><b>${NUM(c.none)}</b><span>${t("notMarked")}</span></div></div>
   <div class="card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div class="legend" style="flex:1;margin:0">✅ ${t("present")} · ❌ ${t("absent")} · 🚫 ${t("excused")}</div>${c.none&&!fut?`<button class="btn sm pri" data-act="allp">${ic("check")}${t("allPresent")}</button>`:""}</div>
-  ${list.map(s=>{const v=S.att[s.id]?.[day];const run=absentRun(s.id,day);return `<div class="st"><div class="av">${esc(initials(s.name))}</div><button class="nm" data-stu="${s.id}">${esc(s.name)}${run>=3?`<small>⚑ ${t("flagged")}</small>`:""}</button>
+  ${list.map(s=>{const v=S.att[s.id]?.[day];const run=absentRun(s.id,day);return `<div class="st"><div class="av">${esc(initials(s.name))}</div><button class="nm" data-stu="${s.id}">${esc(s.name)}${run>=3?`<small>⚑ ${t("inRow",NUM(run))}</small>`:""}</button>
    <div class="seg" role="group" aria-label="${esc(s.name)}">${["present","absent","excused"].map(k=>`<button class="${ST[k].c}" data-mark="${s.id}" data-st="${k}" aria-pressed="${v===k}" aria-label="${t(k)}" ${fut?"disabled":""}>${ST[k].e}</button>`).join("")}</div></div>`}).join("")}
   ${fut?`<p class="mut" style="text-align:center">${t("future")}</p>`:""}</div>
   <button class="btn blk" data-act="addStu">${ic("plus")}${t("addStudent")}</button>`;
  }
  app.innerHTML=`${header(S.cls.name,t("count",list.length))}<main>
  <div class="dayhd"><button class="rbtn prev" data-act="prev" aria-label="←">${ic("chev")}</button><div class="d"><b>${esc(fmtDay(day))}</b>${day!==todayIso()?`<button class="link sm" data-act="today">${t("goToday")}</button>`:`<span class="mut sm">${isOff(day)?t("dayOff"):t("today")}</span>`}</div><button class="rbtn next" data-act="next" aria-label="→">${ic("chev")}</button></div>
+ ${list.length?`<button class="btn blk" data-act="report" style="margin-top:10px">${ic("chart")}${t("report")}</button>`:""}
  ${body}</main>${tabbar()}`;
 }
 
@@ -338,7 +366,7 @@ function renderStudents(){
  const list=active(),rem=S.students.filter(s=>s.removed_at);
  app.innerHTML=`${header(t("students"),`${S.cls.name} · ${t("count",list.length)}`)}<main>
  <button class="btn pri blk" data-act="addStu" style="margin-bottom:12px">${ic("plus")}${t("addStudent")}</button>
- <div class="card">${list.length?list.map(s=>{const run=absentRun(s.id,todayIso());return `<div class="li"><div class="av">${esc(initials(s.name))}</div><div class="tx"><b>${esc(s.name)}</b>${run>=3?` <span class="pill" style="background:var(--warn-soft);color:var(--warn)">⚑ ${NUM(run)}</span>`:""}${s.note?`<div class="mut sm" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(s.note)}</div>`:""}</div><button class="btn sm" data-stu="${s.id}" aria-label="${esc(s.name)}">${ic("chev")}</button></div>`}).join(""):`<p class="mut" style="margin:0">${t("noStudents")}</p>`}</div>
+ <div class="card">${list.length>1?`<p class="mut sm" style="margin:0 0 4px">${t("orderNote")}</p>`:""}${list.length?list.map((s,i)=>{const run=absentRun(s.id,todayIso());return `<div class="li"><div class="av">${esc(initials(s.name))}</div><div class="tx"><b>${esc(s.name)}</b>${run>=3?` <span class="pill" style="background:var(--warn-soft);color:var(--warn)">⚑ ${NUM(run)}</span>`:""}${s.note?`<div class="mut sm" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(s.note)}</div>`:""}</div><button class="mv" data-mv="${s.id}" data-dir="-1" aria-label="${t("moveUp")}" ${i===0?"disabled":""}>▲</button><button class="mv" data-mv="${s.id}" data-dir="1" aria-label="${t("moveDown")}" ${i===list.length-1?"disabled":""}>▼</button><button class="btn sm" data-stu="${s.id}" aria-label="${esc(s.name)}">${ic("chev")}</button></div>`}).join(""):`<p class="mut" style="margin:0">${t("noStudents")}</p>`}</div>
  ${rem.length?`<div class="card"><h2>${t("removedList")}</h2><p class="mut" style="margin-top:0">${t("removedNote")}</p>${rem.map(s=>{const left=Math.max(0,30-Math.floor((Date.now()-new Date(s.removed_at))/864e5));return `<div class="li"><div class="av" style="opacity:.5">${esc(initials(s.name))}</div><div class="tx"><b>${esc(s.name)}</b><div class="mut sm">${t("daysLeft",NUM(left))}</div></div><button class="btn sm" data-restore="${s.id}">${ic("undo")}${t("restore")}</button></div>`}).join("")}</div>`:""}
  </main>${tabbar()}`;
 }
@@ -394,6 +422,7 @@ function renderSettings(){
  <div class="card"><h2>${t("downloads")}</h2><div class="row2"><button class="btn sm" data-dl="all">${ic("dl")}${t("dlAll")}</button><button class="btn sm" data-dl="absent">${ic("dl")}${t("dlAbs")}</button><button class="btn sm" data-dl="present">${ic("dl")}${t("dlPres")}</button><button class="btn sm" data-dl="json">${ic("dl")}${t("dlJson")}</button></div><p class="mut sm" style="margin:8px 0 0">${t("dlNote")}</p></div>
  <div class="card"><h2>${t("lang")} · ${t("theme")}</h2><div class="chips" style="margin-bottom:8px"><button class="chip" data-lang="ar" aria-pressed="${LANG==="ar"}">العربية</button><button class="chip" data-lang="en" aria-pressed="${LANG==="en"}">English</button></div>
   <div class="chips">${["auto","light","dark"].map(k=>`<button class="chip" data-theme="${k}" aria-pressed="${th===k}">${t(k)}</button>`).join("")}</div></div>
+ <div class="card"><h2>${t("storage")}</h2><p class="mut" style="white-space:pre-line;margin:0 0 8px">${t("storageTxt")}</p><p class="sm" style="margin:0 0 8px"><b>${LS.get("teacher.backup",null)?esc(t("lastBackup",fmtTime(LS.get("teacher.backup")))):t("noBackup")}</b></p><button class="btn sm pri" data-dl="json">${ic("dl")}${t("saveBackup")}</button></div>
  <div class="card"><h2>${t("privacy")}</h2><p class="mut" style="white-space:pre-line;margin:0">${t("privacyFull")}</p></div>
  <div class="card"><h2>${t("account")}</h2><div class="row2"><button class="btn sm" data-act="tour">${t("tourAgain")}</button><button class="btn sm" data-act="out">${ic("out")}${t("signout")}</button><button class="btn sm danger" data-act="delAcc">${ic("trash")}${t("delAcc")}</button></div></div>
  <div style="text-align:center"><a class="link" href="../">${ic("home")} ${t("backToSite")}</a></div>
@@ -403,13 +432,40 @@ function renderSettings(){
 function renderPending(){const d=new Date(new Date(S.pendingDel).getTime()+30*864e5);
  app.innerHTML=`${header(t("portal"),S.user.email)}<main><div class="auth"><div class="card" style="text-align:center"><div class="soon"><div class="ic">${ic("trash")}</div><p>${esc(t("pendingDel",d.toLocaleDateString(LANG==="ar"?"ar-SA-u-ca-gregory-nu-arab":"en-US",{day:"numeric",month:"long",year:"numeric"})))}</p><div class="row2" style="justify-content:center"><button class="btn pri" data-act="restoreAcc">${ic("undo")}${t("restoreAcc")}</button><button class="btn" data-act="out">${t("signout")}</button></div></div></div></div></main>`}
 
+async function moveStudent(id,dir){const l=active();const i=l.findIndex(s=>s.id===id),j=i+dir;if(i<0||j<0||j>=l.length)return;const a=l[i],b=l[j];
+ /* give everyone distinct order numbers first, then swap the two */
+ if(new Set(l.map(s=>s.sort_order)).size!==l.length){l.forEach((s,k)=>s.sort_order=k+1);try{await Promise.all(l.map(s=>q(sb.from("students").update({sort_order:s.sort_order}).eq("id",s.id))))}catch(e){toast(errText(e));return}}
+ const ao=a.sort_order,bo=b.sort_order;a.sort_order=bo;b.sort_order=ao;S.students.sort((x,y)=>x.sort_order-y.sort_order);renderStudents();
+ try{await q(sb.from("students").update({sort_order:bo}).eq("id",a.id));await q(sb.from("students").update({sort_order:ao}).eq("id",b.id))}catch(e){toast(errText(e));await loadStudents();renderStudents()}}
+function weekDays(day){const d=fromIso(day);const start=addDays(day,-d.getDay());return Array.from({length:7},(_,i)=>addDays(start,i)).filter(x=>!isOff(x))}
+function renderReport(){
+ const day=S.day,week=S.rep==="week",list=reportOrder(day);const days=week?weekDays(day):[day];
+ const title=week?t("repWeek"):t("repDay");const sub=week?`${fmtShort(days[0])} – ${fmtShort(days[days.length-1])}`:fmtDay(day);
+ const tot={present:0,absent:0,excused:0};
+ const rows=list.map((s,i)=>{const a=S.att[s.id]||{};const c={present:0,absent:0,excused:0};days.forEach(x=>{if(a[x])c[a[x]]++,tot[a[x]]++});const la=longAbsent(s.id,day);
+  return `<tr class="${la?"la":""}"><td>${NUM(i+1)}</td><td class="n">${esc(s.name)}${la?` <span class="pill">${t("longAbs")}</span>`:""}</td>${week?days.map(x=>`<td>${a[x]?ST[a[x]].e:"·"}</td>`).join("")+`<td>${NUM(c.present)}</td><td>${NUM(c.absent)}</td><td>${NUM(c.excused)}</td>`:`<td>${a[day]?esc(stLabel(a[day])):"—"}</td>`}</tr>`}).join("");
+ const head=week?`<th>${t("no")}</th><th class="n">${t("name")}</th>${days.map(x=>`<th>${t("wks")[fromIso(x).getDay()]}<br><small>${NUM(fromIso(x).getDate())}</small></th>`).join("")}<th>✅</th><th>❌</th><th>🚫</th>`:`<th>${t("no")}</th><th class="n">${t("name")}</th><th>${t("status")}</th>`;
+ app.innerHTML=`${header(title,sub,true)}<main>
+ <div class="row2" style="margin-bottom:12px"><button class="btn pri" data-act="print" style="flex:1">${ic("dl")}${t("print")}</button><button class="btn" data-act="repcsv">${t("csv")}</button></div>
+ <div class="chips" style="margin-bottom:12px"><button class="chip" data-rep="day" aria-pressed="${!week}">${t("repDay")}</button><button class="chip" data-rep="week" aria-pressed="${week}">${t("repWeek")}</button></div>
+ <div class="card rep" id="rep"><div class="rh"><div><b>${esc(S.cls.name)} · ${title}</b><div class="mut sm">${esc(sub)}</div></div><div class="mut sm" style="text-align:end">${t("site")}<br>${t("generated")}: ${esc(fmtTime(new Date()))}</div></div>
+ <div class="tw"><table class="rt${week?" wk":""}"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>
+ <p class="sm" style="margin:10px 0 0">${t("total")}: ✅ ${NUM(tot.present)} · ❌ ${NUM(tot.absent)} · 🚫 ${NUM(tot.excused)}</p>
+ <p class="mut sm" style="margin:6px 0 0">${t("repOrder")}</p></div>
+ </main>${tabbar()}`;
+}
+function reportCsv(){const day=S.day,week=S.rep==="week",list=reportOrder(day);const days=week?weekDays(day):[day];
+ const head=[t("no"),t("name"),...days.map(x=>`${t("wks")[fromIso(x).getDay()]} ${x}`),...(week?[t("present"),t("absent"),t("excused")]:[])];
+ const lines=[head,...list.map((s,i)=>{const a=S.att[s.id]||{};const c={present:0,absent:0,excused:0};const cells=days.map(x=>{if(a[x])c[a[x]]++;return a[x]?t(a[x]):""});return [i+1,s.name+(longAbsent(s.id,day)?` (${t("longAbs")})`:""),...cells,...(week?[c.present,c.absent,c.excused]:[])]})].map(r=>r.map(csvCell).join(","));
+ download(`attendance-${week?"week":"day"}-${day}.csv`,"\ufeff"+lines.join("\r\n"),"text/csv;charset=utf-8")}
+
 /* ---------- downloads ---------- */
 function download(name,text,type){const b=new Blob([text],{type});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
 const csvCell=v=>{let s=String(v??"");if(/^[=+\-@]/.test(s))s="'"+s;return /[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s};
 async function doDownload(kind){
  try{const ids=S.students.map(s=>s.id);const rows=ids.length?await q(sb.from("attendance").select("student_id,day,status,updated_at").in("student_id",ids).order("day")):[];
   const name=id=>S.students.find(s=>s.id===id)?.name||"";
-  if(kind==="json"){const log=await q(sb.from("audit_log").select("*").order("at"));download(`teacher-backup-${todayIso()}.json`,JSON.stringify({exported:new Date().toISOString(),class:S.cls,students:S.students,attendance:rows,history:log},null,2),"application/json");return}
+  if(kind==="json"){const log=await q(sb.from("audit_log").select("*").order("at"));LS.set("teacher.backup",new Date().toISOString());download(`teacher-backup-${todayIso()}.json`,JSON.stringify({exported:new Date().toISOString(),class:S.cls,students:S.students,attendance:rows,history:log},null,2),"application/json");return}
   const pick=rows.filter(r=>kind==="all"||r.status===kind||(kind==="absent"&&r.status==="excused"));
   const head=LANG==="ar"?["التاريخ","اليوم","الطالب","الحالة"]:["Date","Day","Student","Status"];
   const lines=[head,...pick.map(r=>[r.day,t("wk")[fromIso(r.day).getDay()],name(r.student_id),t(r.status)])].map(r=>r.map(csvCell).join(","));
@@ -444,6 +500,8 @@ document.addEventListener("click",async e=>{const b=e.target.closest("button,[da
  if(d.stab){S.stuTab=d.stab;renderStudent();return}
  if(d.restore){const s=S.students.find(x=>x.id===d.restore);s&&restoreStudent(s);return}
  if(d.remind){const s=S.students.find(x=>x.id===d.remind);s&&remindSheet(s);return}
+ if(d.mv){moveStudent(d.mv,+d.dir);return}
+ if(d.rep){S.rep=d.rep;S.view="report";document.querySelector(".ov")?.remove();window.scrollTo(0,0);render();return}
  if(d.hf){S.histF=d.hf;renderHistory();return}
  if(d.off!==undefined){const i=+d.off;const cur=S.cls.off_days||[];saveClass({off_days:cur.includes(i)?cur.filter(x=>x!==i):[...cur,i].sort()});return}
  if(d.preset){saveClass({off_days:[+d.preset]});return}
@@ -453,7 +511,10 @@ document.addEventListener("click",async e=>{const b=e.target.closest("button,[da
  const stu=S.students.find(x=>x.id===S.stu);
  switch(a){
   case "google":{const{error}=await sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:HOME}});if(error)renderAuth(["bad",errText(error)]);break}
-  case "back":S.view="students";render();break;
+  case "back":S.view=S.view==="report"?"today":"students";render();break;
+  case "report":sheet(`<h2>${t("report")}</h2><div class="li"><div class="tx"><b>${t("repDay")}</b><div class="mut sm">${t("repDayD")}</div></div><button class="btn sm pri" data-rep="day">${ic("chev")}</button></div><div class="li"><div class="tx"><b>${t("repWeek")}</b><div class="mut sm">${t("repWeekD")}</div></div><button class="btn sm pri" data-rep="week">${ic("chev")}</button></div><p class="mut sm">${t("repOrder")}</p>`);break;
+  case "print":window.print();break;
+  case "repcsv":reportCsv();break;
   case "prev":case "next":S.day=addDays(S.day,a==="prev"?-1:1);S.forceDay=false;renderToday();break;
   case "today":S.day=todayIso();S.forceDay=false;renderToday();break;
   case "force":S.forceDay=true;renderToday();break;
